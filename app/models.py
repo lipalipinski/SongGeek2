@@ -32,6 +32,12 @@ class Playlist(db.Model):
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     tracks = db.relationship("Track", secondary=playlist_track, back_populates="playlists")
 
+    def active_tracks(self):
+        return sum(1 for tr in self.tracks if tr.prev_url)
+
+    def total_tracks(self):
+        return len(self.tracks)
+
     def __repr__(self) -> str:
         return f"<playlist: {self.name} by {self.owner_id}>"
 

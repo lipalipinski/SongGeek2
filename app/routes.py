@@ -179,7 +179,7 @@ def playlist_detalis(playlist_id):
 
     plst = Playlist.query.get(playlist_id)
     
-    return render_template("playlist_details.html", pl = pl, tracks = tracks, plst = plst)
+    return render_template("playlist_details.html", plst = plst)
 
         
 

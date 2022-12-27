@@ -30,7 +30,8 @@ Playlists Manager
                 <ul class="list-group list-group-flush">
                     
                     <li class="list-group-item">
-                        tracks (active/total): <strong>{{ pl.tracks|selectattr("prev_url", "string")|list|length }}/{{ pl.tracks | length }}</strong>
+                        tracks (active/total): <strong>
+                        {{pl.active_tracks() }}/{{ pl.total_tracks() }}</strong>
                     </li>
                 
                     <li class="list-group-item"><span class="font-monospace">{{ pl.updated }}</span></li>
