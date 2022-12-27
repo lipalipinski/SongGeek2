@@ -19,8 +19,18 @@ pl_update_time = app.config["PLAYLIST_UPDATE"]
 @app.route("/")
 @app.route("/index")
 def index():
-    html = "hello, world"
-    return render_template("index.html", html = html)
+    
+    plsts = Playlist.query.filter_by(active=1).all()
+
+    return render_template("index.html", plsts = plsts)
+
+
+@app.route("/quiz")
+def quiz():
+
+    pl = Playlist.query.get(request.args.get("playlist_id"))
+
+    return render_template("quiz.html", pl = pl)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -55,7 +65,6 @@ def logout():
     logout_user()
 
     return redirect(url_for("index"))
-
 
 
 @app.route("/add-playlist", methods = ["POST", "GET"])
@@ -214,6 +223,28 @@ def playlist_manager():
     plsts = Playlist.query.all()
 
     return render_template("playlist_manager.html", plsts = plsts)
+
+
+@app.route("/playlist_manager/activate", methods = ["POST", "GET"])
+@login_required
+def activate_playlist():
+
+    pl = Playlist.query.get(request.form.get("playlist_id"))
+    pl.active = 1
+    db.session.commit()
+
+    return redirect(url_for("playlist_manager"))
+
+
+@app.route("/playlist_manager/deactivate", methods = ["POST", "GET"])
+@login_required
+def deactivate_playlist():
+
+    pl = Playlist.query.get(request.form.get("playlist_id"))
+    pl.active = 0
+    db.session.commit()
+
+    return redirect(url_for("playlist_manager"))
 
 
 @app.route("/playlist-manager/<playlist_id>")
