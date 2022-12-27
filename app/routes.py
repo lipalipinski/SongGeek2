@@ -1,24 +1,65 @@
 from datetime import datetime 
-from flask import flash, render_template, redirect, request, url_for
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from werkzeug.urls import url_parse
+from flask import flash, render_template, redirect, request, url_for
+from flask_login import current_user, login_user, login_required, logout_user
 
 from app import app
 from app.helpers import dict_html, img_helper
-from app.models import db, Playlist, Owner, Track, Album, Artist, Img
+from app.models import db, Playlist, Owner, Track, Album, Artist, Img, User
+from app.forms import LoginForm
 
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=10, retries=5)
 
 pl_update_time = app.config["PLAYLIST_UPDATE"]
 
+
 @app.route("/")
+@app.route("/index")
 def index():
     html = "hello, world"
     return render_template("index.html", html = html)
 
 
+@app.route("/login", methods=["POST", "GET"])
+def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for("playlist_manager"))
+    
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash("invalid username or passowrd")
+            return redirect(url_for("login"))
+        
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get("next")
+
+        # no next page or different domain 
+        if not next_page or url_parse(next_page).netloc != "":
+            next_page = url_for("playlist_manager")
+
+        return redirect(next_page)
+
+    return render_template("login.html", form = form)
+
+
+@app.route("/logout")
+def logout():
+    
+    logout_user()
+
+    return redirect(url_for("index"))
+
+
+
 @app.route("/add-playlist", methods = ["POST", "GET"])
+@login_required
 def add_playlist():
 
     # ======== POST handler ===========
@@ -154,6 +195,7 @@ def add_playlist():
 
 
 @app.route("/remove-playlist", methods = ["POST"])
+@login_required
 def remove_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
@@ -165,6 +207,7 @@ def remove_playlist():
 
 
 @app.route("/playlist-manager", methods = ["POST", "GET"])
+@login_required
 def playlist_manager():
 
 
@@ -174,6 +217,7 @@ def playlist_manager():
 
 
 @app.route("/playlist-manager/<playlist_id>")
+@login_required
 def playlist_detalis(playlist_id):
 
 

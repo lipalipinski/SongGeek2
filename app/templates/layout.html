@@ -28,17 +28,17 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-                {% if session["user_id"] %}
+                {% if current_user.is_anonymous %}
                 <ul class="navbar-nav me-auto mt-2">
                     <li class="nav-item"><a class="nav-link" href="/index">Main Board</a></li>
                 </ul>
                 <ul class="navbar-nav ms-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login' )}}">Log In</a></li>
                 </ul>
                 {% else %}
                 <ul class="navbar-nav ms-auto mt-2">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('playlist_manager') }}">Playlists Manager</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Log In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                 </ul>
                 {% endif %}
             </div>
@@ -61,7 +61,8 @@
         {% endwith %}
         
         <!-- main block -->
-        {% block main %}{% endblock %}
+        {% block main %}
+        {% endblock %}
     </div>
 </body>
 </html>
