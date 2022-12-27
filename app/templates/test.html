@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}
+TEST
+{% endblock %}
+
+{% block main %}
+{$raw#}
+<div class="col mx-auto">
+            {{ playlists | safe}}
+</div>
+{% endblock %}

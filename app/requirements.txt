@@ -1,0 +1,3 @@
+Flask
+spotipy
+flask_session

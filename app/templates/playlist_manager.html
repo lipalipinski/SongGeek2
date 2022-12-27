@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Playlists Manager
+{% endblock %}
+
+{% block main %}
+<div class="col mx-auto">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+
+        {% for pl in plsts %}
+        <div class="col">
+            <div class="card  h-100" style="">
+                
+                <div class="">
+                    <img src="{{ pl.img.md }}" class="img-fluid rounded-start" alt="...">
+                </div>
+
+                
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                    </h5>
+                    <p class="card-text"><small class="text-muted">
+                        by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
+                            {{ pl.owner.name }}</a>
+                    </small></p>
+                    <p class="card-text">{{ pl.description }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    
+                    <li class="list-group-item">
+                        tracks (active/total): <strong>{{ pl.tracks|selectattr("prev_url", "string")|list|length }}/{{ pl.tracks | length }}</strong>
+                    </li>
+                
+                    <li class="list-group-item"><span class="font-monospace">{{ pl.updated }}</span></li>
+                    <li class="list-group-item font-monospace">{{ pl.id }}</li>
+                </ul>
+
+                <div class="card-footer text-center">
+                    <form action="/remove-playlist" method="post">
+                        <button name="playlist_id" value="{{ pl.id }}" class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="col">
+            <div class="card  h-100" style="">
+                <div class="card-body">
+                    <h5>Add a playlist</h5>
+
+                    <form action="/add-playlist" method="post">
+                        <div class="mb-3">
+                            <label for="add-playlist" class="form-label">Playlist ID:</label>
+                            <input name="id" type="text" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <div class="form-text">Playlist will be added to SongGeek database</div>
+                    </form>
+                </div>
+            </div>
+        </div>  
+        
+    </div>
+</div>
+
+<!-- add playlist -->
+
+{% endblock %}
