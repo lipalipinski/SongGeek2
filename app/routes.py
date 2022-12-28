@@ -1,17 +1,12 @@
 from datetime import datetime 
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from werkzeug.urls import url_parse
 from flask import flash, render_template, redirect, request, url_for
 from flask_login import current_user, login_user, login_required, logout_user
 
-from app import app
+from app import app, spotify
 from app.helpers import dict_html, img_helper
 from app.models import db, Playlist, Owner, Track, Album, Artist, Img, User
 from app.forms import LoginForm
-
-auth_manager = SpotifyClientCredentials()
-spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=10, retries=5)
 
 pl_update_time = app.config["PLAYLIST_UPDATE"]
 
