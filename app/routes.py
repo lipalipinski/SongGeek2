@@ -1,16 +1,44 @@
-from datetime import datetime 
+import requests
+import spotipy
+from os import getenv
 from werkzeug.urls import url_parse
-from flask import flash, render_template, redirect, request, url_for
+from flask import flash, render_template, redirect, request, url_for, session, make_response
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException
 
 from app import app, spotify
-from app.helpers import dict_html
-from app.models import db, Playlist, Owner, Track, Album, Artist, Img, User
+from app.helpers import dict_html, auth_required
+from app.models import db, Playlist, User
 from app.forms import LoginForm
 
-
 @app.route("/")
+def verify():
+    CLI = getenv('SPOTIPY_CLIENT_ID')
+    auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
+    print(auth_url)
+    return redirect(auth_url)
+
+
+@app.route("/api_callback", methods=["GET"])
+def api_callback():
+    session.clear()
+    code = request.args.get("code")
+
+    auth_token_url = f"{app.config['API_BASE']}/api/token/"
+    res = requests.post(auth_token_url, data = {
+        "grant_type":"authorization_code",
+        "code":code,
+        "redirect_uri":app.config["REDIRECT_URI"],
+        "client_id":getenv("SPOTIPY_CLIENT_ID"),
+        "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
+    })
+
+    res_body = res.json()
+    print(res.json())
+    session["toke"] = res_body.get("access_token")
+
+    return redirect(url_for("index"))
+
 @app.route("/index")
 def index():
     
@@ -20,6 +48,7 @@ def index():
 
 
 @app.route("/quiz")
+@auth_required
 def quiz():
 
     pl = Playlist.query.get(request.args.get("playlist_id"))
@@ -55,6 +84,12 @@ def login():
 
 @app.route("/logout")
 def logout():
+
+    session.clear()
+    return redirect(url_for("index"))
+
+@app.route("/admin_logout")
+def admin_logout():
     
     logout_user()
 

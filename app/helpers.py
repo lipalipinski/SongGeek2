@@ -1,3 +1,5 @@
+from flask import session, redirect, url_for
+
 def dict_html(dct):
     html = ''
     if type(dct) == list:
@@ -29,3 +31,11 @@ def img_helper(images):
     lg = images[0]["url"]
 
     return {"sm": sm, "md": md, "lg": lg}
+
+
+def auth_required(f):
+    def decorated_function(*args, **kwargs):
+        if session.get("toke") is None:
+            return redirect(url_for("verify"))
+        return f(*args, **kwargs)
+    return decorated_function
