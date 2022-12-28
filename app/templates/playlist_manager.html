@@ -40,6 +40,11 @@ Playlists Manager
 
                 <div class="card-footer d-flex justify-content-evenly">
                     
+                    <!-- UPDATE PLAYLIST -->
+                    <form action="{{ url_for('update_playlist') }}" method="post">
+                        <button name="playlist_id" value="{{ pl.id }}" class="btn btn-sm btn-primary"><i class="bi bi-arrow-repeat"></i></button>
+                    </form>
+                    
                     <!-- activate/deactivate-->
                     {% if pl.active is eq(1) %}
                     <form action="{{ url_for('deactivate_playlist')}}" method="post">
@@ -51,6 +56,7 @@ Playlists Manager
                         <button name="playlist_id" value="{{ pl.id }}" class="btn btn-sm btn-success">Activate</button>
                     </form>
                     {% endif %}
+
 
                     <!-- REMOVE PLAYLIST -->
                     <form action="/remove-playlist" method="post">

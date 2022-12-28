@@ -9,6 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 app = Flask(__name__)
 app.config.from_object(Config)
+pl_update_time = app.config["PLAYLIST_UPDATE"]
 
 db = SQLAlchemy(app)
 migrate = Migrate(app,db,render_as_batch=True)
