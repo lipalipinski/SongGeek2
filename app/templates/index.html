@@ -19,7 +19,7 @@ Home
                 
                 <div class="card-body">
                     <h5 class="card-title">
-                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                        <a href="{{ pl.url }}" target="_blank" noopener noreferer>{{ pl.name }}</a>
                     </h5>
                     <p class="card-text"><small class="text-muted">
                         by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>

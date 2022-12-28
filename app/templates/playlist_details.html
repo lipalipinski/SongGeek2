@@ -8,35 +8,58 @@ Playlists Manager - {{ plst.name }}
 <div class="col mx-auto">
     <!-- playlist details -->
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>playlist_id</th>            
-                <th>name</th>            
-                <th>description</th>            
-                <th>url</th>                      
-                <th>owner_id</th>            
-                <th>active</th>
-                <th>tracks<br>active/total</th>
-                <th>remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ plst.id }}</td>
-                <td><a href="/playlist-manager/{{ plst.id }}">{{ plst.name }}</a></td>
-                <td>{{ plst.description }}</td>
-                <td><a href="{{ plst.url }}" target="_blank" noreferrer noopener>{{ plst.url }}</a></td><td>{{ plst.owner_id }}</td>
-                <td>{{ plst.active }}</td>
-                <td>{{ plst.active_tracks() }}/{{ plst.total_tracks() }}</td>
-                <td>
-                    <form action="/remove-playlist" method="post">
-                        <button name="playlist_id" value="{{ plst.id }}" class="btn btn-sm btn-danger">X</button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-        </table>
+
+        <div class="card mb-3">
+            <div class="row g-0">
+
+                <div class="col-3">
+                    <img src="{{ plst.img.md }}" class="img-fluid rounded-start" alt="...">
+                </div>
+
+                <div class="col-9">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            <a href="/playlist-manager/{{ plst.id }}">{{ plst.name }}</a>
+                        </h4>
+                        <p class="card-text"><small class="text-muted">
+                            by <a href="{{ plst.owner.url }}" target="_blank" noopener noreferer>
+                                {{ plst.owner.name }}</a>
+                        </small></p>
+                        <p class="card-text">{{ plst.description }}</p>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        
+                        <li class="list-group-item">
+                            tracks (active/total): <strong>
+                            {{plst.active_tracks() }}/{{ plst.total_tracks() }}</strong>
+                        </li>
+                    
+                        <li class="list-group-item"><span class="font-monospace">{{ plst.updated }}</span></li>
+                    </ul>
+                    <div class="card-footer d-flex justify-content-evenly align-items-center">
+                        <span class="list-group-item font-monospace">{{ plst.id }}</span>
+                        <!-- activate/deactivate-->
+                        {% if plst.active is eq(1) %}
+                        <form action="{{ url_for('deactivate_playlist')}}" method="post">
+                            <button name="playlist_id" value="{{ plst.id }}" class="btn btn-sm btn-danger">Deactivate</button>
+                        </form>
+                        
+                        {% else %}
+                        <form action="{{ url_for('activate_playlist')}}" method="post">
+                            <button name="playlist_id" value="{{ plst.id }}" class="btn btn-sm btn-success">Activate</button>
+                        </form>
+                        {% endif %}
+                        
+                        <!-- REMOVE PLAYLIST -->
+                        <form action="/remove-playlist" method="post">
+                            <button name="playlist_id" value="{{ plst.id }}" class="btn btn-sm btn-danger">Remove</button>
+                        </form>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
 
     <!-- tracks -->
     <table class="table table-bordered table-striped">
