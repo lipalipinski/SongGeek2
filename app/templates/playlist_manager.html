@@ -15,7 +15,6 @@ Playlists Manager
                 <div class="">
                     <img src="{{ pl.img.md }}" class="img-fluid rounded-start" alt="...">
                 </div>
-
                 
                 <div class="card-body">
                     <h5 class="card-title">
@@ -27,6 +26,7 @@ Playlists Manager
                     </small></p>
                     <p class="card-text">{{ pl.description }}</p>
                 </div>
+
                 <ul class="list-group list-group-flush">
                     
                     <li class="list-group-item">
@@ -39,6 +39,11 @@ Playlists Manager
                 </ul>
 
                 <div class="card-footer d-flex justify-content-evenly">
+                    
+                    <!-- UPDATE PLAYLIST -->
+                    <form action="{{ url_for('update_playlist') }}" method="post">
+                        <button name="playlist_id" value="{{ pl.id }}" class="btn btn-sm btn-primary"><i class="bi bi-arrow-repeat"></i></button>
+                    </form>
                     
                     <!-- activate/deactivate-->
                     {% if pl.active is eq(1) %}
@@ -56,6 +61,7 @@ Playlists Manager
                     <form action="/remove-playlist" method="post">
                         <button name="playlist_id" value="{{ pl.id }}" class="btn btn-sm btn-danger">Remove</button>
                     </form>
+
                 </div>
 
             </div>
@@ -75,6 +81,7 @@ Playlists Manager
                         <button type="submit" class="btn btn-primary">Add</button>
                         <div class="form-text">Playlist will be added to SongGeek database</div>
                     </form>
+                    
                 </div>
             </div>
         </div>  
