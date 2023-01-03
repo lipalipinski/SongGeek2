@@ -40,9 +40,12 @@ def api_callback():
     user = User.query.filter_by(id = usr["id"]).first()
 
     if not user:
-        user = User(id=usr["id"], token=token, r_token=r_token, name=usr["display_name"])
-        db.session.add(user)
-        db.session.commit()
+        user = User(id=usr["id"])
+    
+    user.token = token
+    user.r_token = r_token
+    db.session.add(user)
+    db.session.commit()
 
     login_user(user, remember=True)
 
