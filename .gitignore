@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+app/__pycache__/
+phpliteadmin.php
+app/__pycache__
+.DS_Store
+.cache
