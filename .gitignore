@@ -5,3 +5,4 @@ phpliteadmin.php
 app/__pycache__
 .DS_Store
 .cache
+migrations/versions/.DS_Store

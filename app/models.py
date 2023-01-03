@@ -1,16 +1,16 @@
-from app import db, login, spotify, pl_update_time
-from app.helpers import img_helper
 from datetime import datetime
 from requests.exceptions import RequestException
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from app import db, login, spotify, pl_update_time
+from app.helpers import img_helper
 
 @login.user_loader
 def lod_user(id):
     return User.query.get(int(id))
 
 
-class User(UserMixin, db.Model):
+'''class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, unique=True)
     password_hash = db.Column(db.Text)
@@ -19,7 +19,16 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash, password)'''
+
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Text, primary_key=True)
+    token = db.Column(db.Text)
+    r_token =  db.Column(db.Text)
+    expires = db.Column(db.DateTime)
+    admin = db.Column(db.Boolean, default = False)
+    name = db.Column(db.Text)
 
 
 playlist_track = db.Table("playlist_track",

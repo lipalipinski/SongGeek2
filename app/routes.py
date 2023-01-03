@@ -1,9 +1,9 @@
-import requests
-import spotipy
 import base64
 from os import getenv
+import spotipy
+import requests
 from werkzeug.urls import url_parse
-from flask import flash, render_template, redirect, request, url_for, session, make_response
+from flask import flash, render_template, redirect, request, url_for, session
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException
 
