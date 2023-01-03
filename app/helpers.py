@@ -1,4 +1,7 @@
 from flask import session, redirect, url_for
+from app import app
+from os import getenv
+import requests
 
 def dict_html(dct):
     html = ''
@@ -32,10 +35,28 @@ def img_helper(images):
 
     return {"sm": sm, "md": md, "lg": lg}
 
+def refresh_token(refresh_token):
+
+    auth_token_url = f"{app.config['API_BASE']}/api/token"
+
+    res = requests.post(auth_token_url, data = {
+        "grant_type":"refresh_token",
+        "refresh_token":refresh_token,
+        "client_id":getenv("SPOTIPY_CLIENT_ID"),
+        "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
+    })
+
+    res_body = res.json()
+    if res_body.get("refresh_token"):
+        res_body["refresh_token"] = refresh_token
+
+    return res_body.get("access_token")
 
 def auth_required(f):
     def decorated_function(*args, **kwargs):
+
         if session.get("toke") is None:
             return redirect(url_for("verify"))
+
         return f(*args, **kwargs)
     return decorated_function

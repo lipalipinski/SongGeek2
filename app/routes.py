@@ -1,5 +1,6 @@
 import requests
 import spotipy
+import base64
 from os import getenv
 from werkzeug.urls import url_parse
 from flask import flash, render_template, redirect, request, url_for, session, make_response
@@ -13,6 +14,7 @@ from app.forms import LoginForm
 
 @app.route("/")
 def verify():
+
     CLI = getenv('SPOTIPY_CLIENT_ID')
     auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
     print(auth_url)
@@ -21,8 +23,15 @@ def verify():
 
 @app.route("/api_callback", methods=["GET"])
 def api_callback():
+
     session.clear()
+    
+    # spotify Oauth2 code
     code = request.args.get("code")
+
+    authorization = getenv("SPOTIPY_CLIENT_ID") + ":" + getenv("SPOTIPY_CLIENT_SECRET")
+    authorization = "Basic " + str(base64.b64encode(authorization.encode('ascii')))
+    headers = {"Authorization":authorization}
 
     auth_token_url = f"{app.config['API_BASE']}/api/token/"
     res = requests.post(auth_token_url, data = {
@@ -34,26 +43,39 @@ def api_callback():
     })
 
     res_body = res.json()
-    print(res.json())
+
     session["toke"] = res_body.get("access_token")
+    session["expires"] = res_body.get("expires_in")
+    session["refresh_token"] = res_body.get("refresh_token")
 
     return redirect(url_for("index"))
 
 @app.route("/index")
 def index():
     
+    usr = {}
+
+    if session and session["toke"]:
+        sp = spotipy.Spotify(auth=session['toke'])
+        usr = sp.current_user()
+
+
     plsts = Playlist.query.filter_by(active=1).all()
 
-    return render_template("index.html", plsts = plsts)
+    return render_template("index.html", plsts = plsts, usr = usr)
 
 
 @app.route("/quiz")
 @auth_required
 def quiz():
 
+    if session and session["toke"]:
+        sp = spotipy.Spotify(auth=session['toke'])
+        usr = sp.current_user()
+
     pl = Playlist.query.get(request.args.get("playlist_id"))
 
-    return render_template("quiz.html", pl = pl)
+    return render_template("quiz.html", pl = pl, usr = usr)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -92,7 +114,7 @@ def logout():
 def admin_logout():
     
     logout_user()
-
+    session.clear()
     return redirect(url_for("index"))
 
 
