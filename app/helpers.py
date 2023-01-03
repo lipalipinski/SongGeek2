@@ -51,12 +51,3 @@ def refresh_token(refresh_token):
         res_body["refresh_token"] = refresh_token
 
     return res_body.get("access_token")
-
-def auth_required(f):
-    def decorated_function(*args, **kwargs):
-
-        if session.get("toke") is None:
-            return redirect(url_for("verify"))
-
-        return f(*args, **kwargs)
-    return decorated_function

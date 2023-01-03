@@ -2,36 +2,22 @@ import base64
 from os import getenv
 import spotipy
 import requests
-from werkzeug.urls import url_parse
 from flask import flash, render_template, redirect, request, url_for, session
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException
 
 from app import app, spotify
-from app.helpers import dict_html, auth_required
+from app.helpers import dict_html
 from app.models import db, Playlist, User
-from app.forms import LoginForm
-
-@app.route("/")
-def verify():
-
-    CLI = getenv('SPOTIPY_CLIENT_ID')
-    auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
-    print(auth_url)
-    return redirect(auth_url)
 
 
 @app.route("/api_callback", methods=["GET"])
 def api_callback():
 
-    session.clear()
+
     
     # spotify Oauth2 code
     code = request.args.get("code")
-
-    authorization = getenv("SPOTIPY_CLIENT_ID") + ":" + getenv("SPOTIPY_CLIENT_SECRET")
-    authorization = "Basic " + str(base64.b64encode(authorization.encode('ascii')))
-    headers = {"Authorization":authorization}
 
     auth_token_url = f"{app.config['API_BASE']}/api/token/"
     res = requests.post(auth_token_url, data = {
@@ -44,21 +30,29 @@ def api_callback():
 
     res_body = res.json()
 
-    session["toke"] = res_body.get("access_token")
-    session["expires"] = res_body.get("expires_in")
-    session["refresh_token"] = res_body.get("refresh_token")
+    token = res_body.get("access_token")
+    r_token = res_body.get("refresh_token")
+    expires_in = res_body.get("expires_in") #seconds
+    
+    sp = spotipy.Spotify(auth=token)
+    usr = sp.current_user()
+
+    user = User.query.filter_by(id = usr["id"]).first()
+
+    if not user:
+        user = User(id=usr["id"], token=token, r_token=r_token, name=usr["display_name"])
+        db.session.add(user)
+        db.session.commit()
+
+    login_user(user, remember=True)
 
     return redirect(url_for("index"))
 
+@app.route("/")
 @app.route("/index")
 def index():
     
     usr = {}
-
-    if session and session["toke"]:
-        sp = spotipy.Spotify(auth=session['toke'])
-        usr = sp.current_user()
-
 
     plsts = Playlist.query.filter_by(active=1).all()
 
@@ -66,7 +60,6 @@ def index():
 
 
 @app.route("/quiz")
-@auth_required
 def quiz():
 
     if session and session["toke"]:
@@ -82,39 +75,18 @@ def quiz():
 def login():
 
     if current_user.is_authenticated:
-        return redirect(url_for("playlist_manager"))
+        return redirect(url_for("index"))
     
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash("invalid username or passowrd")
-            return redirect(url_for("login"))
-        
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get("next")
-
-        # no next page or different domain 
-        if not next_page or url_parse(next_page).netloc != "":
-            next_page = url_for("playlist_manager")
-
-        return redirect(next_page)
-
-    return render_template("login.html", form = form)
+    CLI = getenv('SPOTIPY_CLIENT_ID')
+    auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
+    return redirect(auth_url)
 
 
 @app.route("/logout")
 def logout():
-
-    session.clear()
-    return redirect(url_for("index"))
-
-@app.route("/admin_logout")
-def admin_logout():
     
     logout_user()
-    session.clear()
+
     return redirect(url_for("index"))
 
 

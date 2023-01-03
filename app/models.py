@@ -1,13 +1,12 @@
 from datetime import datetime
 from requests.exceptions import RequestException
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login, spotify, pl_update_time
 from app.helpers import img_helper
 
 @login.user_loader
 def lod_user(id):
-    return User.query.get(int(id))
+    return User.query.get(id)
 
 
 '''class User(UserMixin, db.Model):
