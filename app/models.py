@@ -5,20 +5,8 @@ from app import db, login, spotify, pl_update_time
 from app.helpers import img_helper
 
 @login.user_loader
-def lod_user(id):
+def load_user(id):
     return User.query.get(id)
-
-
-'''class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text, unique=True)
-    password_hash = db.Column(db.Text)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)'''
 
 
 class User(UserMixin, db.Model):

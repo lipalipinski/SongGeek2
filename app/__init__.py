@@ -15,6 +15,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app,db,render_as_batch=True)
 
 login = LoginManager(app)
+login.login_message = None
 login.login_view = "login"
 
 auth_manager = SpotifyClientCredentials()

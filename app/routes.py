@@ -54,24 +54,20 @@ def api_callback():
 @app.route("/")
 @app.route("/index")
 def index():
-    
-    usr = {}
 
     plsts = Playlist.query.filter_by(active=1).all()
 
-    return render_template("index.html", plsts = plsts, usr = usr)
+    return render_template("index.html", plsts = plsts)
 
 
 @app.route("/quiz")
+@login_required
 def quiz():
 
-    if session and session["toke"]:
-        sp = spotipy.Spotify(auth=session['toke'])
-        usr = sp.current_user()
 
     pl = Playlist.query.get(request.args.get("playlist_id"))
 
-    return render_template("quiz.html", pl = pl, usr = usr)
+    return render_template("quiz.html", pl = pl)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -82,6 +78,7 @@ def login():
     
     CLI = getenv('SPOTIPY_CLIENT_ID')
     auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
+    
     return redirect(auth_url)
 
 
