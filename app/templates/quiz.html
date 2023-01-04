@@ -9,7 +9,7 @@
     <div class="card  h-100" style="">
         
         <div class="">
-            <img src="{{ pl.img.md }}" class="img-fluid rounded-start" alt="...">
+            <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
         </div>
 
         
@@ -22,12 +22,17 @@
                     {{ pl.owner.name }}</a>
             </small></p>
             <p class="card-text">{{ pl.description }}</p>
+            <p class="card-text">
+                <audio controls>
+                    <source src="{{ quest.track.prev_url }}" type="audio/mpeg">
+                </audio>
+            </p>
         </div>
 
         <div class="card-footer text-center">
-            <form action="/quiz" method="get">
-                <button name="playlist_id" value="{{ pl.id }}" class="btn btn-md btn-primary">Play!</button>
-            </form>
+            <a href="{{ url_for('quiz', pl_id = pl.id, game=game.id, status=game.status) }}">
+                <button class="btn btn-md btn-primary">Next</button>
+            </a>
         </div>
     </div>
 </div>

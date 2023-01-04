@@ -29,9 +29,9 @@ Home
                 </div>
 
                 <div class="card-footer text-center">
-                    <form action="/quiz" method="get">
-                        <button name="playlist_id" value="{{ pl.id }}" class="btn btn-md btn-primary">Play!</button>
-                    </form>
+                    <a href="{{ url_for('quiz') }}/{{ pl.id }}">
+                        <button name="pl" value="" class="btn btn-md btn-primary">Play!</button>
+                    </a>
                 </div>
             </div>
         </div>

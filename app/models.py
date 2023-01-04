@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 from requests.exceptions import RequestException
 from flask_login import UserMixin
@@ -10,12 +11,13 @@ def load_user(id):
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Text, index=True, primary_key=True)
     token = db.Column(db.Text)
     r_token =  db.Column(db.Text)
     expires = db.Column(db.DateTime)
     admin = db.Column(db.Boolean, default = False)
     name = db.Column(db.Text)
+    games = db.relationship("Game", backref="user", lazy="dynamic")
 
 
 playlist_track = db.Table("playlist_track",
@@ -35,6 +37,27 @@ album_artist = db.Table("album_artist",
                 db.Column("artist_id", db.Text, db.ForeignKey("artist.id"), primary_key=True),
                 )
 
+class Game(db.Model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    user_id = db.Column(db.Text, db.ForeignKey("user.id"), index=True)
+    playlist_id = db.Column(db.Text, db.ForeignKey("playlist.id"))
+    status = db.Column(db.Integer, default=0)
+    quests = db.relationship("Quest", backref="game", lazy="dynamic")
+
+    def __init__(self, **kwargs):
+        super(Game, self).__init__(**kwargs)
+        
+        tracks = random.sample(Playlist.query.get(self.playlist_id).active_list(), 5)
+        for i, track in enumerate(tracks):
+            self.quests.append(Quest(track_id = track.id, q_num = i))
+
+
+class Quest(db.Model):
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"), index=True, primary_key=True)
+    track_id = db.Column(db.Text, db.ForeignKey("track.id"), index=True)
+    q_num = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Integer)
+
 
 class Playlist(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
@@ -47,9 +70,13 @@ class Playlist(db.Model):
     owner_id = db.Column(db.Text, db.ForeignKey("owner.id")) 
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     tracks = db.relationship("Track", secondary=playlist_track, back_populates="playlists")
+    games = db.relationship("Game", backref="playlist", lazy="dynamic")
 
     def active_tracks(self):
         return sum(1 for tr in self.tracks if tr.prev_url)
+
+    def active_list(self):
+        return [track for track in self.tracks if track.prev_url]
 
     def total_tracks(self):
         return len(self.tracks)
@@ -166,6 +193,7 @@ class Track(db.Model):
     prev_url = db.Column(db.Text)
     playlists = db.relationship("Playlist", secondary=playlist_track, back_populates="tracks")
     artists = db.relationship("Artist", secondary=track_artist, back_populates="tracks")
+    quests = db.relationship("Quest", backref="track", lazy="dynamic")
 
 
     def __repr__(self) -> str:

@@ -8,7 +8,7 @@ from requests.exceptions import RequestException
 
 from app import app, spotify
 from app.helpers import dict_html
-from app.models import db, Playlist, User
+from app.models import db, Playlist, User, Game
 
 
 @app.route("/api_callback", methods=["GET"])
@@ -60,14 +60,54 @@ def index():
     return render_template("index.html", plsts = plsts)
 
 
+
 @app.route("/quiz")
+@app.route("/quiz/<pl_id>")
+@app.route("/quiz/<pl_id>/<game>")
+@app.route("/quiz/<pl_id>/<game>/<int:status>")
 @login_required
-def quiz():
+def quiz(pl_id = None, game = None, status = None):
 
+    # no pl
+    if not pl_id:
+        return redirect(url_for("index"))
 
-    pl = Playlist.query.get(request.args.get("playlist_id"))
+    pl = Playlist.query.get(pl_id)
+    game_id = game
 
-    return render_template("quiz.html", pl = pl)
+    if not game_id:
+        # check if there is active game
+        game = Game.query.filter_by(user_id=current_user.id, playlist_id=pl.id).first()
+        
+        # create new game
+        if not game or game.status in [0, 5]:
+            game = Game(user_id=current_user.id, playlist_id=pl_id)
+            db.session.add(game)
+            db.session.commit()
+
+        return redirect(url_for("quiz", pl_id = pl.id, game=game.id, status=game.status))
+
+    # game_id invalid
+        # game doesnt exist
+        # wrong user
+        # game inactive
+
+    # display quest
+    if status in range(0, 5):
+        game = Game.query.filter_by(id=game_id).first()
+        quest = game.quests[int(status)]
+    elif status == 5:
+        # !!!!!!! TODO SUMMARY
+        status = 0
+        game = Game.query.filter_by(id=game_id).first()
+        quest = game.quests[int(status)]
+    else:
+        return redirect(url_for("index"))
+
+    game.status += 1
+    db.session.commit()
+
+    return render_template("quiz.html", pl = pl, quest=quest, game=game)
 
 
 @app.route("/login", methods=["POST", "GET"])
