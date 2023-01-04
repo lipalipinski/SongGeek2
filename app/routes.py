@@ -61,53 +61,65 @@ def index():
 
 
 
+@app.route("/quiz/", methods=["POST"])
+def answer():
+    
+    if request.method == "POST":
+
+        pl_id = request.form.get("pl_id")
+        game_id = request.form.get("game_id")
+        track_id = request.form.get("track_id")
+
+        game = Game.query.filter_by(id=game_id).first()
+        quest = game.quests[game.status]
+
+        print(quest.track_id)
+        print(track_id)
+        if quest.track_id == track_id:
+            quest.points = 1
+            db.session.flush()
+
+        game.status += 1
+        db.session.commit()
+
+        return redirect(url_for("quiz", pl_id = pl_id, game=game_id))
+
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>")
 @app.route("/quiz/<pl_id>/<game>")
-@app.route("/quiz/<pl_id>/<game>/<int:status>")
 @login_required
-def quiz(pl_id = None, game = None, status = None):
+def quiz(pl_id = None, game = None):
 
-    # no pl
-    if not pl_id:
+    if pl_id == None:
         return redirect(url_for("index"))
 
     pl = Playlist.query.get(pl_id)
     game_id = game
 
     if not game_id:
-        # check if there is active game
-        game = Game.query.filter_by(user_id=current_user.id, playlist_id=pl.id).first()
-        
         # create new game
-        if not game or game.status in [0, 5]:
-            game = Game(user_id=current_user.id, playlist_id=pl_id)
-            db.session.add(game)
-            db.session.commit()
+        game = Game(user_id=current_user.id, playlist_id=pl_id)
+        db.session.add(game)
+        db.session.commit()
 
-        return redirect(url_for("quiz", pl_id = pl.id, game=game.id, status=game.status))
+        return redirect(url_for("quiz", pl_id = pl.id, game=game.id))
+
+    game = Game.query.filter_by(id=game_id).first()
 
     # game_id invalid
-        # game doesnt exist
-        # wrong user
-        # game inactive
-
-    # display quest
-    if status in range(0, 5):
-        game = Game.query.filter_by(id=game_id).first()
-        quest = game.quests[int(status)]
-    elif status == 5:
-        # !!!!!!! TODO SUMMARY
-        status = 0
-        game = Game.query.filter_by(id=game_id).first()
-        quest = game.quests[int(status)]
-    else:
+    if not game or game.user_id != current_user.id:
+        flash("Invalid url")
         return redirect(url_for("index"))
 
-    game.status += 1
+    if not game.next_quest():
+        return render_template("quiz_score.html", pl = pl, score = 'score: 5/5')
+
+    quest = game.next_quest()
+    db.session.add(game)
     db.session.commit()
 
     return render_template("quiz.html", pl = pl, quest=quest, game=game)
+
 
 
 @app.route("/login", methods=["POST", "GET"])

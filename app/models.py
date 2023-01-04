@@ -51,6 +51,14 @@ class Game(db.Model):
         for i, track in enumerate(tracks):
             self.quests.append(Quest(track_id = track.id, q_num = i))
 
+    def next_quest(self):
+        
+        if self.status in range(0, 5):
+            return self.quests[self.status]
+        return False
+
+    def points(self):
+        return sum([x.points for x in self.quests])
 
 class Quest(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), index=True, primary_key=True)
@@ -58,6 +66,15 @@ class Quest(db.Model):
     q_num = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Integer)
 
+    def all_answrs(self):
+        
+        tracks = [self.track]
+        while len(tracks) < 4:
+            track = random.choice(self.game.playlist.tracks)
+            if track not in tracks:
+                tracks.append(track)
+
+        return tracks
 
 class Playlist(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
