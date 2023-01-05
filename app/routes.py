@@ -61,9 +61,13 @@ def index():
 
 
 
-@app.route("/quiz/", methods=["POST"])
+@app.route("/quiz/", methods=["POST", "GET"])
 def answer():
     
+    if request.method == "GET":
+
+        return {"id":"asd"}
+
     if request.method == "POST":
 
         pl_id = request.form.get("pl_id")
@@ -85,9 +89,14 @@ def answer():
 
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>")
-@app.route("/quiz/<pl_id>/<game>")
+@app.route("/quiz/<pl_id>/<game>", methods=["POST", "GET"])
 @login_required
 def quiz(pl_id = None, game = None):
+
+    if request.method == "POST":
+        track = request.json["id"]
+        
+        return {"pl":pl_id, "game":game, "id":track}
 
     if pl_id == None:
         return redirect(url_for("index"))
@@ -95,8 +104,8 @@ def quiz(pl_id = None, game = None):
     pl = Playlist.query.get(pl_id)
     game_id = game
 
+    # create new game
     if not game_id:
-        # create new game
         game = Game(user_id=current_user.id, playlist_id=pl_id)
         db.session.add(game)
         db.session.commit()

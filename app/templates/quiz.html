@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block main %}
+
+{% block javascript %}
+<script>
+    const ANSWER_URL = {{ url_for('quiz', pl_id = pl.id, game = game.id)|tojson|safe}};
+</script>
+{% endblock %}
+
 <div class="col">
     <div class="card  h-100" style="">
         
@@ -31,17 +38,13 @@
                     </audio>
                 </div>
 
-                <form action="{{ url_for('answer') }}" method="post">
-                    <input type="hidden" id="pl_id" name="pl_id" value="{{ pl.id }}">
-                    <input type="hidden" id="game_id" name="game_id" value="{{ game.id }}">
                     <div class="d-grid gap-2">
                         {% for track in quest.all_answrs() %}
-                            <button type="submit" name="track_id" value="{{ track.id }}" class="btn btn-md btn-primary">
+                            <button id="{{ track.id }}" class="ans-btn btn btn-md btn-primary" name="track_id" value="{{ track.id }}">
                                 {{ track.name }}
                             </button>
                         {% endfor %}
                     </div>
-                </form>
 
             </p>
         </div>

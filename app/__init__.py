@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 pl_update_time = app.config["PLAYLIST_UPDATE"]
 
+
 db = SQLAlchemy(app)
 migrate = Migrate(app,db,render_as_batch=True)
 
@@ -20,6 +21,7 @@ login.login_view = "login"
 
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=10, retries=5)
+
 
 from app import routes, models
 
