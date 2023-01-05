@@ -78,7 +78,6 @@ def answer():
         if quest.track_id == track_id:
             quest.points = 1
             db.session.flush()
-
         game.status += 1
         db.session.commit()
 
@@ -112,8 +111,9 @@ def quiz(pl_id = None, game = None):
         return redirect(url_for("index"))
 
     if not game.next_quest():
-        return render_template("quiz_score.html", pl = pl, score = 'score: 5/5')
+        return render_template("quiz_score.html", pl = pl, game = game)
 
+    
     quest = game.next_quest()
     db.session.add(game)
     db.session.commit()

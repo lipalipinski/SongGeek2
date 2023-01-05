@@ -23,8 +23,27 @@
             </small></p>
             <p class="card-text">{{ pl.description }}</p>
             <p class="card-text">
-                {{ score }}
+                Score: {{ game.points() }}/5
             </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>track</th><th>score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quest in game.quests %}
+                    <tr>
+                        <td>
+                            {% for artist in quest.track.artists %}
+                            {{artist.name}}
+                            {% endfor %} 
+                            - {{quest.track.name}}</td>
+                        <td>{{quest.points}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
         <div class="card-footer text-center">

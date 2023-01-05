@@ -64,7 +64,7 @@ class Quest(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), index=True, primary_key=True)
     track_id = db.Column(db.Text, db.ForeignKey("track.id"), index=True)
     q_num = db.Column(db.Integer, primary_key=True)
-    points = db.Column(db.Integer)
+    points = db.Column(db.Integer, default=0)
 
     def all_answrs(self):
         
@@ -73,7 +73,8 @@ class Quest(db.Model):
             track = random.choice(self.game.playlist.tracks)
             if track not in tracks:
                 tracks.append(track)
-
+        
+        random.shuffle(tracks)
         return tracks
 
 class Playlist(db.Model):
