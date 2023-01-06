@@ -14,8 +14,9 @@ function answer(e) {
     player.pause()
 
     let data = {
-        "id": e.target.value,
+        "id": e.target.value
     }
+
     fetch(ANSWER_URL, {
         "method": "POST",
         "headers": { "Content-Type": "application/json" },
