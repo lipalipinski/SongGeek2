@@ -1,5 +1,6 @@
 // answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
+var next_tracks
 
 for (const btn of buttons) {
     btn.addEventListener('click', answer);
@@ -9,6 +10,7 @@ for (const btn of buttons) {
 const player = document.querySelector('#player')
 const playpause = document.querySelector("#playpause")
 const volume = document.querySelector('#volume')
+const audioSource = document.querySelector('#audioSource')
 
 volume.addEventListener('input', (e) => {
     player.volume = e.target.value / 100;
@@ -43,12 +45,15 @@ player.addEventListener('pause', () => {
 
 function answer(e) {
     
+    // remove listeners from buttons
     for (const btn of buttons) {
         btn.removeEventListener('click', answer);
     }
 
+    // pause player
     player.pause()
 
+    // make request
     let data = {
         "id": e.target.value
     }
@@ -64,16 +69,51 @@ function answer(e) {
             return response.json();
         })
         .then((json) => {
+            // DEBUG LOG
             console.log(json)
+
+            // update points display
             const points = document.querySelector('#points');
             points.textContent = json.points;
+
+            // append progbar
             progbar(document.querySelector('#prog_bar'))
+            
+            // green answer
             turnGreen(document.querySelector(`#_${json.green}`));
+            // red answer
             if (json.red != "") {
                 turnRed(document.querySelector(`#_${json.red}`));
             }
+
+            // if not last game
+            // update audio src
+            audioSource.setAttribute('src', json.next_url)
+            player.load()
+
+            next_tracks = json.next_tracks
+            // listen for new playback
+            playpause.addEventListener('click', question)
+
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
+}
+
+function question(e) {
+    // update buttons
+    for (const [i, btn] of buttons.entries()) {
+        // names
+        btn.textContent = next_tracks[i].name
+        // classes
+        btnReset(btn)
+        // btn id's
+        btn.setAttribute('id', `_${next_tracks[i].id}`)
+        // btn values
+        btn.setAttribute('value', next_tracks[i].id)
+        // event listener
+        btn.addEventListener('click', answer);
+    }
+    playpause.removeEventListener('click', question)
 }
 
 function turnGreen(btn) {
@@ -85,6 +125,11 @@ function turnRed(btn) {
     btn.classList.remove('btn-light')
     btn.classList.add('btn-danger')
 }
+
+function btnReset(btn) {
+    if (btn.classList.remove('btn-success') || btn.classList.remove('btn-danger')) {
+        btn.classList.add('btn-light')
+    }}
 
 function progbar(bar) {
     const prog = document.createElement('div')

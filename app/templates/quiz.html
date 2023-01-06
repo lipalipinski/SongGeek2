@@ -12,7 +12,7 @@
 </script>
 {% endblock %}
 
-<div class="col">
+<div class="col col-md-9 col-lg-7 mx-auto">
     <div class="card  h-100" style="">
         
         <div class="">
@@ -38,7 +38,7 @@
                 
                 <div class="col-3">
                     <audio id="player" preload>
-                        <source src="{{ quest.track.prev_url }}" type="audio/mpeg">
+                        <source id="audioSource" src="{{ quest.track.prev_url }}" type="audio/mpeg">
                     </audio>
                     <button id="playpause" class="controls btn btn-lg shadow btn-info" data-state="play"></button>
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">

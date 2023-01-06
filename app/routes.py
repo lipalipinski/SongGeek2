@@ -65,6 +65,9 @@ def index():
 @app.route("/quiz/<pl_id>/<game>", methods=["POST", "GET"])
 @login_required
 def quiz(pl_id = None, game = None):
+    
+    if pl_id == None:
+        return redirect(url_for("index"))
 
     #  ==== answer received ======
     if request.method == "POST":
@@ -82,10 +85,19 @@ def quiz(pl_id = None, game = None):
         game.status += 1
         db.session.commit()
 
-        return {"points":game.points(), "green":quest.track_id, "red":red}
+        next_quest = game.next_quest()
+        next_tracks =[]
+        if next_quest:
+            next_url = next_quest.track.prev_url
+            for track in next_quest.all_answrs():
+                next_tracks.append({"id":track.id, "name":track.name})
+        
 
-    if pl_id == None:
-        return redirect(url_for("index"))
+
+        return {"points":game.points(), "green":quest.track_id, "red":red,
+                "next_url":next_url, "next_tracks":next_tracks}
+
+    # ======= new game =========    
 
     pl = Playlist.query.get(pl_id)
     game_id = game
@@ -105,6 +117,7 @@ def quiz(pl_id = None, game = None):
         flash("Invalid url")
         return redirect(url_for("index"))
 
+    # ==== display results ======
     if not game.next_quest():
         return render_template("quiz_score.html", pl = pl, game = game)
 
