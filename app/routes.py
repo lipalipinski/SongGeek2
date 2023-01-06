@@ -60,43 +60,29 @@ def index():
     return render_template("index.html", plsts = plsts)
 
 
-
-@app.route("/quiz/", methods=["POST", "GET"])
-def answer():
-    
-    if request.method == "GET":
-
-        return {"id":"asd"}
-
-    if request.method == "POST":
-
-        pl_id = request.form.get("pl_id")
-        game_id = request.form.get("game_id")
-        track_id = request.form.get("track_id")
-
-        game = Game.query.filter_by(id=game_id).first()
-        quest = game.quests[game.status]
-
-        print(quest.track_id)
-        print(track_id)
-        if quest.track_id == track_id:
-            quest.points = 1
-            db.session.flush()
-        game.status += 1
-        db.session.commit()
-
-        return redirect(url_for("quiz", pl_id = pl_id, game=game_id))
-
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>")
 @app.route("/quiz/<pl_id>/<game>", methods=["POST", "GET"])
 @login_required
 def quiz(pl_id = None, game = None):
 
+    #  ==== answer received ======
     if request.method == "POST":
-        track = request.json["id"]
-        
-        return {"pl":pl_id, "game":game, "id":track}
+
+        track_id = request.json["id"]
+        game = Game.query.filter_by(id=game).first()
+        quest = game.quests[game.status]
+        red = ''
+
+        if quest.track_id == track_id:
+            quest.points = 1
+            db.session.flush()
+        else:
+            red = track_id
+        game.status += 1
+        db.session.commit()
+
+        return {"points":game.points(), "green":quest.track_id, "red":red}
 
     if pl_id == None:
         return redirect(url_for("index"))

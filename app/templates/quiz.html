@@ -31,16 +31,19 @@
             <p class="card-text">{{ pl.description }}</p>
             <p class="card-text">
                 song: {{ game.status +1 }} / 5 <br>
-                points: {{ game.points() }}<br>
+                <div id="prog_bar" class="progress">
+                    
+                </div>
+                points: <span id="points">{{ game.points() }}</span><br>
                 <div>
-                    <audio controls>
+                    <audio id="player" controls>
                         <source src="{{ quest.track.prev_url }}" type="audio/mpeg">
                     </audio>
                 </div>
 
                     <div class="d-grid gap-2">
                         {% for track in quest.all_answrs() %}
-                            <button id="{{ track.id }}" class="ans-btn btn btn-md btn-primary" name="track_id" value="{{ track.id }}">
+                            <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light" name="track_id" value="{{ track.id }}">
                                 {{ track.name }}
                             </button>
                         {% endfor %}
