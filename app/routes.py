@@ -61,7 +61,7 @@ def index():
 
 
 @app.route("/quiz")
-@app.route("/quiz/<pl_id>")
+@app.route("/quiz/<pl_id>", methods=["POST", "GET"])
 @app.route("/quiz/<pl_id>/<game>", methods=["POST", "GET"])
 @login_required
 def quiz(pl_id = None, game = None):
@@ -109,12 +109,11 @@ def quiz(pl_id = None, game = None):
         db.session.add(game)
         db.session.commit()
 
-        return redirect(url_for("quiz", pl_id = pl.id, game=game.id))
-
-    game = Game.query.filter_by(id=game_id).first()
+    else:
+        game = Game.query.filter_by(id=game_id).first()
 
     # game_id invalid
-    if not game or game.user_id != current_user.id:
+    if game.status != 5 or game.user_id != current_user.id:
         flash("Invalid url")
         return redirect(url_for("index"))
 
