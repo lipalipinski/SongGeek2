@@ -43,13 +43,17 @@
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                 </div>
 
-                    <div class="d-grid gap-2">
-                        {% for track in quest.all_answrs() %}
-                            <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light" name="track_id" value="{{ track.id }}">
-                                {{ track.name }}
-                            </button>
-                        {% endfor %}
-                    </div>
+                <div>
+                    <span id="question">Guess the title:</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {% for track in quest.all_answrs() %}
+                        <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light" name="track_id" value="{{ track.id }}">
+                            {{ track.name }}
+                        </button>
+                    {% endfor %}
+                </div>
 
             </p>
         </div>
