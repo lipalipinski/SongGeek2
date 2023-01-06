@@ -69,7 +69,9 @@ function answer(e) {
             points.textContent = json.points;
             progbar(document.querySelector('#prog_bar'))
             turnGreen(document.querySelector(`#_${json.green}`));
-            turnRed(document.querySelector(`#_${json.red}`));
+            if (json.red != "") {
+                turnRed(document.querySelector(`#_${json.red}`));
+            }
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }

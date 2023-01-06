@@ -35,12 +35,12 @@
                     
                 </div>
                 points: <span id="points">{{ game.points() }}</span><br>
-                <div>
+                
+                <div class="col-3">
                     <audio id="player" preload>
                         <source src="{{ quest.track.prev_url }}" type="audio/mpeg">
                     </audio>
                     <button id="playpause" class="controls btn btn-lg shadow btn-info" data-state="play"></button>
-                    <label for="volume" class="form-label">Volume</label>
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                 </div>
 
