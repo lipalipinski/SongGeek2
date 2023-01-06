@@ -75,15 +75,15 @@ function answer(e) {
             // update points display
             const points = document.querySelector('#points');
             points.textContent = json.points;
-
-            // append progbar
-            progbar(document.querySelector('#prog_bar'))
             
             // green answer
             turnGreen(document.querySelector(`#_${json.green}`));
             // red answer
             if (json.red != "") {
                 turnRed(document.querySelector(`#_${json.red}`));
+                progbar(document.querySelector('#prog_bar'), false);
+            } else {
+                progbar(document.querySelector('#prog_bar'), true);
             }
 
             // if not last game
@@ -117,23 +117,24 @@ function question(e) {
 }
 
 function turnGreen(btn) {
-    btn.classList.remove('btn-light')
-    btn.classList.add('btn-success')
+    btn.classList.replace('btn-light', 'btn-success');
 }
 
 function turnRed(btn) {
-    btn.classList.remove('btn-light')
-    btn.classList.add('btn-danger')
+    btn.classList.replace('btn-light', 'btn-danger');
 }
 
 function btnReset(btn) {
-    if (btn.classList.remove('btn-success') || btn.classList.remove('btn-danger')) {
-        btn.classList.add('btn-light')
-    }}
+    btn.classList.replace('btn-success', 'btn-light');
+    btn.classList.replace('btn-danger', 'btn-light');
+}
 
-function progbar(bar) {
+function progbar(bar, succes) {
     const prog = document.createElement('div')
     prog.classList.add('progress-bar')
     prog.style.width = '20%'
+    if (succes == false) {
+        prog.classList.add('bg-danger')
+    }
     bar.appendChild(prog)
 }
