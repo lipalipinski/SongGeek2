@@ -91,10 +91,11 @@ def quiz(pl_id = None, game = None):
             next_url = next_quest.track.prev_url
             for track in next_quest.all_answrs():
                 next_tracks.append({"id":track.id, "name":track.name})
-        
+        else:
+            next_url = ""
 
 
-        return {"points":game.points(), "green":quest.track_id, "red":red,
+        return {"quest_num":game.status, "points":game.points(), "green":quest.track_id, "red":red,
                 "next_url":next_url, "next_tracks":next_tracks}
 
     # ======= new game =========    

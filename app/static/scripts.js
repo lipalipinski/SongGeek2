@@ -1,6 +1,8 @@
 // answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
+const quest_num = document.querySelector('#quest_num')
 var next_tracks
+var resp
 
 for (const btn of buttons) {
     btn.addEventListener('click', answer);
@@ -43,6 +45,7 @@ player.addEventListener('pause', () => {
 }, false);
 
 
+// listen for the answer
 function answer(e) {
     
     // remove listeners from buttons
@@ -71,6 +74,7 @@ function answer(e) {
         .then((json) => {
             // DEBUG LOG
             console.log(json)
+            resp = json
 
             // update points display
             const points = document.querySelector('#points');
@@ -86,32 +90,39 @@ function answer(e) {
                 progbar(document.querySelector('#prog_bar'), true);
             }
 
-            // if not last game
-            // update audio src
-            audioSource.setAttribute('src', json.next_url)
-            player.load()
-
-            next_tracks = json.next_tracks
-            // listen for new playback
-            playpause.addEventListener('click', question)
-
+            // if not last quest
+            if (json.next_url != "") {
+                // update audio src
+                audioSource.setAttribute('src', json.next_url)
+                player.load()
+                // listen for new playback
+                playpause.addEventListener('click', question)
+            } else {
+                // AFTER LAST QUEST
+                const results = document.querySelector('#results')
+                results.classList.remove('d-none')
+            }
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }
 
+
+// prepere the question
 function question(e) {
     // update buttons
     for (const [i, btn] of buttons.entries()) {
         // names
-        btn.textContent = next_tracks[i].name
+        btn.textContent = resp.next_tracks[i].name
         // classes
         btnReset(btn)
         // btn id's
-        btn.setAttribute('id', `_${next_tracks[i].id}`)
+        btn.setAttribute('id', `_${resp.next_tracks[i].id}`)
         // btn values
-        btn.setAttribute('value', next_tracks[i].id)
+        btn.setAttribute('value', resp.next_tracks[i].id)
         // event listener
         btn.addEventListener('click', answer);
+        // quest_num update
+        quest_num.textContent = resp.quest_num +1
     }
     playpause.removeEventListener('click', question)
 }

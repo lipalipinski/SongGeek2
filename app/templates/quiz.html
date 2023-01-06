@@ -30,9 +30,8 @@
             </small></p>
             <p class="card-text">{{ pl.description }}</p>
             <p class="card-text">
-                song: {{ game.status +1 }} / 5 <br>
+                song: <span id="quest_num">1</span>/5 <br>
                 <div id="prog_bar" class="progress">
-                    
                 </div>
                 points: <span id="points">{{ game.points() }}</span><br>
                 
@@ -55,9 +54,9 @@
             </p>
         </div>
 
-        <div class="card-footer text-center">
+        <div id="results" class="d-none card-footer text-center">
             <a href="{{ url_for('quiz', pl_id = pl.id, game=game.id) }}">
-                <button class="btn btn-md btn-primary">Next</button>
+                <button class="btn btn-md btn-primary">Results</button>
             </a>
         </div>
     </div>
