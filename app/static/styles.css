@@ -1,0 +1,14 @@
+button.controls{
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 60px;
+    width: 60px;
+}
+
+button.controls[data-state="play"]{
+    background-image: url('/static/img/play-fill.svg');
+}
+
+button.controls[data-state="pause"] {
+    background-image: url('/static/img/pause-fill.svg');
+}

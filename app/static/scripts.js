@@ -1,8 +1,45 @@
+// answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
 
 for (const btn of buttons) {
     btn.addEventListener('click', answer);
 }
+
+// audio player controls
+const player = document.querySelector('#player')
+const playpause = document.querySelector("#playpause")
+const volume = document.querySelector('#volume')
+
+volume.addEventListener('input', (e) => {
+    player.volume = e.target.value / 100;
+})
+
+playpause.addEventListener('click', () => {
+    if (player.paused || player.ended) {
+        player.play();
+    } else {
+        player.pause();
+    }
+});
+
+// change play/pause button state (background img)
+function changeButtonState() {
+    if (player.paused || player.ended) {
+        playpause.setAttribute('data-state', 'play')
+    }
+    else {
+        playpause.setAttribute('data-state', 'pause')
+    }
+}
+
+player.addEventListener('play', () => {
+    changeButtonState();
+}, false);
+
+player.addEventListener('pause', () => {
+    changeButtonState();
+}, false);
+
 
 function answer(e) {
     
@@ -10,7 +47,6 @@ function answer(e) {
         btn.removeEventListener('click', answer);
     }
 
-    player = document.querySelector('#player')
     player.pause()
 
     let data = {
