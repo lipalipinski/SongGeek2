@@ -111,9 +111,12 @@ def quiz(pl_id = None, game = None):
 
     else:
         game = Game.query.filter_by(id=game_id).first()
+        if game.status != 5:
+            flash("Invalid url")
+            return redirect(url_for("index"))
 
     # game_id invalid
-    if game.status != 5 or game.user_id != current_user.id:
+    if game.user_id != current_user.id:
         flash("Invalid url")
         return redirect(url_for("index"))
 
