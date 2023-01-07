@@ -4,7 +4,7 @@ import spotipy
 import requests
 from flask import flash, render_template, redirect, request, url_for, session
 from flask_login import current_user, login_user, login_required, logout_user
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, HTTPError
 
 from app import app, spotify
 from app.helpers import dict_html
@@ -14,12 +14,16 @@ from app.models import db, Playlist, User, Game
 @app.route("/api_callback", methods=["GET"])
 def api_callback():
 
-
+    if request.args.get("error"):
+        flash(f"Log in failed")
+        return redirect(url_for("index"))
     
     # spotify Oauth2 code
     code = request.args.get("code")
 
+
     auth_token_url = f"{app.config['API_BASE']}/api/token/"
+
     res = requests.post(auth_token_url, data = {
         "grant_type":"authorization_code",
         "code":code,
@@ -27,6 +31,7 @@ def api_callback():
         "client_id":getenv("SPOTIPY_CLIENT_ID"),
         "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
     })
+
 
     res_body = res.json()
 
@@ -50,6 +55,19 @@ def api_callback():
     login_user(user, remember=True)
 
     return redirect(url_for("index"))
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    
+    CLI = getenv('SPOTIPY_CLIENT_ID')
+    auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
+    
+    return redirect(auth_url)
+
 
 @app.route("/")
 @app.route("/index")
@@ -133,16 +151,6 @@ def quiz(pl_id = None, game = None):
 
 
 
-@app.route("/login", methods=["POST", "GET"])
-def login():
-
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
-    
-    CLI = getenv('SPOTIPY_CLIENT_ID')
-    auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
-    
-    return redirect(auth_url)
 
 
 @app.route("/logout")
