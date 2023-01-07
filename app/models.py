@@ -133,8 +133,9 @@ class Playlist(db.Model):
     def update(self):
         
         now = datetime.utcnow()
-        if self.updated and (now - self.updated).seconds < pl_update_time:
-            raise ValueError("Playlist up to date")
+        delta = (now - self.updated)
+        if self.updated and delta.seconds < pl_update_time and delta.days < 1:
+            return True
 
         # spotify request
         try:
@@ -145,6 +146,7 @@ class Playlist(db.Model):
         # check snapshot
         if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
             self.updated = datetime.utcnow()
+            db.session.flush()
             return True
 
         # pl img
@@ -221,7 +223,12 @@ class Playlist(db.Model):
         return True
 
     def last_update(self):
-        return True
+        delta = datetime.utcnow() - self.updated
+        days = delta.days
+        hrs = delta.seconds//3600
+        mins = (delta.seconds - hrs*3600)//60
+        upt_txt = f"days: {days} hrs: {hrs} mins:{mins}"
+        return upt_txt
 
     def __repr__(self) -> str:
         return f"<playlist: {self.name} by {self.owner_id}>"

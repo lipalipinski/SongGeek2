@@ -143,6 +143,12 @@ def quiz(pl_id = None, game = None):
 
 
     pl = Playlist.query.get(pl_id)
+    
+    # update playlist 
+    pl.update()
+    db.session.add(pl)
+    db.session.commit()
+
     game_id = game
 
     # create new game
@@ -277,17 +283,11 @@ def deactivate_playlist():
 def update_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
-    
-    try:
-        pl.update()
-        db.session.add(pl)
-        db.session.commit()
-    except RequestException as err:
-        flash(str(err))
-        return redirect(url_for("playlist_manager"))
-    except ValueError as err:
-        flash(str(err))
-        return redirect(url_for("playlist_manager"))
+
+    pl.update()
+    db.session.add(pl)
+    db.session.commit()
+
 
     flash("Playlist updated")
     return redirect(url_for("playlist_manager"))
