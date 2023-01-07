@@ -1,8 +1,10 @@
 import random
-from datetime import datetime
+import requests
+from os import getenv
+from datetime import datetime, timedelta
 from requests.exceptions import RequestException
 from flask_login import UserMixin
-from app import db, login, spotify, pl_update_time
+from app import app, db, login, spotify, pl_update_time
 from app.helpers import img_helper
 
 @login.user_loader
@@ -18,6 +20,34 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default = False)
     name = db.Column(db.Text)
     games = db.relationship("Game", backref="user", lazy="dynamic")
+
+    def refresh_token(self):
+
+        # return if token is fresh
+        if datetime.utcnow() + timedelta(seconds=app.config['TOKEN_UPDATE']) < self.expires:
+            return True
+
+        auth_token_url = f"{app.config['API_BASE']}/api/token/"
+        try:
+            res = requests.post(auth_token_url, data = {
+            "grant_type":"refresh_token",
+            "refresh_token":self.r_token,
+            "client_id":getenv("SPOTIPY_CLIENT_ID"),
+            "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
+            })
+            res.raise_for_status()
+        except Exception as err:
+            print(err)
+            raise RequestException
+
+        res = res.json()
+        self.token = res["access_token"]
+        if "refresh_token" in res.keys():
+            self.r_token = res["refresh_token"]
+        db.session.flush()
+        db.session.commit()
+
+        return True
 
 
 playlist_track = db.Table("playlist_track",
@@ -36,6 +66,7 @@ album_artist = db.Table("album_artist",
                 db.Column("album_id", db.Text, db.ForeignKey("album.id"), primary_key=True),
                 db.Column("artist_id", db.Text, db.ForeignKey("artist.id"), primary_key=True),
                 )
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
@@ -187,6 +218,9 @@ class Playlist(db.Model):
 
 
         self.updated = datetime.utcnow()
+        return True
+
+    def last_update(self):
         return True
 
     def __repr__(self) -> str:

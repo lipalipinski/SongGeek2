@@ -1,4 +1,4 @@
-import base64
+from datetime import datetime, timedelta
 from os import getenv
 import spotipy
 import requests
@@ -49,6 +49,7 @@ def api_callback():
     
     user.token = token
     user.r_token = r_token
+    user.expires = datetime.utcnow() + timedelta(seconds=expires_in)
     db.session.add(user)
     db.session.commit()
 
@@ -76,6 +77,20 @@ def index():
     plsts = Playlist.query.filter_by(active=1).all()
 
     return render_template("index.html", plsts = plsts)
+
+
+@app.route("/user")
+@login_required
+def user_details():
+    
+    try:
+        current_user.refresh_token()
+    except RequestException:
+        flash("You have been logged out due to inactivity")
+        return redirect(url_for("logout"))
+    db.session.commit()
+
+    return redirect(url_for("index"))
 
 
 @app.route("/quiz")
@@ -118,6 +133,15 @@ def quiz(pl_id = None, game = None):
 
     # ======= new game =========    
 
+    # refresh user
+    try:
+        current_user.refresh_token()
+    except RequestException:
+        flash("You have been logged out due to inactivity")
+        return redirect(url_for("logout"))
+    db.session.commit()
+
+
     pl = Playlist.query.get(pl_id)
     game_id = game
 
@@ -148,9 +172,6 @@ def quiz(pl_id = None, game = None):
     db.session.commit()
 
     return render_template("quiz.html", pl = pl, quest=quest, game=game)
-
-
-
 
 
 @app.route("/logout")

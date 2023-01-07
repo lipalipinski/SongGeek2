@@ -45,7 +45,7 @@
                     {% if current_user.admin == True %}
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('playlist_manager') }}">Playlists Manager</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="">{{ current_user.name }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_details') }}">{{ current_user.name }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
                 </ul>
                 {% endif %}
