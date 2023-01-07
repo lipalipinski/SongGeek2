@@ -1,14 +1,16 @@
-button.controls{
+button{
     background-repeat: no-repeat;
     background-size: cover;
-    height: 60px;
-    width: 60px;
 }
 
-button.controls[data-state="play"]{
+button.controls[data-state="play"] {
     background-image: url('/static/img/play-fill.svg');
 }
 
 button.controls[data-state="pause"] {
     background-image: url('/static/img/pause-fill.svg');
+}
+
+button.like[data-state="not-liked"] {
+    background-image: url('/static/img/heart-64.svg');
 }

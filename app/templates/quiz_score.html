@@ -1,49 +1,77 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz-results.css') }}">
+<script src="{{ url_for('static', filename='quiz-results.js')}}" defer></script>
+{% endblock %}
+
 {% block title %}
 {{ pl.name }}
 {% endblock %}
 
 {% block main %}
-<div class="col">
+<div class="col col-md-9 col-lg-7 mx-auto">
     <div class="card  h-100" style="">
-        
-        <div class="">
-            <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
-        </div>
 
-        
         <div class="card-body">
-            <h5 class="card-title">
-                <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
-            </h5>
-            <p class="card-text"><small class="text-muted">
-                by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
-                    {{ pl.owner.name }}</a>
-            </small></p>
-            <p class="card-text">{{ pl.description }}</p>
-            <p class="card-text">
-                Score: {{ game.points() }}/5
-            </p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>track</th><th>score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for quest in game.quests %}
-                    <tr>
-                        <td>
-                            {% for artist in quest.track.artists %}
-                            {{artist.name}}
-                            {% endfor %} 
-                            - {{quest.track.name}}</td>
-                        <td>{{quest.points}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="row mb-3">
+                <div class="col-12 col-sm-4">
+                    <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
+                </div>
+            
+                <div class="col-12 col-sm-8">
+                    <h5 class="card-title">
+                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                    </h5>
+                    <p class="card-text"><small class="text-muted">
+                            by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
+                                {{ pl.owner.name }}</a>
+                        </small></p>
+                    <p class="card-text">{{ pl.description }}</p>
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col">
+                    <p class="card-text">
+                        Score: {{ game.points() }}/5
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>track</th>
+                                <th>score</th>
+                                <th>play</th>
+                                <th>like</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quest in game.quests %}
+                            <tr>
+                                <td>
+                                    {% for artist in quest.track.artists %}
+                                    {{artist.name}}
+                                    {% endfor %} 
+                                    - {{quest.track.name}}</td>
+                                <td>{{quest.points}}</td>
+                                <td>
+                                    <audio id="player{{loop.index0}}" class="audio-player" preload>
+                                        <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
+                                    </audio>
+                                    <button id="playpause{{loop.index0}}" class="controls btn btn-sm btn-info" data-state="play"></button>
+                                </td>
+                                <td>
+                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-outline-success" data-state="not-liked" value="{{quest.track.id}}"></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="col-3">
+                        <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card-footer text-center">

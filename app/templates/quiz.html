@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
+<script src="{{ url_for('static', filename='quiz.js')}}" defer></script>
+{% endblock %}
+
 {% block title %}
 {{ pl.name }}
 {% endblock %}
@@ -48,7 +53,7 @@
                     <audio id="player" preload>
                         <source id="audioSource" src="{{ quest.track.prev_url }}" type="audio/mpeg">
                     </audio>
-                    <button id="playpause" class="controls btn btn-lg shadow btn-info" data-state="play"></button>
+                    <button id="playpause" class="controls btn btn-lg btn-info" data-state="play"></button>
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                 </div>
 
