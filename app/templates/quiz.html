@@ -3,6 +3,13 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
 <script src="{{ url_for('static', filename='quiz.js')}}" defer></script>
+
+{% block javascript %}
+<script>
+    const ANSWER_URL = {{ url_for('quiz', pl_id = pl.id, game = game.id) | tojson | safe}};
+</script>
+{% endblock %}
+
 {% endblock %}
 
 {% block title %}
@@ -10,12 +17,6 @@
 {% endblock %}
 
 {% block main %}
-
-{% block javascript %}
-<script>
-    const ANSWER_URL = {{ url_for('quiz', pl_id = pl.id, game = game.id)|tojson|safe}};
-</script>
-{% endblock %}
 
 <div class="col col-md-9 col-lg-7 mx-auto">
     <div class="card h-100" style="">

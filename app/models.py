@@ -1,5 +1,6 @@
 import random
 import requests
+import spotipy
 from os import getenv
 from datetime import datetime, timedelta
 from requests.exceptions import RequestException
@@ -44,11 +45,20 @@ class User(UserMixin, db.Model):
         self.token = res["access_token"]
         if "refresh_token" in res.keys():
             self.r_token = res["refresh_token"]
+        self.expires = datetime.utcnow() + timedelta(seconds=res["expires_in"])
         db.session.flush()
         db.session.commit()
 
         return True
 
+    def likes_status(self, tracks):
+        """ returns list of dict id:id, like:bool """
+        sp = spotipy.Spotify(auth=self.token)
+        likes = sp.current_user_saved_tracks_contains(tracks)
+        id_likes = []
+        for i, track in enumerate(tracks):
+            id_likes.append({"id":track, "like":likes[i]})
+        return id_likes
 
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),

@@ -72,8 +72,6 @@ function answer(e) {
             return response.json();
         })
         .then((json) => {
-            // DEBUG LOG
-            console.log(json)
             resp = json
 
             // update points display

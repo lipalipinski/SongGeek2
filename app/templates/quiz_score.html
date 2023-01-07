@@ -3,6 +3,13 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='quiz-results.css') }}">
 <script src="{{ url_for('static', filename='quiz-results.js')}}" defer></script>
+
+{% block javascript %}
+<script>
+    const LIKES_API = {{ url_for('likes') | tojson | safe}};
+</script>
+{% endblock %}
+
 {% endblock %}
 
 {% block title %}
@@ -47,7 +54,7 @@
                         </thead>
                         <tbody>
                             {% for quest in game.quests %}
-                            <tr>
+                            <tr id="_{{ quest.track_id }}">
                                 <td>
                                     {% for artist in quest.track.artists %}
                                     {{artist.name}}
@@ -61,7 +68,11 @@
                                     <button id="playpause{{loop.index0}}" class="controls btn btn-sm btn-info" data-state="play"></button>
                                 </td>
                                 <td>
-                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-outline-success" data-state="not-liked" value="{{quest.track.id}}"></button>
+                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-outline-success" data-state="loading" value="{{quest.track.id}}">                                        
+                                        <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </button>
                                 </td>
                             </tr>
                             {% endfor %}

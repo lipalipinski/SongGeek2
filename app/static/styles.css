@@ -14,3 +14,27 @@ button.controls[data-state="pause"] {
 button.like[data-state="not-liked"] {
     background-image: url('/static/img/heart-64.svg');
 }
+
+button.like[data-state="fail"] {
+    background-image: none;
+}
+
+button.like[data-state="fail"] {
+    background-image: none;
+}
+
+button.like[data-state="liked"] {
+    background-image: url('/static/img/heart-64-full.svg');
+}
+
+button.like[data-state="loading"] {
+    background-image: none;
+}
+
+button.like div.spinner-border{
+    display: none;
+}
+
+button.like[data-state="loading"] div.spinner-border{
+    display: inherit;
+}

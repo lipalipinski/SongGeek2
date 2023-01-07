@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from os import getenv
 import spotipy
 import requests
-from flask import flash, render_template, redirect, request, url_for, session
+import json
+from flask import flash, render_template, redirect, request, url_for, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
@@ -141,7 +142,6 @@ def quiz(pl_id = None, game = None):
         return redirect(url_for("logout"))
     db.session.commit()
 
-
     pl = Playlist.query.get(pl_id)
     
     # update playlist 
@@ -179,6 +179,22 @@ def quiz(pl_id = None, game = None):
 
     return render_template("quiz.html", pl = pl, quest=quest, game=game)
 
+
+@app.route("/likes", methods=["POST"])
+def likes():
+    
+    mode = request.json["mode"]
+    if mode == 'check':
+        tracks = request.json["tracks"]
+        try:
+            id_likes = current_user.likes_status(tracks)
+        except:
+            return{"status":401}
+
+        body = json.dumps({"tracks":id_likes})
+        return Response(body, status=200)
+
+    return {'state':'fail'}
 
 @app.route("/logout")
 def logout():
