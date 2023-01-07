@@ -81,21 +81,23 @@ function setLikes() {
                 // song is liked
                 if (track.like == true) {
                     btn.setAttribute('data-state', 'liked');
-                    btn.addEventListener('click', () => {
-                        like_song(track.id, false)
+                    btn.addEventListener('click', (e) => {
+                        like_song(track.id, false, e.target)
                     }, { once: true })
                 // no like
                 } else {
                     btn.setAttribute('data-state', 'not-liked');
-                    btn.addEventListener('click', () => {
-                        like_song(track.id, true)
+                    btn.addEventListener('click', (e) => {
+                        like_song(track.id, true, e.target)
                     }, { once: true })
                 };
             };
     })
 }
 
-function like_song(id, like) {
+function like_song(id, like, btn) {
+
+    btn.setAttribute('data-state', 'loading')
 
     let data = {
         'mode': 'set_like',
@@ -116,17 +118,16 @@ function like_song(id, like) {
             return response.json();
         })
         .then((track) => {
-            btn = document.querySelector(`#_${track.id} td button.like`);
                 if (like == true) {
                     btn.setAttribute('data-state', 'liked');
-                    btn.addEventListener('click', () => {
-                        like_song(track.id, false)
+                    btn.addEventListener('click', (e) => {
+                        like_song(track.id, false, e.target)
                     }, { once: true });
                     // no like
                 } else {
                     btn.setAttribute('data-state', 'not-liked');
-                    btn.addEventListener('click', () => {
-                        like_song(track.id, true)
+                    btn.addEventListener('click', (e) => {
+                        like_song(track.id, true, e.target)
                     }, { once: true });
                 };
         })
