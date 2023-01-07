@@ -146,6 +146,8 @@ function progbar(bar, succes) {
     prog.style.width = '20%'
     if (succes == false) {
         prog.classList.add('bg-danger')
+    } else {
+        prog.classList.add('bg-success')
     }
     bar.appendChild(prog)
 }

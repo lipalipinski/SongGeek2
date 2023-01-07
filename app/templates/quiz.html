@@ -13,28 +13,37 @@
 {% endblock %}
 
 <div class="col col-md-9 col-lg-7 mx-auto">
-    <div class="card  h-100" style="">
-        
-        <div class="">
-            <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
-        </div>
-
+    <div class="card h-100" style="">
         
         <div class="card-body">
-            <h5 class="card-title">
-                <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
-            </h5>
-            <p class="card-text"><small class="text-muted">
-                by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
-                    {{ pl.owner.name }}</a>
-            </small></p>
-            <p class="card-text">{{ pl.description }}</p>
-            <p class="card-text">
-                song: <span id="quest_num">1</span>/5 <br>
-                <div id="prog_bar" class="progress">
+            <!-- GAME STATUS -->
+            <div class="col-12 d-flex mb-1 justify-content-around">
+                <div> song: <span id="quest_num">1</span>/5</div>
+                <div>points: <span id="points">{{ game.points() }}</span></div>
+            </div>
+            <div id="prog_bar" class="progress mb-4">
+            </div>
+
+            <!-- PLAYLIST INFO -->
+            <div class="row mb-3">
+                <div class="col-12 col-sm-4">
+                    <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
                 </div>
-                points: <span id="points">{{ game.points() }}</span><br>
-                
+
+                <div class="col-12 col-sm-8">
+                    <h5 class="card-title">
+                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                    </h5>
+                    <p class="card-text"><small class="text-muted">
+                        by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
+                            {{ pl.owner.name }}</a>
+                    </small></p>
+                    <p class="card-text">{{ pl.description }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- PLAYER -->
                 <div class="col-3">
                     <audio id="player" preload>
                         <source id="audioSource" src="{{ quest.track.prev_url }}" type="audio/mpeg">
@@ -43,6 +52,7 @@
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                 </div>
 
+                <!-- QUESTION -->
                 <div>
                     <span id="question">Guess the title:</span>
                 </div>
@@ -55,7 +65,7 @@
                     {% endfor %}
                 </div>
 
-            </p>
+            </div>
         </div>
 
         <div id="results" class="d-none card-footer text-center">

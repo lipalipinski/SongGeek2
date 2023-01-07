@@ -227,7 +227,7 @@ class Playlist(db.Model):
         days = delta.days
         hrs = delta.seconds//3600
         mins = (delta.seconds - hrs*3600)//60
-        upt_txt = f"days: {days} hrs: {hrs} mins:{mins}"
+        upt_txt = f"d:{days} h:{hrs} m:{mins}"
         return upt_txt
 
     def __repr__(self) -> str:
