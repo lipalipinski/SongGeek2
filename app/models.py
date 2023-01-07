@@ -141,7 +141,7 @@ class Playlist(db.Model):
         try:
             resp = spotify.playlist(self.id)
         except:
-            raise RequestException("Spotify request failed")
+            return False
 
         # check snapshot
         if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
