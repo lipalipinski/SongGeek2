@@ -184,7 +184,9 @@ def quiz(pl_id = None, game = None):
 def likes():
     
     mode = request.json["mode"]
-    if mode == 'check':
+
+    # ==== check liked songs ===
+    if mode == "check":
         tracks = request.json["tracks"]
         try:
             id_likes = current_user.likes_status(tracks)
@@ -194,7 +196,20 @@ def likes():
         body = json.dumps({"tracks":id_likes})
         return Response(body, status=200)
 
-    return {'state':'fail'}
+    # ==== set like =====
+    elif mode == "set_like":
+        track_id = request.json["id"]
+        like = request.json["like"]
+        
+        try:
+            current_user.set_like(track_id, like)
+        except RecursionError:
+            return Response({}, status=401)
+
+        body = json.dumps({"id":track_id, "like":like})
+        return Response(body, status=200)
+
+    return Response({}, status=401)
 
 @app.route("/logout")
 def logout():

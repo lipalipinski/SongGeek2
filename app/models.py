@@ -60,6 +60,25 @@ class User(UserMixin, db.Model):
             id_likes.append({"id":track, "like":likes[i]})
         return id_likes
 
+    def set_like(self, track_id, like):
+        """ add/remove track from library """
+        sp = spotipy.Spotify(auth=self.token)
+
+        # add
+        if like:
+            try:
+                sp.current_user_saved_tracks_add([track_id])
+            except:
+                raise RequestException
+        # remove
+        else:
+            try:
+                sp.current_user_saved_tracks_delete([track_id])
+            except:
+                raise RequestException
+        
+        return True
+
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),
                 db.Column("track_id", db.Text, db.ForeignKey("track.id"), primary_key=True)

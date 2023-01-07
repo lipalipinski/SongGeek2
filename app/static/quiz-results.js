@@ -68,23 +68,66 @@ function setLikes() {
             if (!response.ok) {
                 // make buttons inactive
                 for (like of likes) {
-                    like.setAttribute('disabled', 'true')
-                    like.setAttribute('data-state', 'fail')
-                }
+                    like.setAttribute('disabled', 'true');
+                    like.setAttribute('data-state', 'fail');
+                };
                 throw new Error(`HTTP error: ${response.status}`);
             }
             return response.json();
     })
         .then((resp) => {
-        console.log(resp)
             for (const [i, track] of resp.tracks.entries()) {
-            btn = document.querySelector(`#_${track.id} td button.like`)
+                btn = document.querySelector(`#_${track.id} td button.like`);
+                // song is liked
                 if (track.like == true) {
-                    console.log('LIKED TRACK');
                     btn.setAttribute('data-state', 'liked');
-            } else {
+                    btn.addEventListener('click', () => {
+                        like_song(track.id, false)
+                    }, { once: true })
+                // no like
+                } else {
                     btn.setAttribute('data-state', 'not-liked');
+                    btn.addEventListener('click', () => {
+                        like_song(track.id, true)
+                    }, { once: true })
                 };
             };
     })
+}
+
+function like_song(id, like) {
+
+    let data = {
+        'mode': 'set_like',
+        'like': like,
+        'id': id,
+    };
+    fetch(LIKES_API, {
+        'method': 'POST',
+        'headers': { "Content-Type": "application/json" },
+        'body': JSON.stringify(data)
+    })
+        .then((response) => {
+            if (!response.ok) {
+                // set likes if request fails
+                setLikes();
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((track) => {
+            btn = document.querySelector(`#_${track.id} td button.like`);
+                if (like == true) {
+                    btn.setAttribute('data-state', 'liked');
+                    btn.addEventListener('click', () => {
+                        like_song(track.id, false)
+                    }, { once: true });
+                    // no like
+                } else {
+                    btn.setAttribute('data-state', 'not-liked');
+                    btn.addEventListener('click', () => {
+                        like_song(track.id, true)
+                    }, { once: true });
+                };
+        })
 }
