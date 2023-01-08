@@ -6,7 +6,7 @@ class Config(object):
     SECRET_KEY = 'fgjeroiaulj'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    TOKEN_UPDATE = 60*50 #update token when expires in less than that
+    TOKEN_UPDATE = 60*55 #update token when expires in less than that
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
     API_BASE = 'https://accounts.spotify.com'
     REDIRECT_URI = 'http://127.0.0.1:5000/api_callback'

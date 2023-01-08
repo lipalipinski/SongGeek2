@@ -37,8 +37,7 @@ class User(UserMixin, db.Model):
             "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
             })
             res.raise_for_status()
-        except Exception as err:
-            print(err)
+        except:
             raise RequestException
 
         res = res.json()

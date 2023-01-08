@@ -70,6 +70,17 @@ def login():
     
     return redirect(auth_url)
 
+# ==== REFRESH TOKEN BEFORE REQUEST if user authenticated
+@app.before_request
+def refresh_user_token():
+    if current_user.is_authenticated:
+        try:
+            current_user.refresh_token()
+        except RequestException:
+            flash("You have been logged out due to inactivity")
+            return redirect(url_for("logout"))
+
+    db.session.commit()
 
 @app.route("/")
 @app.route("/index")
@@ -133,14 +144,6 @@ def quiz(pl_id = None, game = None):
                 "next_url":next_url, "next_tracks":next_tracks}
 
     # ======= new game =========    
-
-    # refresh user
-    try:
-        current_user.refresh_token()
-    except RequestException:
-        flash("You have been logged out due to inactivity")
-        return redirect(url_for("logout"))
-    db.session.commit()
 
     pl = Playlist.query.get(pl_id)
     
