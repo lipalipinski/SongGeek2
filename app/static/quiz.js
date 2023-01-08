@@ -1,53 +1,65 @@
 // answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
-const quest_num = document.querySelector('#quest_num')
-var next_tracks
-var resp
+const quest_num = document.querySelector('#quest_num');
+var next_tracks;
+var resp;
+var countdownSeconds = 5;
 
 for (const btn of buttons) {
     btn.addEventListener('click', answer);
 }
 
 // audio player controls
-const player = document.querySelector('#player')
-const playpause = document.querySelector("#playpause")
-const volume = document.querySelector('#volume')
-const audioSource = document.querySelector('#audioSource')
+const player = document.querySelector('#player');
+const play = document.querySelector("#playpause");
+const volume = document.querySelector('#volume');
+const audioSource = document.querySelector('#audioSource');
+const mute = document.querySelector('#mute');
 
+// volume slider
 volume.addEventListener('input', (e) => {
     player.volume = e.target.value / 100;
 })
 
-playpause.addEventListener('click', () => {
-    if (playpause.getAttribute('data-state') == 'results') {
+// toggle mute 
+mute.addEventListener('click', (e) => {
+    if (!player.muted) {
+        player.muted = true;
+        e.target.setAttribute('data-state', 'muted');
+    } else {
+        player.muted = false;
+        e.target.setAttribute('data-state', 'not-muted');
+    }
+})
+
+play.addEventListener('click', startPlayer, {once: true});
+
+function startPlayer() {
+    if (play.getAttribute('data-state') == 'results') {
         return;
     }
     if (player.paused || player.ended) {
+        score = countdownSeconds;
+        play.textContent = score;
         player.play();
-    } else {
-        player.pause();
-    }
-});
-
-// change play/pause button state (background img)
-function changeButtonState() {
-    playpause.textContent = '';
-    if (player.paused || player.ended) {
-        playpause.setAttribute('data-state', 'play');
-    }
-    else {
-        playpause.setAttribute('data-state', 'pause');
-    }
-}
-
-player.addEventListener('play', () => {
-    changeButtonState();
-}, false);
-
-player.addEventListener('pause', () => {
-    changeButtonState();
-}, false);
-
+        play.setAttribute('data-state', 'countdown');
+        const timer = setInterval(() => {
+            score--;
+            if (player.paused) {
+                clearInterval(timer);
+                return;
+            } else if (score == 0) {
+                player.pause();
+                play.setAttribute('data-state', 'after-countdown');
+                play.textContent = "time's out!";
+                clearInterval(timer);
+                return;
+            } else {
+                play.textContent = score;
+            };
+        }, 1000);
+    };
+};
 
 // listen for the answer
 function answer(e) {
@@ -62,7 +74,8 @@ function answer(e) {
 
     // make request
     let data = {
-        "id": e.target.value
+        "id": e.target.value,
+        "score": score
     }
 
     fetch(ANSWER_URL, {
@@ -98,11 +111,13 @@ function answer(e) {
                 audioSource.setAttribute('src', json.next_url);
                 player.load();
                 // listen for new playback
-                playpause.addEventListener('click', question);
-                playpause.textContent = 'NEXT';
+                play.addEventListener('click', question);
+                play.addEventListener('click', startPlayer, { once: true });
+                play.textContent = 'NEXT';
             } else {
                 // AFTER LAST QUEST
-                playpause.setAttribute('data-state', 'results');
+                play.textContent = null;
+                play.setAttribute('data-state', 'results');
                 const results = document.querySelector('#results');
                 results.setAttribute('href', RESULTS_URL);
             }
@@ -128,7 +143,7 @@ function question(e) {
         // quest_num update
         quest_num.textContent = resp.quest_num +1
     }
-    playpause.removeEventListener('click', question)
+    play.removeEventListener('click', question)
 }
 
 function turnGreen(btn) {

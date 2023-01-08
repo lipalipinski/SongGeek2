@@ -118,12 +118,13 @@ def quiz(pl_id = None, game = None):
     if request.method == "POST":
 
         track_id = request.json["id"]
+        score = request.json["score"]
         game = Game.query.filter_by(id=game).first()
         quest = game.quests[game.status]
         red = ''
 
         if quest.track_id == track_id:
-            quest.points = 1
+            quest.points = score +1
             db.session.flush()
         else:
             red = track_id

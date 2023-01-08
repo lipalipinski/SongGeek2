@@ -40,8 +40,8 @@
         
             <div class="row">
                 <div class="col">
-                    <p class="card-text">
-                        Score: {{ game.points() }}/5
+                    <p class="card-text fw-bold">
+                        total score: {{ game.points() }}
                     </p>
                     <table>
                         <thead>
@@ -60,7 +60,7 @@
                                     {{artist.name}}
                                     {% endfor %} 
                                     - {{quest.track.name}}</td>
-                                <td>{{quest.points}}</td>
+                                <td class="fw-bold">{{quest.points}}</td>
                                 <td>
                                     <audio id="player{{loop.index0}}" class="audio-player" preload>
                                         <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">

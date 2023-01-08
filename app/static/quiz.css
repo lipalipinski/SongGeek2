@@ -1,3 +1,4 @@
-button.controls{
-    min-height: 5em;
+button.controls {
+    font-size: 5em;
+    min-height: 290px;
 }
