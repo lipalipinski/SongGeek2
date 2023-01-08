@@ -203,7 +203,7 @@ def likes():
         
         try:
             current_user.set_like(track_id, like)
-        except RecursionError:
+        except RequestException:
             return Response({}, status=401)
 
         body = json.dumps({"id":track_id, "like":like})

@@ -82,20 +82,20 @@ function setLikes() {
                 if (track.like == true) {
                     btn.setAttribute('data-state', 'liked');
                     btn.addEventListener('click', (e) => {
-                        like_song(track.id, false, e.target)
+                        likeSong(track.id, false, e.target)
                     }, { once: true })
                 // no like
                 } else {
                     btn.setAttribute('data-state', 'not-liked');
                     btn.addEventListener('click', (e) => {
-                        like_song(track.id, true, e.target)
+                        likeSong(track.id, true, e.target)
                     }, { once: true })
                 };
             };
     })
 }
 
-function like_song(id, like, btn) {
+function likeSong(id, like, btn) {
 
     btn.setAttribute('data-state', 'loading')
 
@@ -113,6 +113,8 @@ function like_song(id, like, btn) {
             if (!response.ok) {
                 // set likes if request fails
                 setLikes();
+                btn.setAttribute('data-state', 'fail');
+                btn.setAttribute('disabled', 'true');
                 throw new Error(`HTTP error: ${response.status}`);
             }
             return response.json();
@@ -121,13 +123,13 @@ function like_song(id, like, btn) {
                 if (like == true) {
                     btn.setAttribute('data-state', 'liked');
                     btn.addEventListener('click', (e) => {
-                        like_song(track.id, false, e.target)
+                        likeSong(track.id, false, e.target)
                     }, { once: true });
                     // no like
                 } else {
                     btn.setAttribute('data-state', 'not-liked');
                     btn.addEventListener('click', (e) => {
-                        like_song(track.id, true, e.target)
+                        likeSong(track.id, true, e.target)
                     }, { once: true });
                 };
         })
