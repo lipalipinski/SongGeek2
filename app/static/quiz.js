@@ -19,6 +19,9 @@ volume.addEventListener('input', (e) => {
 })
 
 playpause.addEventListener('click', () => {
+    if (playpause.getAttribute('data-state') == 'results') {
+        return;
+    }
     if (player.paused || player.ended) {
         player.play();
     } else {
@@ -99,11 +102,9 @@ function answer(e) {
                 playpause.textContent = 'NEXT';
             } else {
                 // AFTER LAST QUEST
-                playpause.setAttribute('hidden', 'true');
+                playpause.setAttribute('data-state', 'results');
                 const results = document.querySelector('#results');
-                results.classList.remove('d-none');
-                const resBtn = document.querySelector('#results button');
-                resBtn.setAttribute('data-state', 'results')
+                results.setAttribute('href', RESULTS_URL);
             }
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
