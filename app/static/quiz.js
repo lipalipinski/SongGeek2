@@ -28,11 +28,12 @@ playpause.addEventListener('click', () => {
 
 // change play/pause button state (background img)
 function changeButtonState() {
+    playpause.textContent = '';
     if (player.paused || player.ended) {
-        playpause.setAttribute('data-state', 'play')
+        playpause.setAttribute('data-state', 'play');
     }
     else {
-        playpause.setAttribute('data-state', 'pause')
+        playpause.setAttribute('data-state', 'pause');
     }
 }
 
@@ -91,14 +92,18 @@ function answer(e) {
             // if not last quest
             if (json.next_url != "") {
                 // update audio src
-                audioSource.setAttribute('src', json.next_url)
-                player.load()
+                audioSource.setAttribute('src', json.next_url);
+                player.load();
                 // listen for new playback
-                playpause.addEventListener('click', question)
+                playpause.addEventListener('click', question);
+                playpause.textContent = 'NEXT';
             } else {
                 // AFTER LAST QUEST
-                const results = document.querySelector('#results')
-                results.classList.remove('d-none')
+                playpause.setAttribute('hidden', 'true');
+                const results = document.querySelector('#results');
+                results.classList.remove('d-none');
+                const resBtn = document.querySelector('#results button');
+                resBtn.setAttribute('data-state', 'results')
             }
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));

@@ -32,52 +32,56 @@
 
             <!-- PLAYLIST INFO -->
             <div class="row mb-3">
-                <div class="col-12 col-sm-4">
-                    <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
+                <div class="col-12 col-sm-4 mb-3">
+                    <div class="row">
+                        <div class="col-6 col-sm-12">
+                            <img src="{{ pl.img.md }}" class="img-fluid rounded-start" style="width: 150px;" alt="...">
+                        </div>
+                        <div class="col-6 col-sm-12">
+                            <h5 class="card-title">
+                                <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                            </h5>
+                            <p class="card-text"><small class="text-muted">
+                                by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
+                                    {{ pl.owner.name }}</a>
+                            </small></p>
+                            <p class="card-text">{{ pl.description }}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-12 col-sm-8">
-                    <h5 class="card-title">
-                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
-                    </h5>
-                    <p class="card-text"><small class="text-muted">
-                        by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
-                            {{ pl.owner.name }}</a>
-                    </small></p>
-                    <p class="card-text">{{ pl.description }}</p>
-                </div>
-            </div>
-
-            <div class="row">
                 <!-- PLAYER -->
-                <div class="col-3">
+                <div class="col-12 col-sm-8">
                     <audio id="player" preload>
                         <source id="audioSource" src="{{ quest.track.prev_url }}" type="audio/mpeg">
                     </audio>
-                    <button id="playpause" class="controls btn btn-lg btn-info" data-state="play"></button>
+                    <a class="d-none" id="results" href="{{ url_for('quiz', pl_id = pl.id, game=game.id) }}">
+                        <button class="main-btn w-100 h-100 btn btn-lg btn-light"></button>
+                    </a>
+                    <button id="playpause" class="controls main-btn w-100 h-100 btn btn-lg" data-state="play"></button>
                     <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                 </div>
-
+            </div>
+                
+            <div class="row">
                 <!-- QUESTION -->
-                <div>
+                <div class="col-12">
                     <span id="question">Guess the title:</span>
                 </div>
-
-                <div class="d-grid gap-2">
-                    {% for track in quest.all_answrs() %}
-                        <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light" name="track_id" value="{{ track.id }}">
-                            {{ track.name }}
-                        </button>
-                    {% endfor %}
+                <div class="col-12">
+                    <div class="d-grid gap-2">
+                        {% for track in quest.all_answrs() %}
+                            <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light" name="track_id" value="{{ track.id }}">
+                                {{ track.name }}
+                            </button>
+                        {% endfor %} 
+                    </div>
                 </div>
-
             </div>
         </div>
 
-        <div id="results" class="d-none card-footer text-center">
-            <a href="{{ url_for('quiz', pl_id = pl.id, game=game.id) }}">
-                <button class="btn btn-md btn-primary">Results</button>
-            </a>
+        <div  class="d-none card-footer text-center">
+            
         </div>
     </div>
 </div>

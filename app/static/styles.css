@@ -1,6 +1,16 @@
 button{
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size:contain;
+    background-position: 50%;
+}
+
+button.main-btn{
+    color: #FFFFFF;
+    font-size: 2.5em;
+}
+
+button.main-btn[data-state="results"] {
+    background-image: url('/static/img/arrow-right-square-fill.svg');
 }
 
 button.controls[data-state="play"] {
@@ -10,6 +20,7 @@ button.controls[data-state="play"] {
 button.controls[data-state="pause"] {
     background-image: url('/static/img/pause-fill.svg');
 }
+
 
 button.like[data-state="not-liked"] {
     background-image: url('/static/img/heart-64.svg');
