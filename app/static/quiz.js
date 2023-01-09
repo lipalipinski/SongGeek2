@@ -4,6 +4,7 @@ const quest_num = document.querySelector('#quest_num');
 var next_tracks;
 var resp;
 var countdownSeconds = 5;
+var timer;
 
 for (const btn of buttons) {
     btn.addEventListener('click', answer);
@@ -32,7 +33,10 @@ mute.addEventListener('click', (e) => {
     }
 })
 
-play.addEventListener('click', startPlayer, {once: true});
+play.addEventListener('click', startPlayer, { once: true });
+player.addEventListener('pause', () => {
+    clearInterval(timer);
+});
 
 function startPlayer() {
     if (play.getAttribute('data-state') == 'results') {
@@ -43,16 +47,12 @@ function startPlayer() {
         play.textContent = score;
         player.play();
         play.setAttribute('data-state', 'countdown');
-        const timer = setInterval(() => {
+        timer = setInterval(() => {
             score--;
-            if (player.paused) {
-                clearInterval(timer);
-                return;
-            } else if (score == 0) {
+            if (score == 0) {
                 player.pause();
                 play.setAttribute('data-state', 'after-countdown');
                 play.textContent = "time's out!";
-                clearInterval(timer);
             } else {
                 play.textContent = score;
             };
