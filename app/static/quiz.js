@@ -53,7 +53,6 @@ function startPlayer() {
                 play.setAttribute('data-state', 'after-countdown');
                 play.textContent = "time's out!";
                 clearInterval(timer);
-                return;
             } else {
                 play.textContent = score;
             };
