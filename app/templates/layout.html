@@ -43,9 +43,6 @@
                 </ul>
                 {% else %}
                 <ul class="navbar-nav ms-auto mt-2">
-                    {% if current_user.admin == True %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('playlist_manager') }}">Playlists Manager</a></li>
-                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('user_details') }}">
                             <img class="usr-img rounded" src="{{ current_user.img.sm}}" alt="">
@@ -53,6 +50,9 @@
                         </a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
+                    {% if current_user.admin == True %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('playlist_manager') }}">Playlists Manager</a></li>
+                    {% endif %}
                 </ul>
                 {% endif %}
             </div>

@@ -22,7 +22,6 @@ def api_callback():
     # spotify Oauth2 code
     code = request.args.get("code")
 
-
     auth_token_url = f"{app.config['API_BASE']}/api/token/"
 
     res = requests.post(auth_token_url, data = {
@@ -32,7 +31,6 @@ def api_callback():
         "client_id":getenv("SPOTIPY_CLIENT_ID"),
         "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
     })
-
 
     res_body = res.json()
 
@@ -44,7 +42,6 @@ def api_callback():
     usr = sp.current_user()
 
     user = User.query.filter_by(id = usr["id"]).first()
-
 
     if not user:
         user = User(id=usr["id"])
@@ -85,6 +82,7 @@ def refresh_user_token():
             return redirect(url_for("logout"))
 
     db.session.commit()
+
 
 @app.route("/")
 @app.route("/index")
