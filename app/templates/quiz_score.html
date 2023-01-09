@@ -46,6 +46,7 @@
                     <table class="table table-borderless">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>track</th>
                                 <th>score</th>
                                 <th>play</th>
@@ -55,6 +56,7 @@
                         <tbody>
                             {% for quest in game.quests %}
                             <tr id="_{{ quest.track_id }}">
+                                <td><img src="{{quest.track.album.img.sm}}" class="cover-img" alt=""></td>
                                 <td>
                                     {% for artist in quest.track.artists %}
                                     {{artist.name}}
