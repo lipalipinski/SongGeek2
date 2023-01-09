@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     expires = db.Column(db.DateTime)
     admin = db.Column(db.Boolean, default = False)
     name = db.Column(db.Text)
+    img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     games = db.relationship("Game", backref="user", lazy="dynamic")
 
     def refresh_token(self):
@@ -323,3 +324,4 @@ class Img(db.Model):
     lg = db.Column(db.Text, nullable=False)
     playlist = db.relationship("Playlist", backref="img", lazy="dynamic")
     album = db.relationship("Album", backref="img", lazy="dynamic")
+    user = db.relationship("User", backref="img", lazy="dynamic")

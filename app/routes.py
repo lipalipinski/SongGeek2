@@ -8,8 +8,8 @@ from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
 from app import app, spotify
-from app.helpers import dict_html
-from app.models import db, Playlist, User, Game
+from app.helpers import dict_html, img_helper
+from app.models import db, Playlist, User, Game, Img
 
 
 @app.route("/api_callback", methods=["GET"])
@@ -45,12 +45,16 @@ def api_callback():
 
     user = User.query.filter_by(id = usr["id"]).first()
 
+
     if not user:
         user = User(id=usr["id"])
     
     user.token = token
     user.r_token = r_token
     user.expires = datetime.utcnow() + timedelta(seconds=expires_in)
+    user.name = usr["display_name"]
+    img = img_helper(usr["images"])
+    user.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
     db.session.add(user)
     db.session.commit()
 
