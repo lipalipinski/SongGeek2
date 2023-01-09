@@ -10,12 +10,14 @@ for (const btn of buttons) {
     btn.addEventListener('click', answer);
 }
 
+
 // audio player controls
 const player = document.querySelector('#player');
 const play = document.querySelector("#playpause");
 const volume = document.querySelector('#volume');
 const audioSource = document.querySelector('#audioSource');
 const mute = document.querySelector('#mute');
+
 
 // volume slider
 volume.addEventListener('input', (e) => {
