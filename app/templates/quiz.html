@@ -80,7 +80,7 @@
                 <div class="col-12">
                     <div class="d-grid gap-2">
                         {% for track in quest.all_answrs() %}
-                            <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light position-relative" name="track_id" value="{{ track.id }}">
+                            <button id="_{{ track.id }}" class="ans-btn btn btn-lg shadow btn-light position-relative" name="track_id" value="{{ track.id }}" disabled>
                                 <span class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 </span>
                                 {{ track.name }}
