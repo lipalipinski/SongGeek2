@@ -97,14 +97,8 @@ def index():
 @login_required
 def user_details():
     
-    try:
-        current_user.refresh_token()
-    except RequestException:
-        flash("You have been logged out due to inactivity")
-        return redirect(url_for("logout"))
-    db.session.commit()
 
-    return redirect(url_for("index"))
+    return render_template("user_details.html")
 
 
 @app.route("/quiz")

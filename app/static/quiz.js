@@ -10,7 +10,6 @@ for (const btn of buttons) {
     btn.addEventListener('click', answer);
 }
 
-
 // audio player controls
 const player = document.querySelector('#player');
 const play = document.querySelector("#playpause");
@@ -18,11 +17,17 @@ const volume = document.querySelector('#volume');
 const audioSource = document.querySelector('#audioSource');
 const mute = document.querySelector('#mute');
 
+play.addEventListener('click', () => {
+    for (const btn of buttons) {
+        btn.disabled = false;  
+    };
+}, { once: true });
+
 
 // volume slider
 volume.addEventListener('input', (e) => {
     player.volume = e.target.value / 100;
-})
+});
 
 // toggle mute 
 mute.addEventListener('click', (e) => {
