@@ -141,7 +141,7 @@ def quiz(pl_id = None, game = None):
             next_url = ""
 
 
-        return {"quest_num":game.status, "points":game.points(), "green":quest.track_id, "red":red,
+        return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
                 "next_url":next_url, "next_tracks":next_tracks}
 
     # ======= new game =========    

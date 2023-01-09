@@ -1,4 +1,5 @@
 button.controls {
-    font-size: 5em;
+    font-size: 4.4em;
     min-height: 290px;
+    white-space: break-spaces;
 }

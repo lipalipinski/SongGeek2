@@ -92,10 +92,16 @@ function answer(e) {
 
             // update points display
             const points = document.querySelector('#points');
-            points.textContent = json.points;
+            points.textContent = json.total_points;
             
             // green answer
             turnGreen(document.querySelector(`#_${json.green}`));
+            // show badge
+            if (json.points > 0) {
+                const badge = document.querySelector(`#_${json.green} span`);
+                badge.classList.remove('d-none');
+                badge.textContent = '+' + json.points;
+            };
             // red answer
             if (json.red != "") {
                 turnRed(document.querySelector(`#_${json.red}`));
@@ -129,8 +135,11 @@ function answer(e) {
 function question(e) {
     // update buttons
     for (const [i, btn] of buttons.entries()) {
+        const badge = document.createElement('span');
+        badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
         // names
         btn.textContent = resp.next_tracks[i].name
+        btn.appendChild(badge);
         // classes
         btnReset(btn)
         // btn id's
