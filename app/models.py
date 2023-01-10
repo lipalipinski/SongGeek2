@@ -106,8 +106,11 @@ class User(UserMixin, db.Model):
         top_tracks = list(top_tracks.items())
         top_tracks.sort(key = lambda track : track[1], reverse=True)
             
-
         return top_tracks
+
+    def top_artists(self):
+
+        return True
 
 
 playlist_track = db.Table("playlist_track",

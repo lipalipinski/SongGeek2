@@ -97,6 +97,7 @@ def index():
 @login_required
 def user_details():
     
+
     if request.method == "POST":
         tracks = current_user.top_tracks()
         tracks = tracks[0:5]
@@ -118,32 +119,33 @@ def quiz(pl_id = None, game = None):
     #  ==== answer received ======
     if request.method == "POST":
 
-        track_id = request.json["id"]
-        score = request.json["score"]
-        game = Game.query.filter_by(id=game).first()
-        quest = game.quests[game.status]
-        red = ''
+        if request.json["mode"] == "topTracks":
+            track_id = request.json["id"]
+            score = request.json["score"]
+            game = Game.query.filter_by(id=game).first()
+            quest = game.quests[game.status]
+            red = ''
 
-        if quest.track_id == track_id:
-            quest.points = score +1
-            db.session.flush()
-        else:
-            red = track_id
-        game.status += 1
-        db.session.commit()
+            if quest.track_id == track_id:
+                quest.points = score +1
+                db.session.flush()
+            else:
+                red = track_id
+            game.status += 1
+            db.session.commit()
 
-        next_quest = game.next_quest()
-        next_tracks =[]
-        if next_quest:
-            next_url = next_quest.track.prev_url
-            for track in next_quest.all_answrs():
-                next_tracks.append({"id":track.id, "name":track.name})
-        else:
-            next_url = ""
+            next_quest = game.next_quest()
+            next_tracks =[]
+            if next_quest:
+                next_url = next_quest.track.prev_url
+                for track in next_quest.all_answrs():
+                    next_tracks.append({"id":track.id, "name":track.name})
+            else:
+                next_url = ""
 
 
-        return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
-                "next_url":next_url, "next_tracks":next_tracks}
+            return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
+                    "next_url":next_url, "next_tracks":next_tracks}
 
     # ======= new game =========    
 
