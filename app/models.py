@@ -22,6 +22,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.Text)
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     games = db.relationship("Game", backref="user", lazy="dynamic")
+    quests = db.relationship("Quest", secondary="game", viewonly=True)
 
     def __repr__(self) -> str:
         return f"<quest: {self.name}>"
@@ -84,15 +85,15 @@ class User(UserMixin, db.Model):
 
     def top_tracks(self):
 
-        # all user's quests
+        '''# all user's quests
         quests = []
         for game in self.games:
             for quest in game.quests:
-                quests.append(quest)
+                quests.append(quest)'''
 
         tracks = dict()
 
-        for quest in quests:
+        for quest in self.quests:
             if quest.track not in tracks:
                 tracks[quest.track] = dict()
                 tracks[quest.track]["q"] = 1
