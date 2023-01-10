@@ -99,12 +99,25 @@ def user_details():
     
 
     if request.method == "POST":
-        tracks = current_user.top_tracks()
-        tracks = tracks[0:5]
-        tracks = [{"id":track[0].id, "name":track[0].name, "artists":[artist.name for artist in track[0].artists], "score":track[1]} for track in tracks]
-        return Response(json.dumps(tracks), status=200)
 
-    return render_template("user_details.html")
+        # top artists
+        if request.json["mode"] == "topArtists":
+            artists = current_user.top_artists()
+            if len(artists) > 5:
+                artists = artists[0:5]
+            artists = [{"id":artist[0].id, "name":artist[0].name, "url":artist[0].url, "score":artist[1]} for artist in artists]
+            return Response(json.dumps(artists), status=200)
+
+        # top tracks
+        if request.json["mode"] == "topTracks":
+            tracks = current_user.top_tracks()
+            if len(tracks) > 5:
+                tracks = tracks[0:5]
+            tracks = [{"id":track[0].id, "name":track[0].name, "artists":[artist.name for artist in track[0].artists], "score":track[1]} for track in tracks]
+            return Response(json.dumps(tracks), status=200)
+
+    corr_answers, all_answers = current_user.answers()
+    return render_template("user_details.html", corr_answers=corr_answers, all_answers=all_answers)
 
 
 @app.route("/quiz")
@@ -119,33 +132,32 @@ def quiz(pl_id = None, game = None):
     #  ==== answer received ======
     if request.method == "POST":
 
-        if request.json["mode"] == "topTracks":
-            track_id = request.json["id"]
-            score = request.json["score"]
-            game = Game.query.filter_by(id=game).first()
-            quest = game.quests[game.status]
-            red = ''
+        track_id = request.json["id"]
+        score = request.json["score"]
+        game = Game.query.filter_by(id=game).first()
+        quest = game.quests[game.status]
+        red = ''
 
-            if quest.track_id == track_id:
-                quest.points = score +1
-                db.session.flush()
-            else:
-                red = track_id
-            game.status += 1
-            db.session.commit()
+        if quest.track_id == track_id:
+            quest.points = score +1
+            db.session.flush()
+        else:
+            red = track_id
+        game.status += 1
+        db.session.commit()
 
-            next_quest = game.next_quest()
-            next_tracks =[]
-            if next_quest:
-                next_url = next_quest.track.prev_url
-                for track in next_quest.all_answrs():
-                    next_tracks.append({"id":track.id, "name":track.name})
-            else:
-                next_url = ""
+        next_quest = game.next_quest()
+        next_tracks =[]
+        if next_quest:
+            next_url = next_quest.track.prev_url
+            for track in next_quest.all_answrs():
+                next_tracks.append({"id":track.id, "name":track.name})
+        else:
+            next_url = ""
 
 
-            return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
-                    "next_url":next_url, "next_tracks":next_tracks}
+        return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
+                "next_url":next_url, "next_tracks":next_tracks}
 
     # ======= new game =========    
 

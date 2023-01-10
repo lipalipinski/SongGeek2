@@ -31,8 +31,8 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">nick:</li>
-                    <li class="list-group-item">games:</li>
-                    <li class="list-group-item">answers:</li>
+                    <li class="list-group-item">games: {{ current_user.count_games() }}</li>
+                    <li class="list-group-item">answers: {{ corr_answers }}/{{ all_answers }}</li>
                     <li class="list-group-item">ranking:</li>
                 </ul>
                 <div class="card-body">
@@ -50,26 +50,22 @@
                 <ul id="top-tracks" class="list-group list-group-flush list-group-numbered">
                 </ul>
                 <div class="card-body">
-                    Tracks with the highest average score (of those played at least 3 times).
+                    Tracks with the highest average score (played at least 3 times).
                 </div>
             </div>
         </div>
 
         <!-- top artists -->
 
-        <div id="top-artists" class="col">
+        <div class="col">
             <div class="card  h-100" style="">
                 <div class="card-header">
-                    <h5>artists</h5>
+                    <h5>top artists</h5>
                 </div>
-                <ul class="list-group list-group-flush list-group-numbered">
-                    <li class="list-group-item">An item</li>
-                    <li class="list-group-item">A second item</li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A third item</li>
+                <ul id="top-artists" class="list-group list-group-flush list-group-numbered">
                 </ul>
                 <div class="card-body">
+                    Artists with the highest average score (played at least 6 times).
                 </div>
             </div>
         </div>
