@@ -74,7 +74,7 @@ function setLikes() {
                 throw new Error(`HTTP error: ${response.status}`);
             }
             return response.json();
-    })
+        })
         .then((resp) => {
             for (const [i, track] of resp.tracks.entries()) {
                 btn = document.querySelector(`#_${track.id} td button.like`);
@@ -84,7 +84,7 @@ function setLikes() {
                     btn.addEventListener('click', (e) => {
                         likeSong(track.id, false, e.target)
                     }, { once: true })
-                // no like
+                    // no like
                 } else {
                     btn.setAttribute('data-state', 'not-liked');
                     btn.addEventListener('click', (e) => {
@@ -92,8 +92,8 @@ function setLikes() {
                     }, { once: true })
                 };
             };
-    })
-}
+        });
+};
 
 function likeSong(id, like, btn) {
 
@@ -120,17 +120,17 @@ function likeSong(id, like, btn) {
             return response.json();
         })
         .then((track) => {
-                if (like == true) {
-                    btn.setAttribute('data-state', 'liked');
-                    btn.addEventListener('click', (e) => {
-                        likeSong(track.id, false, e.target)
-                    }, { once: true });
-                    // no like
-                } else {
-                    btn.setAttribute('data-state', 'not-liked');
-                    btn.addEventListener('click', (e) => {
-                        likeSong(track.id, true, e.target)
-                    }, { once: true });
-                };
-        })
-}
+            if (like == true) {
+                btn.setAttribute('data-state', 'liked');
+                btn.addEventListener('click', (e) => {
+                    likeSong(track.id, false, e.target)
+                }, { once: true });
+                // no like
+            } else {
+                btn.setAttribute('data-state', 'not-liked');
+                btn.addEventListener('click', (e) => {
+                    likeSong(track.id, true, e.target)
+                }, { once: true });
+            };
+        });
+};

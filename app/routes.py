@@ -93,10 +93,15 @@ def index():
     return render_template("index.html", plsts = plsts)
 
 
-@app.route("/user")
+@app.route("/user", methods=["GET", "POST"])
 @login_required
 def user_details():
     
+    if request.method == "POST":
+        tracks = current_user.top_tracks()
+        tracks = tracks[0:5]
+        tracks = [{"id":track[0].id, "name":track[0].name, "artists":[artist.name for artist in track[0].artists], "score":track[1]} for track in tracks]
+        return Response(json.dumps(tracks), status=200)
 
     return render_template("user_details.html")
 

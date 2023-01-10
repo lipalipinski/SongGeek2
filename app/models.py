@@ -23,6 +23,9 @@ class User(UserMixin, db.Model):
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     games = db.relationship("Game", backref="user", lazy="dynamic")
 
+    def __repr__(self) -> str:
+        return f"<quest: {self.name}>"
+
     def refresh_token(self):
 
         # return if token is fresh
@@ -79,6 +82,34 @@ class User(UserMixin, db.Model):
         
         return True
 
+    def top_tracks(self):
+
+        # all user's quests
+        quests = []
+        for game in self.games:
+            for quest in game.quests:
+                quests.append(quest)
+
+        tracks = dict()
+
+        for quest in quests:
+            if quest.track not in tracks:
+                tracks[quest.track] = dict()
+                tracks[quest.track]["q"] = 1
+                tracks[quest.track]["pts"] = quest.points
+            else:
+                tracks[quest.track]["q"] += 1
+                tracks[quest.track]["pts"] += quest.points
+
+        # top tracks are track asked more than 3 times
+        top_tracks = {track: round(score["pts"]/score["q"], 2) for track, score in tracks.items() if not score["q"] < 3}
+        top_tracks = list(top_tracks.items())
+        top_tracks.sort(key = lambda track : track[1], reverse=True)
+            
+
+        return top_tracks
+
+
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),
                 db.Column("track_id", db.Text, db.ForeignKey("track.id"), primary_key=True)
@@ -127,7 +158,9 @@ class Quest(db.Model):
     points = db.Column(db.Integer, default=0)
 
     def all_answrs(self):
-        
+        """ returns a list of four track (one being target track) 
+        in random order"""
+
         tracks = [self.track]
         while len(tracks) < 4:
             track = random.choice(self.game.playlist.tracks)
@@ -136,6 +169,9 @@ class Quest(db.Model):
         
         random.shuffle(tracks)
         return tracks
+
+    def __repr__(self) -> str:
+        return f"<quest: {self.track}, {self.game.user}>"
 
 class Playlist(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)

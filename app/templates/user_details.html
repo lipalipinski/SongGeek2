@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
 
 {% block head %}
-
+<script src="{{ url_for('static', filename='user_details.js')}}" defer></script>
 
 {% block javascript %}
 <script>
+    const FETCH_URL = {{ url_for('user_details') | tojson | safe}}
 </script>
 {% endblock %}
 
@@ -16,16 +17,82 @@
 
 {% block main %}
 
-<div class="col col-lg-7 col-xl-6 mx-auto">
-<div class="card h-100" style="">
+<div class="col mx-auto">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         
-        <div class="card-body">
-            
+        <!-- user -->
+        <div id="user-data" class="col">
+            <div class="card h-100" style="">
+                <div class="card-header">
+                    <h5>{{current_user.name}}</h5>
+                </div>
+                <div class="">
+                    <img src="{{ current_user.img.lg }}" class="card-img" alt="user profile image">
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">nick:</li>
+                    <li class="list-group-item">games:</li>
+                    <li class="list-group-item">answers:</li>
+                    <li class="list-group-item">ranking:</li>
+                </ul>
+                <div class="card-body">
+                </div>
+            </div>
         </div>
 
-        <div  class="d-none card-footer text-center">
-            
+
+        <!-- top tracks -->
+        <div class="col">
+            <div class="card  h-100" style="">
+                <div class="card-header">
+                    <h5>top tracks</h5>
+                </div>
+                <ul id="top-tracks" class="list-group list-group-flush list-group-numbered">
+                </ul>
+                <div class="card-body">
+                    Tracks with the highest average score (of those played at least 3 times).
+                </div>
+            </div>
         </div>
+
+        <!-- top artists -->
+
+        <div id="top-artists" class="col">
+            <div class="card  h-100" style="">
+                <div class="card-header">
+                    <h5>artists</h5>
+                </div>
+                <ul class="list-group list-group-flush list-group-numbered">
+                    <li class="list-group-item">An item</li>
+                    <li class="list-group-item">A second item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A third item</li>
+                </ul>
+                <div class="card-body">
+                </div>
+            </div>
+        </div>
+
+        <!-- top playlists -->
+
+        <div id="top-plists" class="col">
+            <div class="card  h-100" style="">
+                <div class="card-header">
+                    <h5>top playlists</h5>
+                </div>
+                <ul class="list-group list-group-flush list-group-numbered">
+                    <li class="list-group-item">An item</li>
+                    <li class="list-group-item">A second item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A third item</li>
+                </ul>
+                <div class="card-body">
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}
