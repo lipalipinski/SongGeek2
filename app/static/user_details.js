@@ -1,5 +1,7 @@
 const topTracksList = document.querySelector('#top-tracks')
-const topArtistsList = document.querySelector('#top-artists')
+const topArtistsList = document.querySelector('#top-artists ul')
+const topArtistsSpinner = document.querySelector('#artists-spinner')
+const topTracksSpinner = document.querySelector('#tracks-spinner')
 
 
 let data = {
@@ -22,6 +24,8 @@ fetch(FETCH_URL, {
             li.classList.add('list-group-item');
             li.textContent = `${track.artists} - ${track.name} (${track.score})`;
             topTracksList.appendChild(li);
+            topTracksSpinner.classList.add('d-none');
+            topTracksList.classList.remove('d-none');
         }
     });
 
@@ -45,5 +49,7 @@ fetch(FETCH_URL, {
             li.classList.add('list-group-item');
             li.textContent = `${artist.name} (${artist.score})`;
             topArtistsList.appendChild(li);
+            topArtistsSpinner.classList.add('d-none');
+            topArtistsList.classList.remove('d-none');
         }
     });

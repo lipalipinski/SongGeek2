@@ -47,8 +47,13 @@
                 <div class="card-header">
                     <h5>top tracks</h5>
                 </div>
-                <ul id="top-tracks" class="list-group list-group-flush list-group-numbered">
+                <ul id="top-tracks" class="d-none list-group list-group-flush list-group-numbered">
                 </ul>
+                <div id="tracks-spinner" class="load-spinner card-body">
+                    <div class="d-flex h-100 justify-content-center align-items-center">
+                        <div class="spinner-border my-auto"></div>
+                    </div>
+                </div>
                 <div class="card-body">
                     Tracks with the highest average score (played at least 3 times).
                 </div>
@@ -58,12 +63,17 @@
         <!-- top artists -->
 
         <div class="col">
-            <div class="card  h-100" style="">
+            <div id="top-artists" class="card  h-100" style="">
                 <div class="card-header">
                     <h5>top artists</h5>
                 </div>
-                <ul id="top-artists" class="list-group list-group-flush list-group-numbered">
+                <ul class="d-none list-group list-group-flush list-group-numbered">
                 </ul>
+                <div id="artists-spinner" class="load-spinner card-body">
+                    <div class="d-flex h-100 justify-content-center align-items-center">
+                        <div class="spinner-border my-auto"></div>
+                    </div>
+                </div>
                 <div class="card-body">
                     Artists with the highest average score (played at least 6 times).
                 </div>
@@ -77,7 +87,7 @@
                 <div class="card-header">
                     <h5>top playlists</h5>
                 </div>
-                <ul class="list-group list-group-flush list-group-numbered">
+                <ul class="d-none list-group list-group-flush list-group-numbered">
                     <li class="list-group-item">An item</li>
                     <li class="list-group-item">A second item</li>
                     <li class="list-group-item">A third item</li>

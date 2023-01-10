@@ -133,7 +133,8 @@ class User(UserMixin, db.Model):
         return games
 
     def answers(self):
-        
+        """ returns (correct_answers, all_answers) """
+        # consider only finished games (Game.status == 5)
         answers = db.session.query(Quest).join(Game).join(User).filter(User.id == self.id, Game.status == 5)
         all_quests = answers.count()
         corr_answers = answers.filter(Quest.points != 0).count()
