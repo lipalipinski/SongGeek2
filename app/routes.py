@@ -99,11 +99,13 @@ def featured():
         for pl in playlists:
             print(pl["name"])
 
-            pl = Playlist.query.get(pl["id"])
-            if not pl:
-                new_pl = Playlist(id=resp["id"], description=resp["description"], name=resp["name"], url=resp["external_urls"]["spotify"])
-                img = img_helper(pl["images"])
-                new_pl.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
+            new_pl = Playlist.query.get(pl["id"])
+            if not new_pl:
+                new_pl = Playlist(id=pl["id"])
+                new_pl.preload(pl)
+                db.session.add(new_pl)
+                db.session.commit()
+
 
         return Response(status=200)
 

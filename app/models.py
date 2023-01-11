@@ -235,11 +235,11 @@ class Quest(db.Model):
 class Playlist(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     description = db.Column(db.Text)
-    name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text)
+    url = db.Column(db.Text)
     snapshot_id = db.Column(db.Text)
-    active = db.Column(db.Boolean, nullable=False, default=False)
-    updated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    active = db.Column(db.Boolean, nullable=False, default=True)
+    updated = db.Column(db.DateTime)
     owner_id = db.Column(db.Text, db.ForeignKey("owner.id")) 
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     tracks = db.relationship("Track", secondary=playlist_track, back_populates="playlists")
@@ -254,7 +254,20 @@ class Playlist(db.Model):
     def total_tracks(self):
         return len(self.tracks)
 
-    def preload(self):
+    def preload(self, resp):
+        self.description = resp["description"]
+        self.name=resp["name"]
+        self.url=resp["external_urls"]["spotify"]
+
+        img = img_helper(resp["images"])
+        self.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
+
+        # check if owner in db
+        ownr = Owner.query.get(resp["owner"]["id"])
+        if not ownr:
+            ownr = Owner(id=resp["owner"]["id"], name=resp["owner"]["display_name"], url=resp["owner"]["external_urls"]["spotify"])
+        self.owner = ownr
+
         return True
 
     def update(self):
