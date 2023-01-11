@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='featured.js')}}" defer></script>
+
+{% block javascript %}
+<script>
+    const FETCH_URL = {{ url_for('featured') | tojson | safe}}
+</script>
+{% endblock %}
+
+{% endblock %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block main %}
+<div class="col mx-auto">
+    <div id="main-row" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+
+        
+        
+    </div>
+</div>
+
+<!-- add playlist -->
+
+{% endblock %}

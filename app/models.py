@@ -145,8 +145,6 @@ class User(UserMixin, db.Model):
                 playlists[playlist.id]["q"] += 1
                 playlists[playlist.id]["p"] += game.points()
 
-
-        #played_at_least = sum([pl["q"] for pl in playlists.values()]) / len(playlists)
         played_at_least = statistics.median([pl["q"] for pl in playlists.values()])
         print(played_at_least)
         top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] < played_at_least]
@@ -255,6 +253,9 @@ class Playlist(db.Model):
 
     def total_tracks(self):
         return len(self.tracks)
+
+    def preload(self):
+        return True
 
     def update(self):
         

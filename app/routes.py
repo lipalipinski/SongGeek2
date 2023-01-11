@@ -84,7 +84,32 @@ def refresh_user_token():
     db.session.commit()
 
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
+def featured():
+
+    if request.method == "POST" and request.json["mode"] == "featuredPlaylists":
+        
+        try:
+            resp = spotify.featured_playlists(limit=10)
+        except Exception as inst:
+            flash('Bad request')
+            return redirect(url_for("index")) 
+
+        playlists = resp["playlists"]["items"]
+        for pl in playlists:
+            print(pl["name"])
+
+            pl = Playlist.query.get(pl["id"])
+            if not pl:
+                new_pl = Playlist(id=resp["id"], description=resp["description"], name=resp["name"], url=resp["external_urls"]["spotify"])
+                img = img_helper(pl["images"])
+                new_pl.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
+
+        return Response(status=200)
+
+    return render_template("featured.html")
+
+
 @app.route("/index")
 def index():
 
