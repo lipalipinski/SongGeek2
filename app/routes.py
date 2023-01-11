@@ -96,7 +96,7 @@ def index():
 @app.route("/user", methods=["GET", "POST"])
 @login_required
 def user_details():
-    
+
 
     if request.method == "POST":
 
@@ -105,7 +105,7 @@ def user_details():
             artists = current_user.top_artists()
             if len(artists) > 5:
                 artists = artists[0:5]
-            artists = [{"id":artist[0].id, "name":artist[0].name, "url":artist[0].url, "score":artist[1]} for artist in artists]
+            artists = [{"id":artist["artst"].id, "name":artist["artst"].name, "url":artist["artst"].url, "score":artist["score"]} for artist in artists]
             return Response(json.dumps(artists), status=200)
 
         # top tracks
@@ -113,8 +113,16 @@ def user_details():
             tracks = current_user.top_tracks()
             if len(tracks) > 5:
                 tracks = tracks[0:5]
-            tracks = [{"id":track[0].id, "name":track[0].name, "artists":[artist.name for artist in track[0].artists], "score":track[1]} for track in tracks]
+            tracks = [{"id":track["track"].id, "name":track["track"].name, "artists":[artist.name for artist in track["track"].artists], "score":track["score"]} for track in tracks]
             return Response(json.dumps(tracks), status=200)
+
+        # top playlists
+        if request.json["mode"] == "topPlaylists":
+            playlists = current_user.top_playlists()
+            if len(playlists) > 5:
+                playlists = playlists[0:5]
+            playlists = [{"id":pl["plst"].id, "name":pl["plst"].name, "score":pl["score"]} for pl in playlists]
+            return Response(json.dumps(playlists), status=200)
 
     corr_answers, all_answers = current_user.answers()
     return render_template("user_details.html", corr_answers=corr_answers, all_answers=all_answers)

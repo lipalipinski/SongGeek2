@@ -84,53 +84,77 @@ class User(UserMixin, db.Model):
         return True
 
     def top_tracks(self):
-        """ returns list of tuples (track, score) """
+        """ returns [{'track':plst, 'score':score}, ...] """
         # minimum number of plays
         played_at_least = 3
         tracks = dict()
         for quest in self.quests:
-            if quest.track not in tracks:
-                tracks[quest.track] = dict()
-                tracks[quest.track]["q"] = 1
-                tracks[quest.track]["p"] = quest.points
+            track = quest.track
+            if track.id not in tracks:
+                tracks[track.id] = dict()
+                tracks[track.id]["trck"] = track
+                tracks[track.id]["q"] = 1
+                tracks[track.id]["p"] = quest.points
             else:
-                tracks[quest.track]["q"] += 1
-                tracks[quest.track]["p"] += quest.points
+                tracks[track.id]["q"] += 1
+                tracks[track.id]["p"] += quest.points
 
         # top tracks are track asked more than 3 times
-        top_tracks = {track: round(score["p"]/score["q"], 2) for track, score in tracks.items() if not score["q"] < played_at_least}
-        top_tracks = list(top_tracks.items())
-        top_tracks.sort(key = lambda track : track[1], reverse=True)
+        top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] < played_at_least]
+        top_tracks.sort(key = lambda track : track["score"], reverse=True)
             
         return top_tracks
 
     def top_artists(self):
-        """ returns list of tuples (artist, score) """
+        """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
         played_at_least = 6
 
         artists = dict()
         for quest in self.quests:
             for artist in quest.track.artists:
-                if artist not in artists:
-                    artists[artist] = dict()
-                    artists[artist]["q"] = 1
-                    artists[artist]["p"] = quest.points
+                if artist.id not in artists:
+                    artists[artist.id] = dict()
+                    artists[artist.id]["artst"] = artist
+                    artists[artist.id]["q"] = 1
+                    artists[artist.id]["p"] = quest.points
                 else:
-                    artists[artist]["q"] += 1
-                    artists[artist]["p"] += quest.points
+                    artists[artist.id]["q"] += 1
+                    artists[artist.id]["p"] += quest.points
 
-        top_artists = {artist: round(score["p"]/score["q"], 2) for artist, score in artists.items() if not score["q"] < played_at_least}
-        top_artists = list(top_artists.items())
-        top_artists.sort(key = lambda artist : artist[1], reverse=True)
-
-        #print(top_artists)
+        top_artists = [{"artst":artst["artst"], "score": round(artst["p"]/artst["q"], 2)} for artst in artists.values() if not artst["q"] < played_at_least]
+        top_artists.sort(key = lambda artist : artist["score"], reverse=True)
 
         return top_artists
+    
+    def top_playlists(self):
+        """ returns [{'plst':plst, 'score':score}, ...] """
+        played_at_least = 6
+
+        playlists = dict()
+        games = self.games.filter(Game.status == 5)
+        for game in games:
+            playlist = game.playlist
+            #print(playlist)
+            if playlist.id not in playlists:
+                playlists[playlist.id] = dict()
+                playlists[playlist.id]["plst"]= playlist
+                playlists[playlist.id]["q"] = 1
+                playlists[playlist.id]["p"] = game.points()
+            else:
+                playlists[playlist.id]["q"] += 1
+                playlists[playlist.id]["p"] += game.points()
+
+
+        top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] < played_at_least]
+        top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
+        return top_playlists
+
 
     def count_games(self):
         games = db.session.query(Game).filter(Game.user_id == self.id).count()
         return games
+
 
     def answers(self):
         """ returns (correct_answers, all_answers) """
@@ -182,6 +206,7 @@ class Game(db.Model):
     def points(self):
         return sum([x.points for x in self.quests])
 
+
 class Quest(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), index=True, primary_key=True)
     track_id = db.Column(db.Text, db.ForeignKey("track.id"), index=True)
@@ -204,6 +229,7 @@ class Quest(db.Model):
 
     def __repr__(self) -> str:
         return f"<quest: {self.track}, {self.game.user}>"
+
 
 class Playlist(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
