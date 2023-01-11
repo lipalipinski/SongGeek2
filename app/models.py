@@ -1,6 +1,7 @@
 import random
 import requests
 import spotipy
+import statistics
 from os import getenv
 from datetime import datetime, timedelta
 from requests.exceptions import RequestException
@@ -85,8 +86,6 @@ class User(UserMixin, db.Model):
 
     def top_tracks(self):
         """ returns [{'track':plst, 'score':score}, ...] """
-        # minimum number of plays
-        played_at_least = 3
         tracks = dict()
         for quest in self.quests:
             track = quest.track
@@ -99,6 +98,8 @@ class User(UserMixin, db.Model):
                 tracks[track.id]["q"] += 1
                 tracks[track.id]["p"] += quest.points
 
+        # minimum number of plays
+        played_at_least = sum([track["q"] for track in tracks.values()]) / len(tracks)
         # top tracks are track asked more than 3 times
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] < played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
@@ -108,7 +109,6 @@ class User(UserMixin, db.Model):
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
-        played_at_least = 6
 
         artists = dict()
         for quest in self.quests:
@@ -122,6 +122,7 @@ class User(UserMixin, db.Model):
                     artists[artist.id]["q"] += 1
                     artists[artist.id]["p"] += quest.points
 
+        played_at_least = sum([artist["q"] for artist in artists.values()]) / len(artists)
         top_artists = [{"artst":artst["artst"], "score": round(artst["p"]/artst["q"], 2)} for artst in artists.values() if not artst["q"] < played_at_least]
         top_artists.sort(key = lambda artist : artist["score"], reverse=True)
 
@@ -129,7 +130,6 @@ class User(UserMixin, db.Model):
     
     def top_playlists(self):
         """ returns [{'plst':plst, 'score':score}, ...] """
-        played_at_least = 6
 
         playlists = dict()
         games = self.games.filter(Game.status == 5)
@@ -146,6 +146,9 @@ class User(UserMixin, db.Model):
                 playlists[playlist.id]["p"] += game.points()
 
 
+        #played_at_least = sum([pl["q"] for pl in playlists.values()]) / len(playlists)
+        played_at_least = statistics.median([pl["q"] for pl in playlists.values()])
+        print(played_at_least)
         top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] < played_at_least]
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
