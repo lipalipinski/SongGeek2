@@ -6,6 +6,7 @@
 {% block javascript %}
 <script>
     const FETCH_URL = {{ url_for('featured') | tojson | safe}}
+    const QUIZ_URL = {{ url_for('quiz') | tojson | safe}}
 </script>
 {% endblock %}
 

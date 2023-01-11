@@ -272,10 +272,11 @@ class Playlist(db.Model):
 
     def update(self):
         
-        now = datetime.utcnow()
-        delta = (now - self.updated)
-        if self.updated and delta.seconds < pl_update_time and delta.days < 1:
-            return True
+        if self.updated:
+            now = datetime.utcnow()
+            delta = (now - self.updated)
+            if self.updated and delta.seconds < pl_update_time and delta.days < 1:
+                return True
 
         # spotify request
         try:
