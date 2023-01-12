@@ -17,6 +17,10 @@ const volume = document.querySelector('#volume');
 const audioSource = document.querySelector('#audioSource');
 const mute = document.querySelector('#mute');
 
+//start at random second
+let startTime = Math.floor(Math.random() * 25);
+player.currentTime = startTime;
+
 play.addEventListener('click', () => {
     for (const btn of buttons) {
         btn.disabled = false;  

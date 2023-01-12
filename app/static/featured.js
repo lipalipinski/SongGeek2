@@ -1,26 +1,11 @@
 const mainRow = document.querySelector('#main-row');
 const mainLoadSpinner = document.querySelector('#main-load-spinner');
 
-function wait(delay) {
-    return new Promise((resolve) => setTimeout(resolve, delay));
-};
-
-function fetchRetry(url, delay, retries, options = {}){
-    function onError(err) {
-        console.log('Retry fetch...')
-        retries--;
-        if (!retries > 0) {
-            throw err;
-        };
-        return wait(delay).then(() => fetchRetry(url, delay, retries, options = {}));
-    }
-    return fetch(url, options).catch(onError);
-};
 
 let data = {
     'mode': 'featuredPlaylists'
 };
-fetchRetry(FETCH_URL, 30, 3, {
+fetch(FETCH_URL, {
     'method': 'POST',
     'headers': { 'Content-Type': 'application/json' },
     'body': JSON.stringify(data)

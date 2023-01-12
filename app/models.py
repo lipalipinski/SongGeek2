@@ -98,8 +98,8 @@ class User(UserMixin, db.Model):
                 tracks[track.id]["q"] += 1
                 tracks[track.id]["p"] += quest.points
 
-        # minimum number of plays
-        played_at_least = sum([track["q"] for track in tracks.values()]) / len(tracks)
+        # minimum number of plays = average number of one song plays
+        played_at_least = len(self.quests) / len(tracks)
         # top tracks are track asked more than 3 times
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] <= played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
