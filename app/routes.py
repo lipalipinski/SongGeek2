@@ -85,7 +85,7 @@ def refresh_user_token():
 
 @app.route("/index")
 @app.route("/", methods=["POST", "GET"])
-def featured():
+def index():
 
     if request.method == "POST" and request.json["mode"] == "featuredPlaylists":
         
@@ -94,12 +94,12 @@ def featured():
         try:
             resp = spotify.featured_playlists(limit=20)
         except Exception as inst:
-            flash('Bad request')
-            return redirect(url_for("index")) 
+            #flash(f'Bad request {inst}')
+            print('\n\n SPOTIFY FAIL \n\n')
+            return Response(inst, status=401)
 
         raw_playlists = resp["playlists"]["items"]
         for pl in raw_playlists:
-            print(pl["name"])
 
             new_pl = Playlist.query.get(pl["id"])
             if not new_pl:
@@ -115,7 +115,6 @@ def featured():
                 "ownerUrl": new_pl.owner.url, 
                 "imgUrl": new_pl.img.md
                 })
-
         return Response(json.dumps(playlists), status=200)
 
     return render_template("featured.html")

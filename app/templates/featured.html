@@ -5,7 +5,7 @@
 
 {% block javascript %}
 <script>
-    const FETCH_URL = {{ url_for('featured') | tojson | safe}}
+    const FETCH_URL = {{ url_for('index') | tojson | safe}}
     const QUIZ_URL = {{ url_for('quiz') | tojson | safe}}
 </script>
 {% endblock %}
@@ -19,7 +19,11 @@ Home
 <div class="col mx-auto">
     <div id="main-row" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
 
-        
+        <div id="main-load-spinner" class="col my-5 mx-auto">
+            <div class="d-flex h-100 justify-content-center align-items-center">
+                <div class="spinner-border"></div>
+            </div>
+        </div>
         
     </div>
 </div>

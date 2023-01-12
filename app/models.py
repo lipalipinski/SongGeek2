@@ -101,7 +101,7 @@ class User(UserMixin, db.Model):
         # minimum number of plays
         played_at_least = sum([track["q"] for track in tracks.values()]) / len(tracks)
         # top tracks are track asked more than 3 times
-        top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] < played_at_least]
+        top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] <= played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
             
         return top_tracks
@@ -123,7 +123,7 @@ class User(UserMixin, db.Model):
                     artists[artist.id]["p"] += quest.points
 
         played_at_least = sum([artist["q"] for artist in artists.values()]) / len(artists)
-        top_artists = [{"artst":artst["artst"], "score": round(artst["p"]/artst["q"], 2)} for artst in artists.values() if not artst["q"] < played_at_least]
+        top_artists = [{"artst":artst["artst"], "score": round(artst["p"]/artst["q"], 2)} for artst in artists.values() if not artst["q"] <= played_at_least]
         top_artists.sort(key = lambda artist : artist["score"], reverse=True)
 
         return top_artists
@@ -147,7 +147,7 @@ class User(UserMixin, db.Model):
 
         played_at_least = statistics.median([pl["q"] for pl in playlists.values()])
         print(played_at_least)
-        top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] < played_at_least]
+        top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] <= played_at_least]
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
@@ -193,7 +193,7 @@ class Game(db.Model):
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
-        
+        db.session.flush()
         tracks = random.sample(Playlist.query.get(self.playlist_id).active_list(), 5)
         for i, track in enumerate(tracks):
             self.quests.append(Quest(track_id = track.id, q_num = i))

@@ -3,6 +3,10 @@
     height: 30px;
 }
 
+#main-load-spinner div div {
+    width: 3rem;
+    height: 3rem;
+}
 
 button{
     background-repeat: no-repeat;

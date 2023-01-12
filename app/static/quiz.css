@@ -2,8 +2,15 @@
     width: 30px;
     height: 30px;
 }
+
+#main-load-spinner div{
+    width: 50px;
+    height: 50px;
+}
+
 button.controls {
     font-size: 4.4em;
     min-height: 290px;
     white-space: break-spaces;
 }
+
