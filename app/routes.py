@@ -96,7 +96,7 @@ def index():
         except Exception as inst:
             #flash(f'Bad request {inst}')
             print('\n\n SPOTIFY FAIL \n\n')
-            return Response(inst, status=401)
+            return Response(json.dumps({"error":inst}), status=401)
 
         raw_playlists = resp["playlists"]["items"]
         for pl in raw_playlists:
