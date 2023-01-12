@@ -122,6 +122,9 @@ function answer(e) {
                 // update audio src
                 audioSource.setAttribute('src', json.next_url);
                 player.load();
+                // set random playback start time
+                let startTime = Math.floor(Math.random() * 25);
+                player.currentTime = startTime;
                 // listen for new playback
                 play.addEventListener('click', question);
                 play.addEventListener('click', startPlayer, { once: true });
@@ -145,43 +148,43 @@ function question(e) {
         const badge = document.createElement('span');
         badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
         // names
-        btn.textContent = resp.next_tracks[i].name
+        btn.textContent = resp.next_tracks[i].name;
         btn.appendChild(badge);
         // classes
-        btnReset(btn)
+        btnReset(btn);
         // btn id's
-        btn.setAttribute('id', `_${resp.next_tracks[i].id}`)
+        btn.setAttribute('id', `_${resp.next_tracks[i].id}`);
         // btn values
-        btn.setAttribute('value', resp.next_tracks[i].id)
+        btn.setAttribute('value', resp.next_tracks[i].id);
         // event listener
         btn.addEventListener('click', answer);
         // quest_num update
         quest_num.textContent = resp.quest_num +1
     }
     play.removeEventListener('click', question)
-}
+};
 
 function turnGreen(btn) {
     btn.classList.replace('btn-light', 'btn-success');
-}
+};
 
 function turnRed(btn) {
     btn.classList.replace('btn-light', 'btn-danger');
-}
+};
 
 function btnReset(btn) {
     btn.classList.replace('btn-success', 'btn-light');
     btn.classList.replace('btn-danger', 'btn-light');
-}
+};
 
 function progbar(bar, succes) {
-    const prog = document.createElement('div')
-    prog.classList.add('progress-bar')
-    prog.style.width = '20%'
+    const prog = document.createElement('div');
+    prog.classList.add('progress-bar');
+    prog.style.width = '20%';
     if (succes == false) {
-        prog.classList.add('bg-danger')
+        prog.classList.add('bg-danger');
     } else {
-        prog.classList.add('bg-success')
+        prog.classList.add('bg-success');
     }
-    bar.appendChild(prog)
-}
+    bar.appendChild(prog);
+};

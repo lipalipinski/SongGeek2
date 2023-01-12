@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_caching import Cache
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from config import Config
@@ -19,8 +20,14 @@ login = LoginManager(app)
 login.login_message = None
 login.login_view = "login"
 
+cache = Cache(config={
+    'CACHE_TYPE': 'SimpleCache',
+    "CACHE_DEFAULT_TIMEOUT": 600
+    })
+cache.init_app(app)
+
 auth_manager = SpotifyClientCredentials()
-spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=10, retries=5)
+spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=10, retries=8)
 
 
 from app import routes, models

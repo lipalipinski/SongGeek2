@@ -194,6 +194,7 @@ class Game(db.Model):
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
         db.session.flush()
+        db.session.commit()
         tracks = random.sample(Playlist.query.get(self.playlist_id).active_list(), 5)
         for i, track in enumerate(tracks):
             self.quests.append(Quest(track_id = track.id, q_num = i))
@@ -284,9 +285,9 @@ class Playlist(db.Model):
         except:
             return False
 
+        self.updated = datetime.utcnow()
         # check snapshot
         if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
-            self.updated = datetime.utcnow()
             db.session.flush()
             return True
 
@@ -362,11 +363,13 @@ class Playlist(db.Model):
             # \\\\\\\\\\\
             self.tracks.append(trck)
 
-
-        self.updated = datetime.utcnow()
+        db.session.flush()
+        db.session.commit()
         return True
 
     def last_update(self):
+        if not self.updated:
+            return "preloaded"
         delta = datetime.utcnow() - self.updated
         days = delta.days
         hrs = delta.seconds//3600

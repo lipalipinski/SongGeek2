@@ -6,6 +6,8 @@ class Config(object):
     SECRET_KEY = 'fgjeroiaulj'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
+    CACHE_DEFAULT_TIMEOUT = 300
     TOKEN_UPDATE = 60*55 #update token when expires in less than that
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
     API_BASE = 'https://accounts.spotify.com'

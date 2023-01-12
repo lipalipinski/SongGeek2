@@ -7,7 +7,7 @@ from flask import flash, render_template, redirect, request, url_for, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
-from app import app, spotify
+from app import app, spotify, cache
 from app.helpers import dict_html, img_helper
 from app.models import db, Playlist, User, Game, Img
 
@@ -87,16 +87,20 @@ def refresh_user_token():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
+    @cache.memoize(timeout=3600)
+    def fetch_playlists(spoti, limit, code = None):
+        return spoti.featured_playlists(limit=limit, country = code)
+
     if request.method == "POST" and request.json["mode"] == "featuredPlaylists":
         
         playlists = []
 
         try:
-            resp = spotify.featured_playlists(limit=20)
+            resp = fetch_playlists(spotify, 20)
         except Exception as inst:
             #flash(f'Bad request {inst}')
             print('\n\n SPOTIFY FAIL \n\n')
-            return Response(json.dumps({"error":inst}), status=401)
+            return Response(status=401)
 
         raw_playlists = resp["playlists"]["items"]
         for pl in raw_playlists:
@@ -208,7 +212,7 @@ def quiz(pl_id = None, game = None):
 
     # create new game
     if not game_id:
-        game = Game(user_id=current_user.id, playlist_id=pl_id)
+        game = Game(user_id=current_user.id, playlist = pl)
         db.session.add(game)
         db.session.commit()
 
