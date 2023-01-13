@@ -87,7 +87,7 @@ def refresh_user_token():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    @cache.memoize(timeout=3600)
+    @cache.memoize(timeout=1800)
     def fetch_playlists(spoti, limit, code = None):
         return spoti.featured_playlists(limit=limit, country = code)
 
@@ -97,9 +97,9 @@ def index():
 
         try:
             resp = fetch_playlists(spotify, 20)
-        except Exception as inst:
+        except Exception as err:
             #flash(f'Bad request {inst}')
-            print('\n\n SPOTIFY FAIL \n\n')
+            print(f'\n\n SPOTIFY FAIL {err} \n\n')
             return Response(status=401)
 
         raw_playlists = resp["playlists"]["items"]
@@ -213,6 +213,8 @@ def quiz(pl_id = None, game = None):
     # create new game
     if not game_id:
         game = Game(user_id=current_user.id, playlist = pl)
+        db.session.flush()
+        game.init_quests()
         db.session.add(game)
         db.session.commit()
 

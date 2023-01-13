@@ -99,12 +99,12 @@ class User(UserMixin, db.Model):
                 tracks[track.id]["p"] += quest.points
 
         # minimum number of plays = average number of one song plays
-        played_at_least = len(self.quests) / len(tracks)
+        tracks = [track for track in tracks.values() if track["q"] > 1]
+        played_at_least = statistics.mean([track["p"] for track in tracks])
         # top tracks are track asked more than 3 times
-        top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks.values() if not trck["q"] <= played_at_least]
+        top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks if not trck["q"] < played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
-            
-        return top_tracks
+
 
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
@@ -127,6 +127,7 @@ class User(UserMixin, db.Model):
         top_artists.sort(key = lambda artist : artist["score"], reverse=True)
 
         return top_artists
+    
     
     def top_playlists(self):
         """ returns [{'plst':plst, 'score':score}, ...] """
@@ -193,11 +194,19 @@ class Game(db.Model):
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
-        db.session.flush()
-        db.session.commit()
-        tracks = random.sample(Playlist.query.get(self.playlist_id).active_list(), 5)
+
+    def init_quests(self):
+
+        try:
+            tracks = random.sample(self.playlist.active_list(), 5)
+        except ValueError as err:
+            print(self.playlist.active_list())
+            raise err
+        
         for i, track in enumerate(tracks):
             self.quests.append(Quest(track_id = track.id, q_num = i))
+        
+        return True
 
     def next_quest(self):
         
@@ -317,6 +326,10 @@ class Playlist(db.Model):
         self.tracks.clear()
         for track in tracks:
             track = track["track"]
+
+            # sometimes spotify gives empty "tracks"
+            if not track and track["preview_url"]:
+                continue
 
             # check if track in db
             trck = Track.query.get(track["id"])
