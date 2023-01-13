@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
 from app import app, spotify, cache
-from app.helpers import dict_html, img_helper, countries, set_country, available_markets
+from app.helpers import dict_html, img_helper, countries, set_country, available_markets, retryfy
 from app.models import db, Playlist, User, Game, Img
 
 
@@ -92,6 +92,7 @@ def refresh_user_token():
 def index():
 
     @cache.memoize(timeout=1800)
+    @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
         return spoti.featured_playlists(limit=limit, country = code)
 

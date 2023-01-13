@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from requests.exceptions import RequestException
 from flask_login import UserMixin
 from app import app, db, login, spotify, pl_update_time
-from app.helpers import img_helper
+from app.helpers import img_helper, retryfy
 
 @login.user_loader
 def load_user(id):
@@ -147,7 +147,6 @@ class User(UserMixin, db.Model):
                 playlists[playlist.id]["p"] += game.points()
 
         played_at_least = statistics.median([pl["q"] for pl in playlists.values()])
-        print(played_at_least)
         top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] <= played_at_least]
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
@@ -280,6 +279,7 @@ class Playlist(db.Model):
 
         return True
 
+    @retryfy(3, 3)
     def update(self):
         
         if self.updated:
@@ -292,7 +292,7 @@ class Playlist(db.Model):
         try:
             resp = spotify.playlist(self.id)
         except:
-            return False
+            raise RequestException("Playlist request failed")
 
         self.updated = datetime.utcnow()
         # check snapshot

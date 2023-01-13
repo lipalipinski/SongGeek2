@@ -1,7 +1,10 @@
 from flask import session, redirect, url_for
 from app import app, spotify, cache
 from os import getenv
+import time
+import functools
 import requests
+from requests import HTTPError
 
 countries = {
   "AD": "Andorra",
@@ -255,6 +258,25 @@ countries = {
   "ZW": "Zimbabwe"
 }
 
+def retryfy(reps=1, pause=0):
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(reps):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as err:   
+                    print(f"SPOTIFY {attempt} FAIL {err}")
+                    time.sleep(pause)
+
+            print("SPOTIFY FINAL FAIL")
+            raise Exception
+
+        return wrapper
+
+    return decorator
+
 def dict_html(dct):
     html = ''
     if type(dct) == list:
@@ -304,6 +326,7 @@ def refresh_token(refresh_token):
     return res_body.get("access_token")
 
 @cache.cached(timeout=3600, key_prefix="markets")
+@retryfy(3, 2)
 def available_markets():
     """ returns a {code:name, ...} of available markets"""
     resp = spotify.available_markets()

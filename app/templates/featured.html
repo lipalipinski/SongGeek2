@@ -17,14 +17,17 @@ Home
 
 {% block extranav %}
 <li class="nav-item">
-    <button id="country-btn" type="button" class="btn-navbar btn btn-sm btn-primary b-0" data-bs-toggle="modal"
-    data-bs-target="#exampleModal">
-    Country: {{session["country"]["name"]}}
-</button>
+    {% if current_user.is_authenticated %}
+        <button id="country-btn" type="button" class="btn-navbar btn btn-sm btn-primary b-0" data-bs-toggle="modal"
+        data-bs-target="#exampleModal">
+        Country: {{session["country"]["name"]}}
+        </button>
+    {% endif %}
 </li>
 {% endblock %}
 
 {% block main %}
+
 <!--  select country modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
