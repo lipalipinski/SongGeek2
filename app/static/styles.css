@@ -18,6 +18,11 @@ button.main-btn{
     font-size: 2.5em;
 }
 
+button.btn-navbar{
+    --bs-btn-padding-y: 8px;
+    --bs-btn-border-width: 0;
+}
+
 button.controls[data-state="play"] {
     background-image: url('/static/img/play-fill.svg');
 }

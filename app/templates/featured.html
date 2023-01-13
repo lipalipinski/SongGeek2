@@ -3,19 +3,54 @@
 {% block head %}
 <script src="{{ url_for('static', filename='featured.js')}}" defer></script>
 
+
+{% endblock %}
 {% block javascript %}
 <script>
     const FETCH_URL = {{ url_for('index') | tojson | safe}}
     const QUIZ_URL = {{ url_for('quiz') | tojson | safe}}
 </script>
 {% endblock %}
-
-{% endblock %}
 {% block title %}
 Home
 {% endblock %}
 
+{% block extranav %}
+<li class="nav-item">
+    <button id="country-btn" type="button" class="btn-navbar btn btn-sm btn-primary b-0" data-bs-toggle="modal"
+    data-bs-target="#exampleModal">
+    Country: {{session["country"]["name"]}}
+</button>
+</li>
+{% endblock %}
+
 {% block main %}
+<!--  select country modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Select a country:</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <select id="select-country" class="form-select" aria-label="Default select example">
+                    <option id="selected-country" selected>{{ session["country"]["code"] }}: {{
+                        session["country"]["name"] }}</option>
+                    {% for code, country in countries.items() %}
+                    <option value="{{code}}">{{code}}: {{country}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="change-country" type="button" class="btn btn-primary" data-bs-dismiss="modal">Change
+                    country</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="col mx-auto">
     <div id="main-row" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
 

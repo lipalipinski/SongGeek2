@@ -1,20 +1,29 @@
 const mainRow = document.querySelector('#main-row');
-const mainLoadSpinner = document.querySelector('#main-load-spinner');
+let mainLoadSpinner = document.querySelector('#main-load-spinner');
+// change country button (in modal)
+const changeBtn = document.querySelector('#change-country');
+// dropdown menu
+const selectCountry = document.querySelector('#select-country');
+// selected option in dropdown menu
+const selectedCountry = document.querySelector('#selected-country')
+// select country button (navbar)
+const buttonCountry = document.querySelector('#country-btn');
+let targetCountry;
 
-
-let data = {
-    'mode': 'featuredPlaylists'
-};
-fetch(FETCH_URL, {
-    'method': 'POST',
-    'headers': { 'Content-Type': 'application/json' },
-    'body': JSON.stringify(data)
-})
-    .then((response) => {
-        if (!response.ok) {
-            mainLoadSpinner.classList.add('d-none');
-            errorDiv = document.createElement('div'); 
-            errorDiv.innerHTML = `<div class="card  h-100 my-auto" style="">
+function fetchPlaylists() {
+    let data = {
+        'mode': 'featuredPlaylists'
+    };
+    fetch(FETCH_URL, {
+        'method': 'POST',
+        'headers': { 'Content-Type': 'application/json' },
+        'body': JSON.stringify(data)
+    })
+        .then((response) => {
+            if (!response.ok) {
+                mainLoadSpinner.classList.add('d-none');
+                errorDiv = document.createElement('div');
+                errorDiv.innerHTML = `<div class="card  h-100 my-auto" style="">
                 <div class="card-body my-auto">
                     <h5>Connection problem</h5>
                     <a href="${FETCH_URL}">
@@ -22,17 +31,16 @@ fetch(FETCH_URL, {
                     </a>                    
                 </div>
             </div>`;
-            document.querySelector('#main-row').appendChild(errorDiv);
-            throw new Error(`HTTP error ${response.status}`);
-        };
-        return response.json();
-    })
-    .then((json) => {
-        console.log(json);
-        for (pl of json) {
-            let mainDiv = document.createElement('div');
-            mainDiv.classList.add('col')
-            mainDiv.innerHTML = `<div class="card h-100" style="">
+                document.querySelector('#main-row').appendChild(errorDiv);
+                throw new Error(`HTTP error ${response.status}`);
+            };
+            return response.json();
+        })
+        .then((json) => {
+            for (pl of json) {
+                let mainDiv = document.createElement('div');
+                mainDiv.classList.add('col')
+                mainDiv.innerHTML = `<div class="card h-100" style="">
                 
                 <div class="">
                     <img src="${pl.imgUrl}" class="card-img-top" alt="${pl.name} cover image">
@@ -56,7 +64,56 @@ fetch(FETCH_URL, {
                     </a>
                 </div>
             </div>`;
-            mainLoadSpinner.classList.add('d-none')
-            mainRow.appendChild(mainDiv);
-        };
-    });
+                mainLoadSpinner.classList.add('d-none')
+                mainRow.appendChild(mainDiv);
+            };
+        });
+};
+
+function setLoading() {
+    mainRow.textContent = "";
+    spinner = document.createElement('div');
+    spinner.setAttribute('id', 'main-load-spinner');
+    spinner.classList.add('col', 'my-5', 'mx-auto');
+    spinner.innerHTML = `<div class="d-flex h-100 justify-content-center align-items-center">
+                <div class="spinner-border"></div></div>`;
+    mainLoadSpinner = spinner;
+    mainRow.appendChild(mainLoadSpinner);
+
+};
+
+selectCountry.addEventListener('input', (e) => {
+    targetCountry = e.target.value
+});
+
+function changeCountry(code) {
+    data = {
+        "code": code
+    }
+    fetch(COUNTRY_URL, {
+        'method': 'POST',
+        'headers': { 'Content-Type': 'application/json' },
+        'body': JSON.stringify(data)
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error ${response.status}`);
+            };
+            return response.json();
+        })
+        .then((json) => {
+            // update page
+            selectedCountry.textContent = `${json["code"]}: ${json["name"]}}`;
+            buttonCountry.textContent = `Country: ${json["name"]}`;
+        })
+        .then(() => {
+            fetchPlaylists();
+        });
+};
+
+fetchPlaylists();
+
+changeBtn.addEventListener('click', () => {
+    setLoading();
+    changeCountry(targetCountry);
+});

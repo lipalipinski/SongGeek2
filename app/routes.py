@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
 from app import app, spotify, cache
-from app.helpers import dict_html, img_helper
+from app.helpers import dict_html, img_helper, countries, set_country, available_markets
 from app.models import db, Playlist, User, Game, Img
 
 
@@ -56,7 +56,10 @@ def api_callback():
     db.session.commit()
 
     login_user(user, remember=True)
-    session["country"] = "PL"
+    
+    # set session country
+    code = "PL"
+    set_country(code)
 
     return redirect(url_for("index"))
 
@@ -84,7 +87,7 @@ def refresh_user_token():
 
     db.session.commit()
 
-@app.route("/index")
+#@app.route("/index")
 @app.route("/", methods=["POST", "GET"])
 def index():
 
@@ -97,7 +100,10 @@ def index():
         playlists = []
 
         try:
-            resp = fetch_playlists(spotify, 20)
+            if session["country"]["code"] in available_markets().keys():
+                resp = fetch_playlists(spotify, 20, session["country"]["code"])
+            else:
+                resp = fetch_playlists(spotify, 20)
         except Exception as err:
             #flash(f'Bad request {inst}')
             print(f'\n\n SPOTIFY FAIL {err} \n\n')
@@ -122,8 +128,21 @@ def index():
                 })
         return Response(json.dumps(playlists), status=200)
 
-    return render_template("featured.html")
+    return render_template("featured.html", countries = available_markets())
 
+@app.route("/country", methods=["POST"])
+@login_required
+def country():
+
+    code = request.json["code"]
+    # VALIDATE COUNTRY
+    if code not in available_markets().keys():
+        print(f"WRONG COUNTRY: {code}")
+        return Response(status=401)
+
+    set_country(code)
+    resp = json.dumps(session["country"])
+    return Response(resp, status=200)
 
 
 @app.route("/user", methods=["GET", "POST"])
@@ -231,14 +250,14 @@ def quiz(pl_id = None, game = None):
 
     # ==== display results ======
     if not game.next_quest():
-        return render_template("quiz_score.html", pl = pl, game = game)
+        return render_template("quiz_score.html", pl = pl, game = game, countries = available_markets())
 
     
     quest = game.next_quest()
     db.session.add(game)
     db.session.commit()
 
-    return render_template("quiz.html", pl = pl, quest=quest, game=game)
+    return render_template("quiz.html", pl = pl, quest=quest, game=game, countries = available_markets())
 
 
 @app.route("/likes", methods=["POST"])

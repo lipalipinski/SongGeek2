@@ -259,7 +259,7 @@ class Playlist(db.Model):
         return sum(1 for tr in self.tracks if tr.prev_url)
 
     def active_list(self):
-        return [track for track in self.tracks if track.prev_url]
+        return [track for track in self.tracks if track.prev_url != None]
 
     def total_tracks(self):
         return len(self.tracks)
@@ -329,6 +329,7 @@ class Playlist(db.Model):
 
             # sometimes spotify gives empty "tracks"
             if not track and track["preview_url"]:
+                print("TRACK NOT ACTIVE")
                 continue
 
             # check if track in db

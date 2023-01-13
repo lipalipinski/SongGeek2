@@ -3,6 +3,7 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='quiz-results.css') }}">
 <script src="{{ url_for('static', filename='quiz-results.js')}}" defer></script>
+{% endblock %}
 
 {% block javascript %}
 <script>
@@ -10,7 +11,6 @@
 </script>
 {% endblock %}
 
-{% endblock %}
 
 {% block title %}
 {{ pl.name }}

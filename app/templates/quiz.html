@@ -4,13 +4,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}">
 <script src="{{ url_for('static', filename='quiz.js')}}" defer></script>
 
+
+{% endblock %}
+
 {% block javascript %}
 <script>
     const ANSWER_URL = {{ url_for('quiz', pl_id = pl.id, game = game.id) | tojson | safe}};
     const RESULTS_URL = {{ url_for('quiz', pl_id = pl.id, game = game.id) | tojson | safe}}
 </script>
-{% endblock %}
-
 {% endblock %}
 
 {% block title %}
