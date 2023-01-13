@@ -3,7 +3,7 @@ from os import getenv
 import spotipy
 import requests
 import json
-from flask import flash, render_template, redirect, request, url_for, Response
+from flask import flash, render_template, redirect, request, url_for, Response, session
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException, HTTPError
 
@@ -56,6 +56,7 @@ def api_callback():
     db.session.commit()
 
     login_user(user, remember=True)
+    session["country"] = "PL"
 
     return redirect(url_for("index"))
 
@@ -128,7 +129,6 @@ def index():
 @app.route("/user", methods=["GET", "POST"])
 @login_required
 def user_details():
-
 
     if request.method == "POST":
 

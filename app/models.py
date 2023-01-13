@@ -105,6 +105,7 @@ class User(UserMixin, db.Model):
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks if not trck["q"] < played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
 
+        return top_tracks
 
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
@@ -127,7 +128,6 @@ class User(UserMixin, db.Model):
         top_artists.sort(key = lambda artist : artist["score"], reverse=True)
 
         return top_artists
-    
     
     def top_playlists(self):
         """ returns [{'plst':plst, 'score':score}, ...] """
