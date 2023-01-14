@@ -267,7 +267,7 @@ def retryfy(reps=1, pause=0):
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:   
-                    print(f"SPOTIFY {attempt} FAIL {err}")
+                    print(f"SPOTIFY {attempt+1} FAIL {err}")
                     time.sleep(pause)
 
             print("SPOTIFY FINAL FAIL")
