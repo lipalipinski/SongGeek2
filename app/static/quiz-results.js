@@ -23,7 +23,7 @@ for (const [i, playpause] of controls.entries()) {
     });
 };
 
-// change button state
+// change play button state
 for (const [i, player] of players.entries()) {
     player.addEventListener('play', () => {
         changeButtonState(player, controls[i]);
@@ -125,12 +125,25 @@ function likeSong(id, like, btn) {
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, false, e.target)
                 }, { once: true });
+                badgeForButton(btn, 'Added to Liked Songs', 900);
                 // no like
             } else {
                 btn.setAttribute('data-state', 'not-liked');
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, true, e.target)
                 }, { once: true });
+                badgeForButton(btn, 'Removed from Liked Songs', 900);
             };
         });
+};
+
+// flash a badge for [timeout] seconds
+function badgeForButton(button, message, timeout) {
+    badge = document.createElement('span');
+    badge.classList.add('position-absolute', 'top-100', 'start-50', 'translate-middle', 'badge', 'rounded-pill', 'bg-dark');
+    badge.textContent = message;
+    button.appendChild(badge);
+    setTimeout(() => {
+        badge.remove();
+    }, timeout);
 };
