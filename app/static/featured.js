@@ -1,5 +1,4 @@
 const mainRow = document.querySelector('#main-row');
-let mainLoadSpinner = document.querySelector('#main-load-spinner');
 // change country button (in modal)
 const changeBtn = document.querySelector('#change-country');
 // dropdown menu
@@ -9,6 +8,53 @@ const selectedCountry = document.querySelector('#selected-country')
 // select country button (navbar)
 const buttonCountry = document.querySelector('#country-btn');
 let targetCountry;
+
+function setPlaceholders() {
+    mainRow.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+        let placeholder = document.createElement('div');
+        placeholder.classList.add('main-load', 'col');
+        placeholder.innerHTML = `
+        <div class ="card h-100 px-0">
+        <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img"
+                aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#868e96"></rect>
+            </svg>
+            
+            <div class="card-body">
+                <h5 class="card-title placeholder-glow">
+                        <span class="placeholder col-6"></span>
+                </h5>
+                <p class="card-text placeholder-glow">
+                        <span class="placeholder col-1"></span> 
+                        <span class="placeholder col-4"></span>
+                </p>
+                <p class="card-text placeholder-glow">
+                        <span class="placeholder col-7"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-6"></span>
+                        <span class="placeholder col-8"></span>
+                </p>
+            </div>
+            <div class="card-footer text-center placeholder-glow">
+                <span class="placeholder col-4"></span>
+            </div>
+            <div class="card-footer text-center placeholder-glow">
+                <span class="placeholder col-4"></span>
+            </div>
+            </div>`;
+        mainRow.appendChild(placeholder);
+    };  
+};
+
+function removePlaceholders() {
+    let placeholders = document.querySelectorAll('.main-load');
+    for (placeholder of placeholders) {
+        placeholder.remove();
+    };
+};
 
 function fetchPlaylists() {
     let data = {
@@ -42,6 +88,7 @@ function fetchPlaylists() {
                 return p2.lvl - p1.lvl;
             };
             json.sort(compareLvls);
+            removePlaceholders()
             for (pl of json) {
                 let badge = '';
                 if (pl.lvl == 1) {
@@ -53,7 +100,7 @@ function fetchPlaylists() {
                 };
                 let mainDiv = document.createElement('div');
                 mainDiv.classList.add('col')
-                mainDiv.innerHTML = `<div class="card h-100" style="">
+                mainDiv.innerHTML = `<div class="card h-100">
                 
                 <div class="">
                     <img src="${pl.imgUrl}" class="card-img-top" alt="${pl.name} cover image">
@@ -69,7 +116,7 @@ function fetchPlaylists() {
                             ${pl.ownerName}</a>
                     </small></p>
                     <p class="card-text">${pl.description}</p>
-                    </div>
+                </div>
                 <div class="card-footer text-center">
                     ${badge}
                 </div>
@@ -79,7 +126,6 @@ function fetchPlaylists() {
                     </a>
                 </div>
             </div>`;
-                mainLoadSpinner.classList.add('d-none')
                 mainRow.appendChild(mainDiv);
             };
         });
@@ -96,10 +142,6 @@ function setLoading() {
     mainRow.appendChild(mainLoadSpinner);
 
 };
-
-selectCountry.addEventListener('input', (e) => {
-    targetCountry = e.target.value
-});
 
 function changeCountry(code) {
     data = {
@@ -126,9 +168,15 @@ function changeCountry(code) {
         });
 };
 
+selectCountry.addEventListener('input', (e) => {
+    targetCountry = e.target.value
+});
+
+
+setPlaceholders();
 fetchPlaylists();
 
 changeBtn.addEventListener('click', () => {
-    setLoading();
+    setPlaceholders();
     changeCountry(targetCountry);
 });
