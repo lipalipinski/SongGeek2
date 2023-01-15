@@ -6,8 +6,15 @@ from os import getenv
 from datetime import datetime, timedelta
 from requests.exceptions import RequestException
 from flask_login import UserMixin
-from app import app, db, login, spotify, pl_update_time
+from app import app, db, login, spotify, pl_update_time, cache
 from app.helpers import img_helper, retryfy
+
+
+@cache.cached(timeout=3600, key_prefix="pls_avgs")
+def all_pls_avgs():
+    '''returns a list of all playlists average scores'''
+    return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
+
 
 @login.user_loader
 def load_user(id):
@@ -390,6 +397,34 @@ class Playlist(db.Model):
         mins = (delta.seconds - hrs*3600)//60
         upt_txt = f"d:{days} h:{hrs} m:{mins}"
         return upt_txt
+
+    def avg_score(self):
+        """ returns current average score of all games with this playlist, 
+        or 0 if no games played"""
+
+        games_count = db.session.query(Game).filter(Game.playlist_id == self.id).count()
+        if games_count != 0:
+            return sum([game.points() for game in self.games])/games_count
+        else:
+            return 0
+
+    def level(self):
+
+        if self.avg_score() == 0:
+            return 2
+        
+        all_scores = all_pls_avgs()
+        mean_score = statistics.mean(all_scores)
+        std_dev = statistics.stdev(all_scores)
+
+        # easy
+        if self.avg_score() > mean_score + std_dev:
+            return 1
+        # hard
+        elif self.avg_score() < mean_score:
+            return 3
+        # medium
+        return 2
 
     def __repr__(self) -> str:
         return f"<playlist: {self.name} by {self.owner_id}>"

@@ -37,7 +37,20 @@ function fetchPlaylists() {
             return response.json();
         })
         .then((json) => {
+            function compareLvls(p1, p2) {
+                //reverse (hard first)
+                return p2.lvl - p1.lvl;
+            };
+            json.sort(compareLvls);
             for (pl of json) {
+                let badge = '';
+                if (pl.lvl == 1) {
+                    badge = '<h5>level: <span class="badge text-bg-success">easy</span></h5>';
+                } if (pl.lvl == 2) {
+                    badge = '<h5>level: <span class="badge text-bg-warning">normal</span></h5>';
+                } if (pl.lvl == 3) {
+                    badge = '<h5>level: <span class="badge text-bg-danger">hard</span></h5>';
+                };
                 let mainDiv = document.createElement('div');
                 mainDiv.classList.add('col')
                 mainDiv.innerHTML = `<div class="card h-100" style="">
@@ -56,8 +69,10 @@ function fetchPlaylists() {
                             ${pl.ownerName}</a>
                     </small></p>
                     <p class="card-text">${pl.description}</p>
+                    </div>
+                <div class="card-footer text-center">
+                    ${badge}
                 </div>
-
                 <div class="card-footer text-center">
                     <a href="${QUIZ_URL}/${pl.id}">
                         <button name="pl" value="" class="btn btn-md btn-primary">Play!</button>

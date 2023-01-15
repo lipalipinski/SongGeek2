@@ -125,7 +125,8 @@ def index():
                 "url": new_pl.url,
                 "ownerName": new_pl.owner.name, 
                 "ownerUrl": new_pl.owner.url, 
-                "imgUrl": new_pl.img.md
+                "imgUrl": new_pl.img.md,
+                "lvl": new_pl.level()
                 })
         return Response(json.dumps(playlists), status=200)
 
