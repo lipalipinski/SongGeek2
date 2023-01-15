@@ -131,17 +131,6 @@ function fetchPlaylists() {
         });
 };
 
-function setLoading() {
-    mainRow.textContent = "";
-    spinner = document.createElement('div');
-    spinner.setAttribute('id', 'main-load-spinner');
-    spinner.classList.add('col', 'my-5', 'mx-auto');
-    spinner.innerHTML = `<div class="d-flex h-100 justify-content-center align-items-center">
-                <div class="spinner-border"></div></div>`;
-    mainLoadSpinner = spinner;
-    mainRow.appendChild(mainLoadSpinner);
-
-};
 
 function changeCountry(code) {
     data = {
