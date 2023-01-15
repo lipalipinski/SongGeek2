@@ -325,6 +325,7 @@ def refresh_token(refresh_token):
 
     return res_body.get("access_token")
 
+
 @cache.cached(timeout=3600, key_prefix="markets")
 @retryfy(3, 2)
 def available_markets():
