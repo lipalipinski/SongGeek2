@@ -125,7 +125,8 @@ class User(UserMixin, db.Model):
         tracks = [track for track in tracks.values() if track["q"] > 1]
         if len(tracks) == 0:
             return []
-        played_at_least = statistics.mean([track["q"] for track in tracks])
+        trcks_points = [track["q"] for track in tracks]
+        played_at_least = statistics.mean(trcks_points) - statistics.stdev(trcks_points)
     
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks if not trck["q"] < played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)

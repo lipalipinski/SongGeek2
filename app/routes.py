@@ -91,7 +91,6 @@ def refresh_user_token():
         except RequestException:
             flash("You have been logged out due to inactivity")
             return redirect(url_for("logout"))
-
     db.session.commit()
 
 #@app.route("/index")
@@ -198,19 +197,60 @@ def user_details():
 
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>", methods=["POST", "GET"])
-@app.route("/quiz/<pl_id>/<game>", methods=["POST", "GET"])
 @login_required
 def quiz(pl_id = None, game = None):
     
     if pl_id == None:
         return redirect(url_for("index"))
 
-    #  ==== answer received ======
-    if request.method == "POST":
+    if request.method == "GET":
+        return render_template("quiz.html", pl_id = pl_id)
 
+    # ======= new game =========    
+    if request.json["mode"] == "newGame":
+        pl = Playlist.query.get(pl_id)
+        
+        # update playlist 
+        pl.update()
+        db.session.add(pl)
+        db.session.commit()
+
+
+        game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
+        db.session.flush()
+        game.init_quests()
+        db.session.add(game)
+        db.session.commit()
+
+        next_quest = game.next_quest()
+        db.session.add(game)
+        db.session.commit()
+
+        body = {
+                "gameId": game.id,
+                "quest_num":0, 
+                "plImgUrl":pl.img.md, 
+                "plDescription":pl.description,
+                "plName":pl.name,
+                "plOwner":pl.owner.name,
+                "plLvl":pl.level()}
+
+        body["next_url"] = next_quest.track.prev_url
+        next_tracks = []
+        for track in next_quest.all_answrs():
+            next_tracks.append({"id":track.id, "name":track.name})
+        body["next_tracks"] = next_tracks
+
+        return Response(json.dumps(body), 200)
+
+
+    #  ==== answer received ======
+    elif request.json["mode"] == "nextQuest":
+
+        game_id = request.json["gameId"]
         track_id = request.json["id"]
         score = request.json["score"]
-        game = Game.query.filter_by(id=game).first()
+        game = Game.query.filter_by(id=game_id).first()
         quest = game.quests[game.status]
         red = ''
 
@@ -223,58 +263,38 @@ def quiz(pl_id = None, game = None):
         db.session.commit()
 
         next_quest = game.next_quest()
-        next_tracks =[]
+        body = {
+                "quest_num":game.status,
+                "total_points":game.points(),
+                "points":quest.points,
+                "green":quest.track_id,
+                "red":red,
+                }
         if next_quest:
+            next_tracks =[]
+            next_url = next_quest.track.prev_url
             next_url = next_quest.track.prev_url
             for track in next_quest.all_answrs():
                 next_tracks.append({"id":track.id, "name":track.name})
+            body["next_url"] = next_url
+            body["next_tracks"] = next_tracks
         else:
-            next_url = ""
+            
+            body["next_url"] = ""
+            body["resultsUrl"] = url_for("quiz_results", pl_id = pl_id, game = game.id)
 
-
-        return {"quest_num":game.status,"total_points":game.points(), "points":quest.points, "green":quest.track_id, "red":red,
-                "next_url":next_url, "next_tracks":next_tracks}
-
-    # ======= new game =========    
-
-    pl = Playlist.query.get(pl_id)
+        return Response(json.dumps(body), 200)
     
-    # update playlist 
-    pl.update()
-    db.session.add(pl)
-    db.session.commit()
-
-    game_id = game
-
-    # create new game
-    if not game_id:
-        game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
-        db.session.flush()
-        game.init_quests()
-        db.session.add(game)
-        db.session.commit()
-
     else:
-        game = Game.query.filter_by(id=game_id).first()
-        if game.status != 5:
-            flash("Invalid url")
-            return redirect(url_for("index"))
+        return Response(401)
 
-    # game_id invalid
-    if game.user_id != current_user.id:
-        flash("Invalid url")
-        return redirect(url_for("index"))
 
-    # ==== display results ======
-    if not game.next_quest():
-        return render_template("quiz_score.html", pl = pl, game = game, countries = available_markets())
-
-    
-    quest = game.next_quest()
-    db.session.add(game)
-    db.session.commit()
-
-    return render_template("quiz.html", pl = pl, quest=quest, game=game, countries = available_markets())
+@app.route("/quiz/<pl_id>/<game>", methods=["GET"])
+@login_required
+def quiz_results(pl_id, game):
+    pl = Playlist.query.get(pl_id)
+    game = db.session.query(Game).get(game)
+    return render_template("quiz_score.html", pl = pl, game = game)
 
 
 @app.route("/likes", methods=["POST"])

@@ -1,14 +1,12 @@
 // answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
 const quest_num = document.querySelector('#quest_num');
-var next_tracks;
-var resp;
-var countdownSeconds = 5;
-var timer;
-
-for (const btn of buttons) {
-    btn.addEventListener('click', answer);
-}
+const quizCard = document.querySelector('#quiz-card')
+const loadCard = document.querySelector('.load-card')
+let resp;
+const countdownSeconds = 5;
+let timer;
+let gameId;
 
 // audio player controls
 const player = document.querySelector('#player');
@@ -17,37 +15,64 @@ const volume = document.querySelector('#volume');
 const audioSource = document.querySelector('#audioSource');
 const mute = document.querySelector('#mute');
 
-//start at random second
-let startTime = Math.floor(Math.random() * 25);
-player.currentTime = startTime;
+function get_quiz() {
 
-play.addEventListener('click', () => {
-    for (const btn of buttons) {
-        btn.disabled = false;  
-    };
-}, { once: true });
-
-
-// volume slider
-volume.addEventListener('input', (e) => {
-    player.volume = e.target.value / 100;
-});
-
-// toggle mute 
-mute.addEventListener('click', (e) => {
-    if (!player.muted) {
-        player.muted = true;
-        e.target.setAttribute('data-state', 'muted');
-    } else {
-        player.muted = false;
-        e.target.setAttribute('data-state', 'not-muted');
+    // make request
+    let data = {
+        "mode": "newGame"
     }
-})
 
-play.addEventListener('click', startPlayer, { once: true });
-player.addEventListener('pause', () => {
-    clearInterval(timer);
-});
+    fetch(QUIZ_URL, {
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body": JSON.stringify(data),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((json) => {
+            resp = json;
+            gameId = json.gameId;
+            // set playlist img
+            document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);
+            // set playlist name
+            document.querySelector('#pl_name').textContent = json.plName;
+            // set playlist owner
+            document.querySelector('#pl_owner').textContent = json.plOwner;
+            // set playlist description
+            document.querySelector('#pl_desc').textContent = json.plDescription;
+            // set playlist lvl
+            let badge = document.createElement('h5');
+            switch (json.plLvl) {
+                case 1:
+                    badge.innerHTML = 'level: <span class="badge text-bg-success">easy</span>';
+                    break;
+                case 2:
+                    badge.innerHTML = 'level: <span class="badge text-bg-warning">normal</span>';
+                    break;
+                case 3:
+                    badge.innerHTML = 'level: <span class="badge text-bg-danger">hard</span>';
+                    break;
+            };
+            console.log(json.plLvl);
+            document.querySelector('#lvl-badge').appendChild(badge);
+            // update audio src
+            audioSource.setAttribute('src', json.next_url);
+            player.load();
+            // set random playback start time
+            let startTime = Math.floor(Math.random() * 25);
+            player.currentTime = startTime;
+            play.addEventListener('click', startPlayer, { once: true });
+            loadCard.classList.add('d-none');
+            quizCard.classList.remove('d-none');
+
+            question();
+        })
+        .catch((err) => console.error(`Fetch problem: ${err.message}`));
+}
 
 function startPlayer() {
     if (play.getAttribute('data-state') == 'results') {
@@ -73,7 +98,7 @@ function startPlayer() {
 
 // listen for the answer
 function answer(e) {
-    
+
     // remove listeners from buttons
     for (const btn of buttons) {
         btn.removeEventListener('click', answer);
@@ -84,14 +109,17 @@ function answer(e) {
 
     // make request
     let data = {
+        "mode": "nextQuest",
+        "gameId": gameId,
         "id": e.target.value,
         "score": score
     }
 
-    fetch(ANSWER_URL, {
+    fetch(QUIZ_URL, {
         "method": "POST",
         "headers": { "Content-Type": "application/json" },
-        "body": JSON.stringify(data),})
+        "body": JSON.stringify(data),
+    })
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
@@ -99,12 +127,11 @@ function answer(e) {
             return response.json();
         })
         .then((json) => {
-            resp = json
-
+            resp = json;
             // update points display
             const points = document.querySelector('#points');
             points.textContent = json.total_points;
-            
+
             // green answer
             turnGreen(document.querySelector(`#_${json.green}`));
             // show badge
@@ -135,20 +162,20 @@ function answer(e) {
                 play.textContent = 'NEXT';
             } else {
                 // AFTER LAST QUEST
+                
                 play.textContent = null;
                 play.setAttribute('data-state', 'results');
                 const results = document.querySelector('#results');
-                results.setAttribute('href', RESULTS_URL);
+                results.href = json.resultsUrl;
             }
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }
 
-
 // prepere the question
-function question(e) {
+function question() {
     // update buttons
-    for (const [i, btn] of buttons.entries()) {
+    for (let [i, btn] of buttons.entries()) {
         const badge = document.createElement('span');
         badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
         // names
@@ -163,7 +190,7 @@ function question(e) {
         // event listener
         btn.addEventListener('click', answer);
         // quest_num update
-        quest_num.textContent = resp.quest_num +1
+        quest_num.textContent = resp.quest_num + 1
     }
     play.removeEventListener('click', question)
 };
@@ -192,3 +219,43 @@ function progbar(bar, succes) {
     }
     bar.appendChild(prog);
 };
+
+
+get_quiz()
+
+for (const btn of buttons) {
+    btn.addEventListener('click', answer);
+}
+
+//start at random second
+let startTime = Math.floor(Math.random() * 25);
+player.currentTime = startTime;
+
+// disable all buttons after answer
+play.addEventListener('click', () => {
+    for (const btn of buttons) {
+        btn.disabled = false;  
+    };
+}, { once: true });
+
+
+// volume slider
+volume.addEventListener('input', (e) => {
+    player.volume = e.target.value / 100;
+});
+
+// toggle mute 
+mute.addEventListener('click', (e) => {
+    if (!player.muted) {
+        player.muted = true;
+        e.target.setAttribute('data-state', 'muted');
+    } else {
+        player.muted = false;
+        e.target.setAttribute('data-state', 'not-muted');
+    }
+})
+
+play.addEventListener('click', startPlayer, { once: true });
+player.addEventListener('pause', () => {
+    clearInterval(timer);
+});
