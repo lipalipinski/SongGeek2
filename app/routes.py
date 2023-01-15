@@ -38,8 +38,15 @@ def api_callback():
     r_token = res_body.get("refresh_token")
     expires_in = res_body.get("expires_in") #seconds
     
-    sp = spotipy.Spotify(auth=token)
-    usr = sp.current_user()
+    try:
+        sp = spotipy.Spotify(auth=token)
+        usr = sp.current_user()
+    except spotipy.exceptions.SpotifyException as err:
+        if err.http_status == 403:
+            flash(f"Login failed, contact developer to gain access")
+        else:
+            flash("Login failed")
+        return redirect(url_for("index"))
 
     user = User.query.filter_by(id = usr["id"]).first()
 

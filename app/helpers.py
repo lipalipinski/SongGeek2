@@ -302,9 +302,12 @@ def dict_html(dct):
 def img_helper(images):
     """returns {sm: 'url', md: 'url', lg: 'url'}"""
 
-    sm = images[::-1][0]["url"]
-    md = images[int(len(images)/2)]["url"]
-    lg = images[0]["url"]
+    if len(images) == 0:
+        sm = md = lg = "/static/img/person-square.svg"
+    else:
+        sm = images[::-1][0]["url"]
+        md = images[int(len(images)/2)]["url"]
+        lg = images[0]["url"]
 
     return {"sm": sm, "md": md, "lg": lg}
 
