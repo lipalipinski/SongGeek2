@@ -196,6 +196,8 @@ class Game(db.Model):
     user_id = db.Column(db.Text, db.ForeignKey("user.id"), index=True)
     playlist_id = db.Column(db.Text, db.ForeignKey("playlist.id"))
     status = db.Column(db.Integer, default=0)
+    level = db.Column(db.Integer)
+    final_points = db.Column(db.Integer)
     quests = db.relationship("Quest", backref="game", lazy="dynamic")
 
     def __init__(self, **kwargs):
@@ -213,6 +215,12 @@ class Game(db.Model):
             self.quests.append(Quest(track_id = track.id, q_num = i))
         
         return True
+
+    def update_status(self):
+        self.status +=1
+        if self.status == 5:
+            lvl_mod = {1:0.5, 2:1, 3:2}
+            self.final_points = round(self.points() * lvl_mod[self.level], 0)
 
     def next_quest(self):
         
