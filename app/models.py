@@ -158,11 +158,9 @@ class User(UserMixin, db.Model):
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
-
     def count_games(self):
-        games = db.session.query(Game).filter(Game.user_id == self.id).count()
+        games = db.session.query(Game).filter(Game.user_id == self.id, Game.status == 5).count()
         return games
-
 
     def answers(self):
         """ returns (correct_answers, all_answers) """
@@ -172,6 +170,8 @@ class User(UserMixin, db.Model):
         corr_answers = answers.filter(Quest.points != 0).count()
         return (corr_answers, all_quests)
 
+    def total_points(self):
+        return sum([game.final_points for game in self.games if game.final_points != None])
 
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),
