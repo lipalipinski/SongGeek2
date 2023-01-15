@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    
+</script>
+{% endblock %}
+
+{% block title %}
+Ranking
+{% endblock %}
+
+{% block main %}
+
+<div class="col col-lg-7 col-xl-6 mx-auto">
+    <div class="card h-100" style="">
+
+        <div class="card-body">
+            <ul class="list-group list-group-flush list-group-numbered">
+            {% for user in ranks %}
+                <li class="list-group-item">{{user.name}} ({{user.total_points}})</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

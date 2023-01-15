@@ -2,6 +2,7 @@ import random
 import requests
 import spotipy
 import statistics
+import pandas as pd
 from os import getenv
 from datetime import datetime, timedelta
 from requests.exceptions import RequestException
@@ -15,6 +16,20 @@ def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
+
+def get_ranking():
+    ids = []
+    pts = []
+    for user in db.session.query(User).all():
+        ids.append(user)
+        pts.append(user.total_points)
+
+    sr = pd.Series(pts)
+    sr.index = ids
+
+    ranking = sr.rank(ascending=False, method="first", na_option="top").sort_values().to_dict()
+    print(ranking)
+    return ranking
 
 @login.user_loader
 def load_user(id):
@@ -34,7 +49,7 @@ class User(UserMixin, db.Model):
     quests = db.relationship("Quest", secondary="game", viewonly=True)
 
     def __repr__(self) -> str:
-        return f"<quest: {self.name}>"
+        return f"<user: {self.name}>"
 
     def refresh_token(self):
 
@@ -106,10 +121,10 @@ class User(UserMixin, db.Model):
                 tracks[track.id]["q"] += 1
                 tracks[track.id]["p"] += quest.points
 
-        if len(tracks) == 0:
-            return []
         # minimum number of plays = average number of one song plays
         tracks = [track for track in tracks.values() if track["q"] > 1]
+        if len(tracks) == 0:
+            return []
         played_at_least = statistics.mean([track["p"] for track in tracks])
     
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks if not trck["q"] < played_at_least]

@@ -9,7 +9,7 @@ from requests.exceptions import RequestException, HTTPError
 
 from app import app, spotify, cache
 from app.helpers import dict_html, img_helper, countries, set_country, available_markets, retryfy
-from app.models import db, Playlist, User, Game, Img
+from app.models import db, Playlist, User, Game, Img, get_ranking
 
 
 @app.route("/api_callback", methods=["GET"])
@@ -153,6 +153,13 @@ def country():
     set_country(code)
     resp = json.dumps(session["country"])
     return Response(resp, status=200)
+
+
+@app.route("/ranking")
+@login_required
+def ranking():
+    ranks = get_ranking()
+    return render_template("ranking.html", ranks=ranks)
 
 
 @app.route("/user", methods=["GET", "POST"])
