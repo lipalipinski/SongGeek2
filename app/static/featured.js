@@ -67,7 +67,7 @@ function fetchPlaylists() {
     })
         .then((response) => {
             if (!response.ok) {
-                mainLoadSpinner.classList.add('d-none');
+                removePlaceholders()
                 errorDiv = document.createElement('div');
                 errorDiv.innerHTML = `<div class="card  h-100 my-auto" style="">
                 <div class="card-body my-auto">

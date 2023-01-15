@@ -38,8 +38,10 @@ Home
             </div>
             <div class="modal-body">
                 <select id="select-country" class="form-select" aria-label="Default select example">
+                    {% if current_user.is_authenticated %}
                     <option id="selected-country" selected>{{ session["country"]["code"] }}: {{
                         session["country"]["name"] }}</option>
+                    {% endif %}
                     {% for code, country in countries.items() %}
                     <option value="{{code}}">{{code}}: {{country}}</option>
                     {% endfor %}

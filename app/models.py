@@ -109,7 +109,7 @@ class User(UserMixin, db.Model):
         # minimum number of plays = average number of one song plays
         tracks = [track for track in tracks.values() if track["q"] > 1]
         played_at_least = statistics.mean([track["p"] for track in tracks])
-        # top tracks are track asked more than 3 times
+    
         top_tracks = [{"track":trck["trck"], "score": round(trck["p"]/trck["q"], 2)} for trck in tracks if not trck["q"] < played_at_least]
         top_tracks.sort(key = lambda track : track["score"], reverse=True)
 
@@ -428,10 +428,10 @@ class Playlist(db.Model):
         std_dev = statistics.stdev(all_scores)
 
         # easy
-        if self.avg_score() > mean_score + std_dev:
+        if self.avg_score() > mean_score + 0.5 * std_dev:
             return 1
         # hard
-        elif self.avg_score() < mean_score:
+        elif self.avg_score() < mean_score - 0.5 * std_dev:
             return 3
         # medium
         return 2

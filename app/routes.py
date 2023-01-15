@@ -101,10 +101,11 @@ def index():
         playlists = []
 
         try:
-            if session["country"]["code"] in available_markets().keys():
+            if current_user.is_anonymous:
+                resp = fetch_playlists(spotify, 20, "GB")
+
+            elif session["country"]["code"] in available_markets().keys():
                 resp = fetch_playlists(spotify, 20, session["country"]["code"])
-            else:
-                resp = fetch_playlists(spotify, 20)
         except Exception as err:
             #flash(f'Bad request {inst}')
             print(f'\n\n SPOTIFY FAIL {err} \n\n')
