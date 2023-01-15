@@ -176,7 +176,7 @@ def user_details():
                 playlists = playlists[0:5]
             playlists = [{"id":pl["plst"].id, "name":pl["plst"].name, "score":pl["score"]} for pl in playlists]
             return Response(json.dumps(playlists), status=200)
-
+    
     corr_answers, all_answers = current_user.answers()
     return render_template("user_details.html", corr_answers=corr_answers, all_answers=all_answers)
 
@@ -204,7 +204,7 @@ def quiz(pl_id = None, game = None):
             db.session.flush()
         else:
             red = track_id
-        game.status += 1
+        game.update_status()
         db.session.commit()
 
         next_quest = game.next_quest()
@@ -233,7 +233,7 @@ def quiz(pl_id = None, game = None):
 
     # create new game
     if not game_id:
-        game = Game(user_id=current_user.id, playlist = pl)
+        game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
         db.session.flush()
         game.init_quests()
         db.session.add(game)

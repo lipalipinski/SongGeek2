@@ -28,7 +28,8 @@ class User(UserMixin, db.Model):
     expires = db.Column(db.DateTime)
     admin = db.Column(db.Boolean, default = False)
     name = db.Column(db.Text)
-    img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
+    img_id = db.Column(db.Integer, db.ForeignKey("img.id"))
+    total_points = db.Column(db.Integer, default = 0)
     games = db.relationship("Game", backref="user", lazy="dynamic")
     quests = db.relationship("Quest", secondary="game", viewonly=True)
 
@@ -158,11 +159,9 @@ class User(UserMixin, db.Model):
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
-
     def count_games(self):
-        games = db.session.query(Game).filter(Game.user_id == self.id).count()
+        games = db.session.query(Game).filter(Game.user_id == self.id, Game.status == 5).count()
         return games
-
 
     def answers(self):
         """ returns (correct_answers, all_answers) """
@@ -172,6 +171,8 @@ class User(UserMixin, db.Model):
         corr_answers = answers.filter(Quest.points != 0).count()
         return (corr_answers, all_quests)
 
+    def set_total_points(self):
+        self.total_points = sum([game.final_points for game in self.games if game.final_points != None])
 
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),
@@ -196,6 +197,8 @@ class Game(db.Model):
     user_id = db.Column(db.Text, db.ForeignKey("user.id"), index=True)
     playlist_id = db.Column(db.Text, db.ForeignKey("playlist.id"))
     status = db.Column(db.Integer, default=0)
+    level = db.Column(db.Integer)
+    final_points = db.Column(db.Integer)
     quests = db.relationship("Quest", backref="game", lazy="dynamic")
 
     def __init__(self, **kwargs):
@@ -213,6 +216,13 @@ class Game(db.Model):
             self.quests.append(Quest(track_id = track.id, q_num = i))
         
         return True
+
+    def update_status(self):
+        self.status +=1
+        if self.status == 5:
+            lvl_mod = {1:0.5, 2:1, 3:2}
+            self.final_points = round(self.points() * lvl_mod[self.level], 0)
+            self.user.set_total_points()
 
     def next_quest(self):
         

@@ -33,7 +33,7 @@
                     <li class="list-group-item">nick:</li>
                     <li class="list-group-item">games: {{ current_user.count_games() }}</li>
                     <li class="list-group-item">answers: {{ corr_answers }}/{{ all_answers }}</li>
-                    <li class="list-group-item">ranking:</li>
+                    <li class="list-group-item">ranking: {{current_user.total_points}}</li>
                 </ul>
                 <div class="card-body">
                 </div>
