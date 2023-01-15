@@ -106,6 +106,8 @@ class User(UserMixin, db.Model):
                 tracks[track.id]["q"] += 1
                 tracks[track.id]["p"] += quest.points
 
+        if len(tracks) == 0:
+            return []
         # minimum number of plays = average number of one song plays
         tracks = [track for track in tracks.values() if track["q"] > 1]
         played_at_least = statistics.mean([track["p"] for track in tracks])
@@ -119,6 +121,7 @@ class User(UserMixin, db.Model):
         """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
 
+
         artists = dict()
         for quest in self.quests:
             for artist in quest.track.artists:
@@ -131,6 +134,9 @@ class User(UserMixin, db.Model):
                     artists[artist.id]["q"] += 1
                     artists[artist.id]["p"] += quest.points
 
+        if len(artists) == 0:
+            return []
+        
         played_at_least = sum([artist["q"] for artist in artists.values()]) / len(artists)
         top_artists = [{"artst":artst["artst"], "score": round(artst["p"]/artst["q"], 2)} for artst in artists.values() if not artst["q"] <= played_at_least]
         top_artists.sort(key = lambda artist : artist["score"], reverse=True)
@@ -154,6 +160,9 @@ class User(UserMixin, db.Model):
                 playlists[playlist.id]["q"] += 1
                 playlists[playlist.id]["p"] += game.points()
 
+        if len(playlists) == 0:
+            return []
+        
         played_at_least = statistics.median([pl["q"] for pl in playlists.values()])
         top_playlists = [{"plst":plst["plst"], "score":round(plst["p"]/plst["q"], 2)} for plst in playlists.values() if not plst["q"] <= played_at_least]
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
