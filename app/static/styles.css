@@ -3,9 +3,8 @@
     height: 30px;
 }
 
-#main-load-spinner div div {
-    width: 3rem;
-    height: 3rem;
+main{
+    min-height: 200px;
 }
 
 button{
