@@ -203,6 +203,7 @@ def quiz(pl_id = None, game = None):
     if pl_id == None:
         return redirect(url_for("index"))
 
+    # render template
     if request.method == "GET":
         # force update
         if request.args.get("force") == "True":

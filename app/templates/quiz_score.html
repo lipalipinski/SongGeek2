@@ -8,6 +8,7 @@
 {% block javascript %}
 <script>
     const LIKES_API = {{ url_for('likes') | tojson | safe}};
+    const GAME_LVL = {{game.level}};
 </script>
 {% endblock %}
 
@@ -28,7 +29,7 @@
             
                 <div class="col-12 col-sm-8">
                     <h5 class="card-title">
-                        <a href="/playlist-manager/{{ pl.id }}">{{ pl.name }}</a>
+                        <a href="{{ pl.url }}" target="_blank" noopener noreferer>{{ pl.name }}</a>
                     </h5>
                     <p class="card-text"><small class="text-muted">
                             by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
@@ -40,8 +41,11 @@
         
             <div class="row">
                 <div class="col">
+                    </table>
                     <p class="card-text fw-bold">
-                        total score: {{ game.points() }}
+                        score: {{ game.points() }} pts x
+                        <span id="lvl-badge" class="badge"></span>
+                        = {{ game.final_points }} pts
                     </p>
                     <table class="table table-borderless">
                         <thead>
