@@ -16,7 +16,7 @@ def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
-
+@cache.cached(timeout=5)
 def get_ranking():
     ids = []
     pts = []
@@ -133,6 +133,7 @@ class User(UserMixin, db.Model):
 
         return top_tracks
 
+    @cache.memoize(timeout=60)
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
@@ -159,6 +160,7 @@ class User(UserMixin, db.Model):
 
         return top_artists
     
+    @cache.memoize(timeout=60)
     def top_playlists(self):
         """ returns [{'plst':plst, 'score':score}, ...] """
 
@@ -184,10 +186,12 @@ class User(UserMixin, db.Model):
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
+    @cache.memoize(timeout=5)
     def count_games(self):
         games = db.session.query(Game).filter(Game.user_id == self.id, Game.status == 5).count()
         return games
 
+    @cache.memoize(timeout=5)
     def answers(self):
         """ returns (correct_answers, all_answers) """
         # consider only finished games (Game.status == 5)
@@ -455,6 +459,7 @@ class Playlist(db.Model):
         else:
             return 0
 
+    @cache.memoize(timeout=300)
     def level(self):
 
         if self.avg_score() == 0:
