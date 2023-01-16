@@ -235,7 +235,8 @@ class Game(db.Model):
             tracks = random.sample(self.playlist.active_list(), 5)
         except ValueError as err:
             print(self.playlist.active_list())
-            raise err
+            raise ValueError(f"Game init fail: {err}")
+            
         
         for i, track in enumerate(tracks):
             self.quests.append(Quest(track_id = track.id, q_num = i))
@@ -322,23 +323,25 @@ class Playlist(db.Model):
         return True
 
     @retryfy(3, 3)
-    def update(self):
-        
-        if self.updated:
+    def update(self, force=False):
+        """ force = force update """
+
+        if self.updated and not force:
             now = datetime.utcnow()
             delta = (now - self.updated)
             if self.updated and delta.seconds < pl_update_time and delta.days < 1:
+                # playlist up to date
                 return True
-
+        
         # spotify request
         try:
             resp = spotify.playlist(self.id)
-        except:
-            raise RequestException("Playlist request failed")
+        except Exception as err:
+            raise RequestException(f"Playlist request failed: {err}")
 
         self.updated = datetime.utcnow()
         # check snapshot
-        if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
+        if self.snapshot_id and self.snapshot_id == resp["snapshot_id"] and not force:
             db.session.flush()
             return True
 
@@ -356,12 +359,20 @@ class Playlist(db.Model):
         self.owner = ownr
 
         # request tracks
-        pl_items = spotify.playlist_items(self.id)
+        try:
+            pl_items = spotify.playlist_items(self.id)
+        except Exception as err:
+            raise RequestException(f"Playlist update fail (get items): {err}")
+            
+        
         tracks = pl_items["items"]
 
         # request remaining tracks
         while pl_items["next"]:
-            pl_items = spotify.next(pl_items)
+            try:
+                pl_items = spotify.next(pl_items)
+            except Exception as err:
+                raise RequestException(f"Additional items request failed: {err}")
             tracks.extend(pl_items["items"])
 
         # add new tracks to db
@@ -370,8 +381,8 @@ class Playlist(db.Model):
             track = track["track"]
 
             # sometimes spotify gives empty "tracks"
-            if not track and track["preview_url"]:
-                print("TRACK NOT ACTIVE")
+            if not track or not track["preview_url"]:
+                #print(f"TRACK NOT ACTIVE {track}\n")
                 continue
 
             # check if track in db
@@ -421,6 +432,7 @@ class Playlist(db.Model):
 
         db.session.flush()
         db.session.commit()
+
         return True
 
     def last_update(self):

@@ -1,8 +1,9 @@
 // answer buttons
 const buttons = document.querySelectorAll('.ans-btn');
 const quest_num = document.querySelector('#quest_num');
-const quizCard = document.querySelector('#quiz-card')
-const loadCard = document.querySelector('.load-card')
+const quizCard = document.querySelector('#quiz-card');
+const loadCard = document.querySelector('.load-card');
+const mainContainer = document.querySelector('#main-container');
 let resp;
 const countdownSeconds = 5;
 let timer;
@@ -29,6 +30,15 @@ function get_quiz() {
     })
         .then((response) => {
             if (!response.ok) {
+                mainContainer.textContent = ""
+                mainContainer.innerHTML = `<div class="card  h-100 my-auto" style="">
+                <div class="card-body my-auto">
+                    <h5>Connection problem</h5>
+                    <a href="${QUIZ_URL}?force=True">
+                        <button type="submit" class="btn btn-primary">Try again</button>
+                    </a>                    
+                </div>
+            </div>`
                 throw new Error(`HTTP error: ${response.status}`);
             }
             return response.json();
@@ -57,7 +67,6 @@ function get_quiz() {
                     badge.innerHTML = 'level: <span class="badge text-bg-danger">hard</span>';
                     break;
             };
-            console.log(json.plLvl);
             document.querySelector('#lvl-badge').appendChild(badge);
             // update audio src
             audioSource.setAttribute('src', json.next_url);

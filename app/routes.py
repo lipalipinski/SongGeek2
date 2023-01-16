@@ -204,6 +204,17 @@ def quiz(pl_id = None, game = None):
         return redirect(url_for("index"))
 
     if request.method == "GET":
+        # force update
+        if request.args.get("force") == "True":
+            pl = Playlist.query.get(pl_id)
+            try:
+                pl.update(force=True)
+            except Exception as err:
+                flash(f"Playlist update error {err}")
+                return redirect(url_for("index"))
+            
+            db.session.add(pl)
+            db.session.commit()
         return render_template("quiz.html", pl_id = pl_id)
 
     # ======= new game =========    

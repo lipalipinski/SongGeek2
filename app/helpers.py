@@ -1,10 +1,11 @@
 from flask import session, redirect, url_for
 from app import app, spotify, cache
 from os import getenv
+from random import randint
 import time
 import functools
 import requests
-from requests import HTTPError
+from requests import RequestException
 
 countries = {
   "AD": "Andorra",
@@ -268,10 +269,10 @@ def retryfy(reps=1, pause=0):
                     return func(*args, **kwargs)
                 except Exception as err:   
                     print(f"SPOTIFY {attempt+1} FAIL {err}")
-                    time.sleep(pause)
+                    time.sleep(randint(0, pause))
 
             print("SPOTIFY FINAL FAIL")
-            raise Exception
+            raise RequestException("Final request fail")
 
         return wrapper
 
