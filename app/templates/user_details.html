@@ -18,7 +18,7 @@
 {% block main %}
 
 <div class="col mx-auto">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3">
         
         <!-- user -->
         <div id="user-data" class="col">
@@ -30,10 +30,22 @@
                     <img src="{{ current_user.img.lg }}" class="card-img" alt="user profile image">
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">nick:</li>
-                    <li class="list-group-item">games: {{ current_user.count_games() }}</li>
-                    <li class="list-group-item">answers: {{ corr_answers }}/{{ all_answers }}</li>
-                    <li class="list-group-item">ranking: {{current_user.total_points}}</li>
+                    <li class="list-group-item">
+                        games: 
+                        <strong>
+                            {{ current_user.count_games() }}
+                        </strong>
+                    </li>
+                    <li class="list-group-item">
+                        answers: 
+                        <strong>
+                            <span class="text-success">{{ corr_answers }}</span>/{{ all_answers }}
+                        </strong> 
+                        ({{ (corr_answers/all_answers * 100) | round(2, 'common') }}%)
+                    </li>
+                    <li class="list-group-item">
+                        ranking: <strong>{{ (current_user.rank()) | int() }}</strong> ({{current_user.total_points}} pts)
+                    </li>
                 </ul>
                 <div class="card-body">
                 </div>
@@ -58,6 +70,58 @@
                     Most played tracks with the highest average score.
                 </div>
             </div>
+            <table class="table table-sm align-middle table-borderless">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">track</th>
+                                <th>pts</th>
+                                <th>play</th>
+                                <th>like</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quest in game.quests %}
+                            <tr id="_{{ quest.track_id }}">
+                                <td>
+                                    <a href="{{ quest.track.album.url }}"  data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                        <img src="{{quest.track.album.img.sm}}" class="cover-img" alt="">
+                                    </a>
+                                </td>
+                                <td>
+                                    {% for artist in quest.track.artists %}
+                                    <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    {{artist.name}}
+                                    </a>
+                                    {% endfor %} 
+                                    -
+                                    <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                         {{quest.track.name}}
+                                    </a>
+                                </td>
+                                <td class="fw-bold text-center">
+                                    {{quest.points}}
+                                </td>
+                                <td>
+                                    <audio id="player{{loop.index0}}" class="audio-player" preload>
+                                        <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
+                                    </audio>
+                                    <button id="playpause{{loop.index0}}" class="controls btn btn-sm btn-light" data-state="play"></button>
+                                </td>
+                                <td>
+                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-light position-relative" data-bs-toggle="tooltip" data-bs-title="Add to Liked Songs" data-state="loading" value="{{quest.track.id}}">                                        
+                                        <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="col-3 float-end">
+                        <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
+                    </div>
         </div>
 
         <!-- top artists -->

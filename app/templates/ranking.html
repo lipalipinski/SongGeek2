@@ -23,7 +23,10 @@ Ranking
         <div class="card-body">
             <ul class="list-group list-group-flush list-group-numbered">
             {% for user in ranks %}
-                <li class="list-group-item">{{user.name}} ({{user.total_points}})</li>
+                <li class="list-group-item">
+                    <img src="{{ user.img.sm }}" class="usr-img rounded" alt="{{user.name}} profile image">
+                    {{user.name}} ({{user.total_points}} pts)
+                </li>
             {% endfor %}
             </ul>
         </div>

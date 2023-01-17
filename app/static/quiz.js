@@ -75,6 +75,8 @@ function get_quiz() {
             let startTime = Math.floor(Math.random() * 25);
             player.currentTime = startTime;
             play.addEventListener('click', startPlayer, { once: true });
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             loadCard.classList.add('d-none');
             quizCard.classList.remove('d-none');
 

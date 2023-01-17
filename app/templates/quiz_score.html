@@ -29,10 +29,12 @@
             
                 <div class="col-12 col-sm-8">
                     <h5 class="card-title">
-                        <a href="{{ pl.url }}" target="_blank" noopener noreferer>{{ pl.name }}</a>
+                        <a href="{{ pl.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                            {{ pl.name }}
+                        </a>
                     </h5>
                     <p class="card-text"><small class="text-muted">
-                            by <a href="{{ pl.owner.url }}" target="_blank" noopener noreferer>
+                            by <a href="{{ pl.owner.url }}" class="link-secondary" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                 {{ pl.owner.name }}</a>
                         </small></p>
                     <p class="card-text">{{ pl.description }}</p>
@@ -41,18 +43,17 @@
         
             <div class="row">
                 <div class="col">
-                    </table>
                     <p class="card-text fw-bold">
                         score: {{ game.points() }} pts x
                         <span id="lvl-badge" class="badge"></span>
                         = {{ game.final_points }} pts
                     </p>
-                    <table class="table table-borderless">
+                    <table class="table table-sm align-middle table-borderless">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>track</th>
-                                <th>score</th>
+                                <th class="text-center">track</th>
+                                <th>pts</th>
                                 <th>play</th>
                                 <th>like</th>
                             </tr>
@@ -60,13 +61,25 @@
                         <tbody>
                             {% for quest in game.quests %}
                             <tr id="_{{ quest.track_id }}">
-                                <td><img src="{{quest.track.album.img.sm}}" class="cover-img" alt=""></td>
+                                <td>
+                                    <a href="{{ quest.track.album.url }}"  data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                        <img src="{{quest.track.album.img.sm}}" class="cover-img" alt="">
+                                    </a>
+                                </td>
                                 <td>
                                     {% for artist in quest.track.artists %}
+                                    <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                     {{artist.name}}
+                                    </a>
                                     {% endfor %} 
-                                    - {{quest.track.name}}</td>
-                                <td class="fw-bold">{{quest.points}}</td>
+                                    -
+                                    <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                         {{quest.track.name}}
+                                    </a>
+                                </td>
+                                <td class="fw-bold text-center">
+                                    {{quest.points}}
+                                </td>
                                 <td>
                                     <audio id="player{{loop.index0}}" class="audio-player" preload>
                                         <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
@@ -74,7 +87,7 @@
                                     <button id="playpause{{loop.index0}}" class="controls btn btn-sm btn-light" data-state="play"></button>
                                 </td>
                                 <td>
-                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-light position-relative" data-state="loading" value="{{quest.track.id}}">                                        
+                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-light position-relative" data-bs-toggle="tooltip" data-bs-title="Add to Liked Songs" data-state="loading" value="{{quest.track.id}}">                                        
                                         <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
@@ -84,7 +97,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    <div class="col-3">
+                    <div class="col-3 float-end">
                         <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                     </div>
                 </div>

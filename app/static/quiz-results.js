@@ -3,6 +3,8 @@ const controls = document.querySelectorAll(".controls");
 const volume = document.querySelector('#volume');
 const likes = document.querySelectorAll(".like")
 
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
 function setLvlBadge(badge, lvl) {
     let badgeClass;

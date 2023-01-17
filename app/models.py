@@ -16,8 +16,8 @@ def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
-@cache.cached(timeout=5)
 def get_ranking():
+    """returns sorted dict {<user>:rank, ...}"""
     ids = []
     pts = []
     for user in db.session.query(User).all():
@@ -202,6 +202,9 @@ class User(UserMixin, db.Model):
 
     def set_total_points(self):
         self.total_points = sum([game.final_points for game in self.games if game.final_points != None])
+
+    def rank(self):
+        return get_ranking()[self]
 
 playlist_track = db.Table("playlist_track",
                 db.Column("playlist_id", db.Text, db.ForeignKey("playlist.id"), primary_key=True),

@@ -109,10 +109,10 @@ function fetchPlaylists() {
                 
                 <div class="card-body">
                     <h5 class="card-title">
-                        <a href="${pl.url}" target="_blank" noopener noreferer>${pl.name}</a>
+                        <a href="${pl.url}" class="link-dark" target="_blank" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" noopener noreferer>${pl.name}</a>
                     </h5>
                     <p class="card-text"><small class="text-muted">
-                        by <a href="${pl.ownerUrl}" target="_blank" noopener noreferer>
+                        by <a href="${pl.ownerUrl}" class="link-secondary" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                             ${pl.ownerName}</a>
                     </small></p>
                     <p class="card-text">${pl.description}</p>
@@ -127,6 +127,8 @@ function fetchPlaylists() {
                 </div>
             </div>`;
                 mainRow.appendChild(mainDiv);
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             };
         });
 };
