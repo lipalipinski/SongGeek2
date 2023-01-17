@@ -2,7 +2,10 @@
     width: 30px;
     height: 30px;
 }
-
+.cover-img {
+    width: 45px;
+    height: 45px;
+}
 button{
     background-repeat: no-repeat;
     background-size:contain;
@@ -10,14 +13,16 @@ button{
 
 a{
     color: black;
-    text-decoration: none;
 }
 
 button.main-btn{
     color: #FFFFFF;
     font-size: 2.5em;
 }
-
+button.multiplayer {
+    height: 40px;
+    width: 40px;
+}
 button.btn-navbar{
     --bs-btn-padding-y: 8px;
     --bs-btn-border-width: 0;

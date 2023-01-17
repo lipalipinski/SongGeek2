@@ -84,10 +84,10 @@
                                     <audio id="player{{loop.index0}}" class="audio-player" preload>
                                         <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
                                     </audio>
-                                    <button id="playpause{{loop.index0}}" class="controls btn btn-sm btn-light" data-state="play"></button>
+                                    <button id="playpause{{loop.index0}}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
                                 </td>
                                 <td>
-                                    <button id="like{{loop.index0}}" class="like btn btn-sm btn-light position-relative" data-bs-toggle="tooltip" data-bs-title="Add to Liked Songs" data-state="loading" value="{{quest.track.id}}">                                        
+                                    <button id="like{{loop.index0}}" class="multiplayer like btn btn-sm btn-light position-relative" data-bs-toggle="tooltip" data-bs-title="Add to Liked Songs" data-state="loading" value="{{quest.track.id}}">                                        
                                         <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>

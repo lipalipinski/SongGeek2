@@ -180,7 +180,16 @@ def user_details():
             tracks = current_user.top_tracks()
             if len(tracks) > 5:
                 tracks = tracks[0:5]
-            tracks = [{"id":track["track"].id, "name":track["track"].name, "artists":[artist.name for artist in track["track"].artists], "score":track["score"]} for track in tracks]
+            tracks = [{
+                    "rank":i+1, 
+                    "id":track["track"].id, 
+                    "name":track["track"].name,
+                    "url":track["track"].url,
+                    "prevUrl":track["track"].prev_url,
+                    "artists":[{"name":artist.name, "url":artist.url} for artist in track["track"].artists], 
+                    "score":track["score"],
+                    "albumUrl":track["track"].album.url,
+                    "albumImg":track["track"].album.img.sm} for i, track in enumerate(tracks)]
             return Response(json.dumps(tracks), status=200)
 
         # top playlists
