@@ -29,12 +29,12 @@
             
                 <div class="col-12 col-sm-8">
                     <h5 class="card-title">
-                        <a href="{{ pl.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                        <a href="{{ pl.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                             {{ pl.name }}
                         </a>
                     </h5>
                     <p class="card-text"><small class="text-muted">
-                            by <a href="{{ pl.owner.url }}" class="link-secondary" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                            by <a href="{{ pl.owner.url }}" class="link-secondary" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                 {{ pl.owner.name }}</a>
                         </small></p>
                     <p class="card-text">{{ pl.description }}</p>
@@ -62,18 +62,17 @@
                             {% for quest in game.quests %}
                             <tr id="_{{ quest.track_id }}">
                                 <td>
-                                    <a href="{{ quest.track.album.url }}"  data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    <a href="{{ quest.track.album.url }}" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                         <img src="{{quest.track.album.img.sm}}" class="cover-img" alt="">
                                     </a>
                                 </td>
                                 <td>
                                     {% for artist in quest.track.artists %}
-                                    <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                    {{artist.name}}
-                                    </a>
+                                    <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    {{artist.name}}</a>{% if loop.index != quest.track.artists|length%},{% endif %}
                                     {% endfor %} 
                                     -
-                                    <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                          {{quest.track.name}}
                                     </a>
                                 </td>

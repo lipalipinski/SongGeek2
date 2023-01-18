@@ -179,10 +179,12 @@ fetch(FETCH_URL, {
             const tr = document.createElement('tr');
             tr.classList.add(`_${track.id}`)
             let artists = '';
-            for (artist of track.artists) {
+            for (let [i, artist] of track.artists.entries()) {
                 artists += `<a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                ${artist.name}
-                            </a>`;
+                                ${artist.name}</a>`;
+                if (i != track.artists.length -1) {
+                    artists += ',';
+                };
             }
             tr.innerHTML = `
                             <td><strong>${track.rank}.</strong></td>
@@ -254,7 +256,7 @@ fetch(FETCH_URL, {
             topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
             topArtistsTable.classList.remove('d-none');
-        }
+        };
         for (let [i, artist] of artists.entries()) {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>
@@ -271,8 +273,8 @@ fetch(FETCH_URL, {
             topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
             topArtistsTable.classList.remove('d-none');
-            console.log(topArtistsTable);
-        }
+            
+        };
     })
     .then(() => {
         const artistsTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
