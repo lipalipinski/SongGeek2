@@ -48,11 +48,43 @@
                     <li class="list-group-item">
                         ranking: <strong>{{ (current_user.rank()) | int() }}</strong> ({{current_user.total_points}} pts)
                     </li>
+                    <li class="list-group-item text-center">
+                        <a href="{{ url_for('remove_user') }}">
+                            <button type="button" class="btn btn-sm btn-danger" >
+                                remove account
+                            </button>
+                        </a>
+                    </li>
                 </ul>
                 <div class="card-body">
                 </div>
             </div>
         </div>
+
+        <!-- remove account modal -->
+        <div class="modal fade" id="removeAccount" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete account?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        You are about to permanently delete your SongGeek account. 
+                        Bear in mind, that this process is irreversible. 
+                        We will not be able to restore your account. 
+                        You can always set up a new account - simply login with Spotify.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go back</button>
+                        <a href="{{ url_for('remove_user') }}">
+                            <button type="button" class="btn btn-danger">Delete account permanently</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <!-- top tracks -->
@@ -130,6 +162,7 @@
 
 
     </div>
+
     <div class="row g-3" id="top-playlists">
         <div class="col col-12 mb-0">
             <h4>top playlists:</h4>

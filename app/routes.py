@@ -5,8 +5,7 @@ import requests
 import json
 from flask import flash, render_template, redirect, request, url_for, Response, session
 from flask_login import current_user, login_user, login_required, logout_user
-from requests.exceptions import RequestException, HTTPError
-
+from requests.exceptions import RequestException
 from app import app, spotify, cache
 from app.helpers import dict_html, img_helper, countries, set_country, available_markets, retryfy
 from app.models import db, Playlist, User, Game, Img, get_ranking
@@ -81,6 +80,13 @@ def login():
     auth_url = f'''{app.config["API_BASE"]}/authorize?client_id={CLI}&response_type=code&redirect_uri={app.config["REDIRECT_URI"]}&scope={app.config["SCOPE"]}&show_dialog={True}'''
     
     return redirect(auth_url)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+
+    return redirect(url_for("index"))
+
 
 # ==== REFRESH TOKEN BEFORE REQUEST if user authenticated
 @app.before_request
@@ -235,6 +241,22 @@ def user_details():
     return render_template("user_details.html", corr_answers=corr_answers, all_answers=all_answers)
 
 
+@app.route("/remove-user", methods=["GET", "POST"])
+def remove_user():
+
+    if current_user.is_anonymous:
+        return redirect(url_for("index"))
+    
+    # POSt
+    if request.method == "POST":
+        db.session.delete(current_user)
+        logout_user()
+        db.session.commit()
+        return redirect(url_for("index"))
+    
+    # GET
+    return render_template("remove_user.html")
+
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>", methods=["POST", "GET"])
 @login_required
@@ -380,12 +402,7 @@ def likes():
 
     return Response({}, status=401)
 
-@app.route("/logout")
-def logout():
-    
-    logout_user()
 
-    return redirect(url_for("index"))
 
 
 @app.route("/add-playlist", methods = ["POST", "GET"])
