@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 
 {% block head %}
-
+<script src="{{ url_for('static', filename='ranking.js')}}" defer></script>
 
 {% endblock %}
 
 {% block javascript %}
 <script>
-    
+    const FETCH_URL = {{ url_for('ranking') | tojson | safe}}
 </script>
 {% endblock %}
 
@@ -19,16 +19,24 @@ Ranking
 
 <div class="col col-lg-7 col-xl-6 mx-auto">
     <div class="card h-100" style="">
-
+        <div class="card-header">
+            <h5>top 10 players</h5>
+        </div>
         <div class="card-body">
-            <ul class="list-group list-group-flush list-group-numbered">
-            {% for user in ranks %}
-                <li class="list-group-item">
-                    <img src="{{ user.img.sm }}" class="usr-img rounded" alt="{{user.name}} profile image">
-                    {{user.name}} ({{user.total_points}} pts)
-                </li>
-            {% endfor %}
-            </ul>
+            <table id="top-players" class="d-none table table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th></th>
+                        <th>player</th>
+                        <th>points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- top players -->
+                </tbody>
+            </table>
+
         </div>
     </div>
 </div>

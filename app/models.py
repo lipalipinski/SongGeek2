@@ -16,8 +16,8 @@ def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
-def get_ranking():
-    """returns sorted dict {<user>:rank, ...}"""
+def get_ranking(n=None):
+    """get to n players returns sorted dict {<user>:rank, ...}"""
     ids = []
     pts = []
     for user in db.session.query(User).all():
@@ -27,7 +27,7 @@ def get_ranking():
     sr = pd.Series(pts)
     sr.index = ids
 
-    ranking = sr.rank(ascending=False, method="first", na_option="bottom").sort_values().to_dict()
+    ranking = sr.rank(ascending=False, method="first", na_option="bottom").sort_values().head(n).to_dict()
 
     return ranking
 
