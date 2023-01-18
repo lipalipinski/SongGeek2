@@ -87,7 +87,9 @@ function fetchPlaylists() {
                 //reverse (hard first)
                 return p2.lvl - p1.lvl;
             };
-            json.sort(compareLvls);
+            json.sort((p1, p2) => {
+                return p2.lvl - p1.lvl;
+            });
             removePlaceholders()
             for (pl of json) {
                 let badge = '';

@@ -8,6 +8,7 @@
 <script>
     const FETCH_URL = {{ url_for('user_details') | tojson | safe}}
     const LIKES_API = {{ url_for('likes') | tojson | safe}};
+    const QUIZ_URL = {{ url_for('quiz') | tojson | safe}};
 </script>
 {% endblock %}
 
@@ -19,7 +20,7 @@
 {% block main %}
 
 <div class="col mx-auto">
-    <div class="row g-3">
+    <div class="row g-3 mb-3">
 
         <!-- user -->
         <div id="user-data" class="col-6 col-sm-4 col-lg-3 col-xl-2 order-first">
@@ -127,36 +128,14 @@
 
         <!-- top playlists -->
 
-        <div class="col col-sm-6 order-last">
-            <div class="card  h-100" style="">
-                <div class="card-header">
-                    <h5>top playlists</h5>
-                </div>
-                <div class="card-body">
-                    <table id="top-playlists" class="d-none table table-sm align-middle">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th class="text-center">playlist</th>
-                                <th>pts</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- top artists rows here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="playlists-spinner" class="load-spinner card-body">
-                    <div class="d-flex h-100 justify-content-center align-items-center">
-                        <div class="spinner-border my-auto"></div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    Most played playlists with the highest average score.
-                </div>
-            </div>
-        </div>
 
     </div>
+    <div class="row g-3" id="top-playlists">
+        <div class="col col-12 mb-0">
+            <h4>top playlists:</h4>
+        </div>
+    </div>
+
+
 </div>
 {% endblock %}

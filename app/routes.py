@@ -197,15 +197,20 @@ def user_details():
             return Response(json.dumps(tracks), status=200)
 
         # top playlists
+        plsts_q = 6
         if request.json["mode"] == "topPlaylists":
             playlists = current_user.top_playlists()
-            if len(playlists) > 5:
-                playlists = playlists[0:5]
+            if len(playlists) > plsts_q:
+                playlists = playlists[0:plsts_q]
             playlists = [{
                     "id":pl["plst"].id, 
                     "name":pl["plst"].name,
-                    "url":pl["plst"].url, 
-                    "imgUrl":pl["plst"].img.sm,
+                    "url":pl["plst"].url,
+                    "lvl":pl["plst"].level(),
+                    "imgUrl":pl["plst"].img.lg,
+                    "ownerUrl":pl["plst"].owner.url,
+                    "ownerName":pl["plst"].owner.name,
+                    'description':pl["plst"].description,
                     "score":pl["score"]} for pl in playlists]
             return Response(json.dumps(playlists), status=200)
     

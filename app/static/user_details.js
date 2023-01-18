@@ -4,6 +4,7 @@ const topTracksTable = document.querySelector('#top-tracks')
 const topTracksSpinner = document.querySelector('#tracks-spinner');
 const topPlaylistsTable = document.querySelector('#top-playlists');
 const topPlaylistsSpinner = document.querySelector('#playlists-spinner');
+const playlistsRow = document.querySelector('#top-playlists');
 
 function setMultiPlayer(plrs, cntrls, vol) {
     vol.classList.remove('d-none');
@@ -152,6 +153,54 @@ function flashTooltip(element, message, timeout) {
     }, timeout);
 };
 
+//set placeholders for playlists cards
+function setPlaylistsPlaceholders(row, count) {
+    //row.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        let placeholder = document.createElement('div');
+        placeholder.classList.add('main-load', 'col', 'col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'col-xl-2')
+        placeholder.innerHTML = `
+        <div class ="card h-100 px-0">
+        <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img"
+                aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#868e96"></rect>
+            </svg>
+            
+            <div class="card-body">
+                <h5 class="card-title placeholder-glow">
+                        <span class="placeholder col-6"></span>
+                </h5>
+                <p class="card-text placeholder-glow">
+                        <span class="placeholder col-1"></span> 
+                        <span class="placeholder col-4"></span>
+                </p>
+                <p class="card-text placeholder-glow">
+                        <span class="placeholder col-7"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-4"></span>
+                        <span class="placeholder col-6"></span>
+                        <span class="placeholder col-8"></span>
+                </p>
+            </div>
+            <div class="card-footer text-center placeholder-glow">
+                <span class="placeholder col-4"></span>
+            </div>
+            <div class="card-footer text-center placeholder-glow">
+                <span class="placeholder col-4"></span>
+            </div>
+            </div>`;
+        row.appendChild(placeholder);
+    };
+};
+
+function removePlaceholders() {
+    let placeholders = document.querySelectorAll('.main-load');
+    for (placeholder of placeholders) {
+        placeholder.remove();
+    };
+};
+
 // TOP TRACKS
 let data = {
     'mode':'topTracks'
@@ -281,46 +330,86 @@ fetch(FETCH_URL, {
         const artistsTooltipList = [...artistsTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     });
 
-// TOP PLAYLISTS
-data = {
-    'mode': 'topPlaylists'
-};
-fetch(FETCH_URL, {
-    'method': 'POST',
-    'headers': { 'Content-Type': 'application/json' },
-    'body': JSON.stringify(data)
-})
+
+function fetchPlaylists(row) {
+    data = {
+        'mode': 'topPlaylists'
+    };
+    fetch(FETCH_URL, {
+        'method': 'POST',
+        'headers': { 'Content-Type': 'application/json' },
+        'body': JSON.stringify(data)
+    })
     .then((response) => {
         if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
+            removePlaceholders()
+            errorDiv = document.createElement('div');
+            errorDiv.innerHTML = `<div class="card  h-100 my-auto" style="">
+                    <div class="card-body my-auto">
+                        <h5>Connection problem</h5>
+                        <a href="${FETCH_URL}">
+                            <button type="submit" class="btn btn-primary">Try again</button>
+                        </a>                    
+                    </div>
+                </div>`;
+            document.querySelector('#main-row').appendChild(errorDiv);
+            throw new Error(`HTTP error ${response.status}`);
         };
         return response.json();
     })
-    .then((playlists) => {
-        // no top plsts
-        if (playlists.length == 0) {
-            const tr = document.createElement('tr');
-            tr.textContent = "to few games";
-            topPlaylistsTable.querySelector('tbody').appendChild(tr);
-            topPlaylistsSpinner.classList.add('d-none');
-            topPlaylistsTable.classList.remove('d-none',);
-        }
-        for (let [i, playlist] of playlists.entries()) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td><strong>${i + 1}.</strong></td>
-                            <td>
-                                <a href="${playlist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                    <img src="${playlist.imgUrl}" class="cover-img" alt="playlist ${playlist.name} cover photo"/>
-                                </a>
-                            </td>
-                            <td>
-                                ${playlist.name}
-                            </td>
-                            <td>
-                                (${playlist.score})
-                            </td>`;
-            topPlaylistsTable.querySelector('tbody').appendChild(tr);
-            topPlaylistsSpinner.classList.add('d-none');
-            topPlaylistsTable.classList.remove('d-none');
-        }
+    .then((json) => {
+        json.sort((p1, p2) => {
+            return p2.score - p1.score;
+        });
+        removePlaceholders()
+        for (pl of json) {
+            let badge = '';
+            if (pl.lvl == 1) {
+                badge = '<h5>level: <span class="badge text-bg-success">easy</span></h5>';
+            } if (pl.lvl == 2) {
+                badge = '<h5>level: <span class="badge text-bg-warning">normal</span></h5>';
+            } if (pl.lvl == 3) {
+                badge = '<h5>level: <span class="badge text-bg-danger">hard</span></h5>';
+            };
+            let mainDiv = document.createElement('div');
+            mainDiv.classList.add('col', 'col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'col-xl-2')
+            mainDiv.innerHTML = `<div class="card h-100">
+            
+            <div class="">
+                <img src="${pl.imgUrl}" class="card-img-top" alt="${pl.name} cover image">
+            </div>
+
+            
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="${pl.url}" class="link-dark" target="_blank" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" noopener noreferer>${pl.name}</a>
+                </h5>
+                <p class="card-text"><small class="text-muted">
+                    by <a href="${pl.ownerUrl}" class="link-secondary" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                        ${pl.ownerName}</a>
+                </small></p>
+                <p class="card-text">${pl.description}</p>
+            </div>
+            <div class="card-footer text-center">
+                <span>
+                    avg score: <strong>${pl.score}</strong>
+                </span>
+            </div>
+            <div class="card-footer text-center">
+                ${badge}
+            </div>
+            <div class="card-footer text-center">
+                <a href="${QUIZ_URL}/${pl.id}">
+                    <button name="pl" value="" class="btn btn-md btn-primary">Play!</button>
+                </a>
+            </div>
+        </div>`;
+            row.appendChild(mainDiv);
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        };
     });
+};
+
+setPlaylistsPlaceholders(playlistsRow, 6);
+fetchPlaylists(playlistsRow);
