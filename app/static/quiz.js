@@ -45,6 +45,7 @@ function get_quiz() {
         })
         .then((json) => {
             resp = json;
+            document.querySelector('title').innerText = `SongGeek: ${json.plName}`;
             gameId = json.gameId;
             // set playlist img
             document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);

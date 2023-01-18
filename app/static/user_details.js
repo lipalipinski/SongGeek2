@@ -127,26 +127,27 @@ function likeSong(id, like, btn) {
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, false, e.target)
                 }, { once: true });
-                badgeForButton(btn, 'Added to Liked Songs', 900);
+                flashTooltip(btn, 'Added to Liked Songs', 900);
                 // no like
             } else {
                 btn.setAttribute('data-state', 'not-liked');
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, true, e.target)
                 }, { once: true });
-                badgeForButton(btn, 'Removed from Liked Songs', 900);
+                flashTooltip(btn, 'Removed from Liked Songs', 900);
             };
         });
 };
 
-// flash a badge for [timeout] seconds
-function badgeForButton(button, message, timeout) {
-    badge = document.createElement('span');
-    badge.classList.add('position-absolute', 'top-100', 'start-50', 'translate-middle', 'badge', 'rounded-pill', 'bg-dark');
-    badge.textContent = message;
-    button.appendChild(badge);
+// flash a tooltip for [timeout] seconds
+function flashTooltip(element, message, timeout) {
+    const tooltip = new bootstrap.Tooltip(element, {
+        'title': message,
+        'trigger': 'manual'
+    });
+    tooltip.show();
     setTimeout(() => {
-        badge.remove();
+        tooltip.dispose();
     }, timeout);
 };
 
@@ -205,7 +206,7 @@ fetch(FETCH_URL, {
                                 <button id="playpause${i}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
                             </td>
                             <td>
-                                <button id="like${i}" class="like multiplayer btn btn-sm btn-light position-relative" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Add to Liked Songs" data-state="loading" value="${track.id}">                                        
+                                <button id="like${i}" class="like multiplayer btn btn-sm btn-light position-relative" data-state="loading" value="${track.id}">                                        
                                     <div id="spinner${i}" class="spinner-border spinner-border-sm" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>

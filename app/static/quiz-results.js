@@ -112,26 +112,27 @@ function likeSong(id, like, btn) {
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, false, e.target)
                 }, { once: true });
-                badgeForButton(btn, 'Added to Liked Songs', 900);
+                flashTooltip(btn, 'Added to Liked Songs', 900);
                 // no like
             } else {
                 btn.setAttribute('data-state', 'not-liked');
                 btn.addEventListener('click', (e) => {
                     likeSong(track.id, true, e.target)
                 }, { once: true });
-                badgeForButton(btn, 'Removed from Liked Songs', 900);
+                flashTooltip(btn, 'Removed from Liked Songs', 900);
             };
         });
 };
 
-// flash a badge for [timeout] seconds
-function badgeForButton(button, message, timeout) {
-    badge = document.createElement('span');
-    badge.classList.add('position-absolute', 'top-100', 'start-50', 'translate-middle', 'badge', 'rounded-pill', 'bg-dark');
-    badge.textContent = message;
-    button.appendChild(badge);
+// flash a tooltip for [timeout] seconds
+function flashTooltip(element, message, timeout) {
+    const tooltip = new bootstrap.Tooltip(element, {
+        'title': message,
+        'trigger': 'manual'
+    });
+    tooltip.show();
     setTimeout(() => {
-        badge.remove();
+        tooltip.dispose();
     }, timeout);
 };
 
