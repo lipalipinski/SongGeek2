@@ -128,12 +128,24 @@
         <!-- top playlists -->
 
         <div class="col col-sm-6 order-last">
-            <div id="top-playlists"  class="card  h-100" style="">
+            <div class="card  h-100" style="">
                 <div class="card-header">
                     <h5>top playlists</h5>
                 </div>
-                <ul class="d-none list-group list-group-flush list-group-numbered">
-                </ul>
+                <div class="card-body">
+                    <table id="top-playlists" class="d-none table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">playlist</th>
+                                <th>pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- top artists rows here -->
+                        </tbody>
+                    </table>
+                </div>
                 <div id="playlists-spinner" class="load-spinner card-body">
                     <div class="d-flex h-100 justify-content-center align-items-center">
                         <div class="spinner-border my-auto"></div>

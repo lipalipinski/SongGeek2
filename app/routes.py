@@ -201,7 +201,12 @@ def user_details():
             playlists = current_user.top_playlists()
             if len(playlists) > 5:
                 playlists = playlists[0:5]
-            playlists = [{"id":pl["plst"].id, "name":pl["plst"].name, "score":pl["score"]} for pl in playlists]
+            playlists = [{
+                    "id":pl["plst"].id, 
+                    "name":pl["plst"].name,
+                    "url":pl["plst"].url, 
+                    "imgUrl":pl["plst"].img.sm,
+                    "score":pl["score"]} for pl in playlists]
             return Response(json.dumps(playlists), status=200)
     
     corr_answers, all_answers = current_user.answers()

@@ -1,8 +1,8 @@
-const topTracksTable = document.querySelector('#top-tracks')
 const topArtistsTable = document.querySelector('#top-artists');
 const topArtistsSpinner = document.querySelector('#artists-spinner');
+const topTracksTable = document.querySelector('#top-tracks')
 const topTracksSpinner = document.querySelector('#tracks-spinner');
-const topPlaylistsList = document.querySelector('#top-playlists ul');
+const topPlaylistsTable = document.querySelector('#top-playlists');
 const topPlaylistsSpinner = document.querySelector('#playlists-spinner');
 
 function setMultiPlayer(plrs, cntrls, vol) {
@@ -190,7 +190,7 @@ fetch(FETCH_URL, {
                             <td><strong>${track.rank}.</strong></td>
                             <td>
                                 <a href="${track.albumUrl}"  data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                    <img src="${track.albumImg}" class="cover-img" alt="">
+                                    <img src="${track.albumImg}" class="cover-img" alt="${track.name} cover photo">
                                 </a>
                             </td>
                             <td>
@@ -299,19 +299,28 @@ fetch(FETCH_URL, {
     .then((playlists) => {
         // no top plsts
         if (playlists.length == 0) {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item');
-            li.textContent = "to few games";
-            topPlaylistsList.appendChild(li);
+            const tr = document.createElement('tr');
+            tr.textContent = "to few games";
+            topPlaylistsTable.querySelector('tbody').appendChild(tr);
             topPlaylistsSpinner.classList.add('d-none');
-            topPlaylistsList.classList.remove('d-none', 'list-group-numbered');
+            topPlaylistsTable.classList.remove('d-none',);
         }
-        for (playlist of playlists) {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item');
-            li.textContent = `${playlist.name} (${playlist.score})`;
-            topPlaylistsList.appendChild(li);
+        for (let [i, playlist] of playlists.entries()) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td><strong>${i + 1}.</strong></td>
+                            <td>
+                                <a href="${playlist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    <img src="${playlist.imgUrl}" class="cover-img" alt="playlist ${playlist.name} cover photo"/>
+                                </a>
+                            </td>
+                            <td>
+                                ${playlist.name}
+                            </td>
+                            <td>
+                                (${playlist.score})
+                            </td>`;
+            topPlaylistsTable.querySelector('tbody').appendChild(tr);
             topPlaylistsSpinner.classList.add('d-none');
-            topPlaylistsList.classList.remove('d-none');
+            topPlaylistsTable.classList.remove('d-none');
         }
     });
