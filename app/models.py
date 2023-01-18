@@ -451,15 +451,19 @@ class Playlist(db.Model):
         upt_txt = f"d:{days} h:{hrs} m:{mins}"
         return upt_txt
 
-    def avg_score(self):
+    def avg_score(self, user=None):
         """ returns current average score of all games with this playlist, 
         or 0 if no games played"""
-
+        
         games_count = db.session.query(Game).filter(Game.playlist_id == self.id).count()
-        if games_count != 0:
-            return sum([game.points() for game in self.games])/games_count
-        else:
+        if games_count == 0:
             return 0
+        if not user:
+            return sum([game.points() for game in self.games])/games_count
+       
+        user_games = db.session.query(Game).filter(Game.playlist_id == self.id, Game.user_id == user.id)
+        return statistics.mean([game.points() for game in user_games.all()])
+
 
     @cache.memoize(timeout=300)
     def level(self):
