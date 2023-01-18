@@ -20,9 +20,9 @@
 
 <div class="col mx-auto">
     <div class="row g-3">
-        <!--row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3-->
+
         <!-- user -->
-        <div id="user-data" class="col-6 col-sm-4 col-lg-2 order-first">
+        <div id="user-data" class="col-6 col-sm-4 col-lg-3 col-xl-2 order-first">
             <div class="card h-100" style="">
                 <div class="card-header">
                     <h5>{{current_user.name}}</h5>
@@ -32,7 +32,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        games: 
+                        total games: 
                         <strong>
                             {{ current_user.count_games() }}
                         </strong>
@@ -55,7 +55,7 @@
 
 
         <!-- top tracks -->
-        <div class="col col-sm-8 col-lg-6 order-3 order-sm-2">
+        <div class="col col-sm-8 col-lg-6 order-sm-2 order-3">
             <div class="card h-100" style="">
                 <div class="card-header">
                     <h5>top tracks</h5>
@@ -66,15 +66,15 @@
                             <div class="spinner-border my-auto"></div>
                         </div>
                     </div>
-                    <table id="top-tracks" class="d-none table align-middle table-borderless">
+                    <table id="top-tracks" class="d-none table table-sm align-middle">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th></th>
                                 <th class="text-center">track</th>
                                 <th>pts</th>
-                                <th>play</th>
-                                <th>like</th>
+                                <th class="text-center">play</th>
+                                <th class="text-center">like</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,7 +82,7 @@
                         </tbody>
                     </table>
                     <div class="col-3 float-end">
-                        <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
+                        <input id="volume" min="0" max="100" value="80" type="range" class="d-none form-range">
                     </div>
                     <div class="card-body">
                         Most played tracks with the highest average score.
@@ -93,16 +93,30 @@
 
         <!-- top artists -->
 
-        <div class="col col-sm-6 col-lg-4 order-2 order-sm-3">
-            <div id="top-artists" class="card  h-100" style="">
+        <div class="col col-sm-6 col-lg-3 order-2 order-sm-3">
+            <div class="card  h-100" style="">
                 <div class="card-header">
                     <h5>top artists</h5>
                 </div>
-                <ul class="d-none list-group list-group-flush list-group-numbered">
-                </ul>
-                <div id="artists-spinner" class="load-spinner card-body">
-                    <div class="d-flex h-100 justify-content-center align-items-center">
-                        <div class="spinner-border my-auto"></div>
+                <div class="card-body">
+
+                    <table id="top-artists" class="d-none table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">artist</th>
+                                <th>pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- top artists rows here -->
+                        </tbody>
+                    </table>
+
+                    <div id="artists-spinner" class="load-spinner card-body">
+                        <div class="d-flex h-100 justify-content-center align-items-center">
+                            <div class="spinner-border my-auto"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">

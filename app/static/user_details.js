@@ -1,11 +1,12 @@
 const topTracksTable = document.querySelector('#top-tracks')
-const topArtistsList = document.querySelector('#top-artists ul');
+const topArtistsTable = document.querySelector('#top-artists');
 const topArtistsSpinner = document.querySelector('#artists-spinner');
 const topTracksSpinner = document.querySelector('#tracks-spinner');
 const topPlaylistsList = document.querySelector('#top-playlists ul');
 const topPlaylistsSpinner = document.querySelector('#playlists-spinner');
 
 function setMultiPlayer(plrs, cntrls, vol) {
+    vol.classList.remove('d-none');
     // play/pause player
     for (const [i, playpause] of cntrls.entries()) {
         playpause.addEventListener('click', () => {
@@ -172,7 +173,7 @@ fetch(FETCH_URL, {
             tr.textContent = "to few games";
             topTracksTable.querySelector('tbody').appendChild(tr);
             topTracksSpinner.classList.add('d-none');
-            topTracksTable.classList.remove('d-none', 'list-group-numbered');
+            topTracksTable.classList.remove('d-none');
         }
         for (let [i, track] of tracks.entries()) {
             const tr = document.createElement('tr');
@@ -248,21 +249,34 @@ fetch(FETCH_URL, {
     })
     .then((artists) => {
         if (artists.length == 0) {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item');
-            li.textContent = "to few games";
-            topArtistsList.appendChild(li);
+            const tr = document.createElement('tr');
+            tr.textContent = "to few games";
+            topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
-            topArtistsList.classList.remove('d-none', 'list-group-numbered');
+            topArtistsTable.classList.remove('d-none');
         }
-        for (artist of artists) {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item');
-            li.textContent = `${artist.name} (${artist.score})`;
-            topArtistsList.appendChild(li);
+        for (let [i, artist] of artists.entries()) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>
+                                <strong>${i + 1}.</strong>
+                            </td>
+                            <td>
+                                <a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                    ${artist.name}
+                                </a>
+                            </td>
+                            <td>
+                                (<strong>${artist.score}</strong>)
+                            </td>`;
+            topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
-            topArtistsList.classList.remove('d-none');
+            topArtistsTable.classList.remove('d-none');
+            console.log(topArtistsTable);
         }
+    })
+    .then(() => {
+        const artistsTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const artistsTooltipList = [...artistsTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     });
 
 // TOP PLAYLISTS

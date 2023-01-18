@@ -172,7 +172,11 @@ def user_details():
             artists = current_user.top_artists()
             if len(artists) > 5:
                 artists = artists[0:5]
-            artists = [{"id":artist["artst"].id, "name":artist["artst"].name, "url":artist["artst"].url, "score":artist["score"]} for artist in artists]
+            artists = [{
+                    "id":artist["artst"].id, 
+                    "name":artist["artst"].name, 
+                    "url":artist["artst"].url, 
+                    "score":artist["score"]} for artist in artists]
             return Response(json.dumps(artists), status=200)
 
         # top tracks
