@@ -27,7 +27,7 @@ def get_ranking():
     sr = pd.Series(pts)
     sr.index = ids
 
-    ranking = sr.rank(ascending=False, method="first", na_option="top").sort_values().to_dict()
+    ranking = sr.rank(ascending=False, method="first", na_option="bottom").sort_values().to_dict()
 
     return ranking
 

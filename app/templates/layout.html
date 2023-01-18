@@ -29,7 +29,7 @@
     <title>SongGeek: {% block title %}{% endblock %}</title>
     
 </head>
-<body>
+<body class="d-flex flex-column">
 
     <!-- top bar -->
     <nav class="bg-light border navbar navbar-expand-sm navbar-light mb-4">
@@ -82,7 +82,7 @@
     </nav>
 
     <!-- main content -->
-    <div id="main-container" class="container mx-auto">
+    <div id="main-container" class="container mx-auto flex-grow-1">
 
         <!-- flash messages-->
         {% with messages = get_flashed_messages() %}
@@ -100,5 +100,25 @@
         {% block main %}
         {% endblock %}
     </div>
+
+    <footer class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col col-6 col-sm-4 col-md-2">
+                    <h4>SongGeek</h4>
+                    <span>by Jakub Lipiński</span>
+                </div>
+                <div class="col col-6 col-sm-4 col-md-3">
+                    <h5>Spotify</h5>
+                    <span>data provided by Spotify</span>
+                </div>
+                <div class="col col-6 col-sm-4 col-md-3">
+                    <h5>contact me</h5>
+                    <span>lipabass@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
