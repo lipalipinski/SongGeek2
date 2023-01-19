@@ -250,8 +250,8 @@ def remove_user():
     # POSt
     if request.method == "POST":
         db.session.delete(current_user)
-        logout_user()
         db.session.commit()
+        logout_user()
         return redirect(url_for("index"))
     
     # GET

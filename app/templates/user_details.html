@@ -43,7 +43,11 @@
                         <strong>
                             <span class="text-success">{{ corr_answers }}</span>/{{ all_answers }}
                         </strong> 
+                        {% if all_answers != 0%}
                         ({{ (corr_answers/all_answers * 100) | round(2, 'common') }}%)
+                        {% else %}
+                        (0%)
+                        {% endif %}
                     </li>
                     <li class="list-group-item">
                         ranking: <strong>{{ (current_user.rank()) | int() }}</strong> ({{current_user.total_points}} pts)

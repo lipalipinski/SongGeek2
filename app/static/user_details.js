@@ -219,7 +219,7 @@ fetch(FETCH_URL, {
     .then((tracks) => {
         if (tracks.length == 0) {
             const tr = document.createElement('tr');
-            tr.textContent = "to few games";
+            tr.innerHTML = '<td class="text-center" colspan="5">to few games</td>'
             topTracksTable.querySelector('tbody').appendChild(tr);
             topTracksSpinner.classList.add('d-none');
             topTracksTable.classList.remove('d-none');
@@ -301,7 +301,7 @@ fetch(FETCH_URL, {
     .then((artists) => {
         if (artists.length == 0) {
             const tr = document.createElement('tr');
-            tr.textContent = "to few games";
+            tr.innerHTML = '<td class="text-center" colspan="3">to few games</td>';
             topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
             topArtistsTable.classList.remove('d-none');
