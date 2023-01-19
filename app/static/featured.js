@@ -83,10 +83,6 @@ function fetchPlaylists() {
             return response.json();
         })
         .then((json) => {
-            function compareLvls(p1, p2) {
-                //reverse (hard first)
-                return p2.lvl - p1.lvl;
-            };
             json.sort((p1, p2) => {
                 return p2.lvl - p1.lvl;
             });
@@ -110,13 +106,14 @@ function fetchPlaylists() {
 
                 
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="${pl.url}" class="link-dark" target="_blank" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" noopener noreferer>${pl.name}</a>
-                    </h5>
-                    <p class="card-text"><small class="text-muted">
-                        by <a href="${pl.ownerUrl}" class="link-secondary" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                            ${pl.ownerName}</a>
-                    </small></p>
+                    <a href="${pl.url}" class="link-dark" target="_blank" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" noopener noreferer>
+                        <h4 class="card-title align-middle">
+                            ${pl.name}
+                            <img id="spotify-icon" src="static/img/Spotify_Icon_RGB_Green.png" alt="Spotify icon">
+                        </h4>
+                        
+                    </a>
+                    
                     <p class="card-text">${pl.description}</p>
                 </div>
                 <div class="card-footer text-center">

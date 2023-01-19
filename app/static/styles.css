@@ -5,6 +5,10 @@ body{
     height: 50px;
     margin: 25px;
 }
+#spotify-icon{
+    height: 24px;
+    margin: 12px;
+}
 .usr-img {
     width: 30px;
     height: 30px;
