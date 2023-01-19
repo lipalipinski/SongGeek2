@@ -1,6 +1,10 @@
 body{
     min-height: 100vh;
 }
+#spotify-logo{
+    height: 50px;
+    margin: 25px;
+}
 .usr-img {
     width: 30px;
     height: 30px;
