@@ -13,10 +13,7 @@ body{
     width: 30px;
     height: 30px;
 }
-.cover-img {
-    width: 45px;
-    height: 45px;
-}
+
 button{
     background-repeat: no-repeat;
     background-size:contain;

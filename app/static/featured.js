@@ -109,7 +109,7 @@ function fetchPlaylists() {
                     <a href="${pl.url}" class="link-dark" target="_blank" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" noopener noreferer>
                         <h4 class="card-title align-middle">
                             ${pl.name}
-                            <img id="spotify-icon" src="static/img/Spotify_Icon_RGB_Green.png" alt="Spotify icon">
+                            <img id="spotify-icon" src="/static/img/Spotify_Icon_RGB_Green.png" alt="Spotify icon">
                         </h4>
                         
                     </a>

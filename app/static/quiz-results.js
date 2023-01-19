@@ -64,7 +64,7 @@ function setLikes() {
         })
         .then((resp) => {
             for (const [i, track] of resp.tracks.entries()) {
-                btn = document.querySelector(`#_${track.id} td button.like`);
+                btn = document.querySelector(`#like${i}`);
                 // song is liked
                 if (track.like == true) {
                     btn.setAttribute('data-state', 'liked');

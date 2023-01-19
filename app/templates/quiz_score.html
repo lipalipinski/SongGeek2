@@ -28,15 +28,13 @@
                 </div>
             
                 <div class="col-12 col-sm-8">
-                    <h5 class="card-title">
-                        <a href="{{ pl.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                    <a href="{{ pl.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                        data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                        <h5 class="card-title">
                             {{ pl.name }}
-                        </a>
-                    </h5>
-                    <p class="card-text"><small class="text-muted">
-                            by <a href="{{ pl.owner.url }}" class="link-secondary" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                {{ pl.owner.name }}</a>
-                        </small></p>
+                            <img id="spotify-icon" src="/static/img/Spotify_Icon_RGB_Green.png" alt="Spotify icon">
+                        </h5>
+                    </a>
                     <p class="card-text">{{ pl.description }}</p>
                 </div>
             </div>
@@ -44,61 +42,59 @@
             <div class="row">
                 <div class="col">
                     <p class="card-text fw-bold">
-                        score: {{ game.points() }} pts x
+                        score: <span class="text-bg-dark rounded px-1">{{ game.points() }} pts</span> x
                         <span id="lvl-badge" class="badge"></span>
                         = {{ game.final_points }} pts
                     </p>
-                    <table class="table table-sm align-middle table-borderless">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th class="text-center">track</th>
-                                <th>pts</th>
-                                <th>play</th>
-                                <th>like</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="container px-0 ">
                             {% for quest in game.quests %}
-                            <tr id="_{{ quest.track_id }}">
-                                <td>
-                                    <a href="{{ quest.track.album.url }}" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                        <img src="{{quest.track.album.img.sm}}" class="cover-img" alt="">
-                                    </a>
-                                </td>
-                                <td>
-                                    {% for artist in quest.track.artists %}
-                                    <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                    {{artist.name}}</a>{% if loop.index != quest.track.artists|length%},{% endif %}
-                                    {% endfor %} 
-                                    -
-                                    <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                         {{quest.track.name}}
-                                    </a>
-                                </td>
-                                <td class="fw-bold text-center">
-                                    {{quest.points}}
-                                </td>
-                                <td>
-                                    <audio id="player{{loop.index0}}" class="audio-player" preload>
-                                        <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
-                                    </audio>
-                                    <button id="playpause{{loop.index0}}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
-                                </td>
-                                <td>
-                                    <button id="like{{loop.index0}}" class="multiplayer like btn btn-sm btn-light position-relative" data-state="loading" value="{{quest.track.id}}">                                        
-                                        <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                            <div class="row pb-1 mb-2 border-bottom d-flex flex-wrap justify-content-between">
+                                <div class="col-3 col-sm-2 col-xl-1 d-flex align-items-center">
+                                        <a href="{{ quest.track.album.url }}" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                            <img src="{{quest.track.album.img.sm}}" class="cover-img" alt="">
+                                        </a>
+                                </div>
+                                <div class="col-9 col-sm-10 col-xl-11">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col col-12">
+                                                <a href="{{ quest.track.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                                    <span class="text-bg-light rounded px-1 fw-bold">{{quest.track.name}}</span>
+                                                </a> 
+                                            
+                                                <span>by</span>
+                                                {% for artist in quest.track.artists %}
+                                                <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                                    <span class="text-bg-light rounded px-1 ">{{artist.name}}</span></a>
+                                                    {% endfor %}   
+                                            </div>
+                                            <div class="col col-5 d-flex align-items-center">
+                                                    <span class="text-bg-dark rounded px-1"><strong>{{quest.points}} pts</strong></span>
+                                            </div>
+                                            <div class="col col-4">
+                                                    <audio id="player{{loop.index0}}" class="audio-player" preload>
+                                                        <source id="audioSource{{loop.index0}}" src="{{ quest.track.prev_url }}" type="audio/mpeg">
+                                                    </audio>
+                                                    <button id="playpause{{loop.index0}}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
+                                            </div>
+                                            <div class="col col-3">
+                                                <button id="like{{loop.index0}}" class="multiplayer like btn btn-sm btn-light position-relative" data-state="loading" value="{{quest.track.id}}">                                        
+                                                    <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </button>
-                                </td>
-                            </tr>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </div>
+
                     <div class="col-3 float-end">
                         <input id="volume" min="0" max="100" value="80" type="range" class="form-range">
                     </div>
+
                 </div>
             </div>
         </div>
