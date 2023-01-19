@@ -311,29 +311,33 @@ fetch(FETCH_URL, {
             topArtistsTable.querySelector('tbody').appendChild(tr);
             topArtistsSpinner.classList.add('d-none');
             topArtistsTable.classList.remove('d-none');
-        };
-        for (let [i, artist] of artists.entries()) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>
-                                <strong>${i + 1}.</strong>
-                            </td>
-                            <td>
-                                <a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                    ${artist.name}
-                                </a>
-                            </td>
-                            <td>
-                                (<strong>${artist.score}</strong>)
-                            </td>`;
-            topArtistsTable.querySelector('tbody').appendChild(tr);
-            topArtistsSpinner.classList.add('d-none');
-            topArtistsTable.classList.remove('d-none');
-            
+            return false;
+        } else {
+            for (let [i, artist] of artists.entries()) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>
+                <strong>${i + 1}.</strong>
+                </td>
+                <td>
+                <a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                ${artist.name}
+                </a>
+                </td>
+                <td>
+                (<strong>${artist.score}</strong>)
+                </td>`;
+                topArtistsTable.querySelector('tbody').appendChild(tr);
+                topArtistsSpinner.classList.add('d-none');
+                topArtistsTable.classList.remove('d-none');
+            };
+            return true;
         };
     })
-    .then(() => {
-        const artistsTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const artistsTooltipList = [...artistsTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    .then((artists) => {
+        if (artists) {    
+            const artistsTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const artistsTooltipList = [...artistsTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        };
     });
 
 
@@ -363,7 +367,8 @@ function fetchPlaylists(row) {
         };
         return response.json();
     })
-    .then((json) => {
+        .then((json) => {
+        // sort playlists by players avg score
         json.sort((p1, p2) => {
             return p2.score - p1.score;
         });
