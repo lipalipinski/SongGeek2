@@ -185,13 +185,14 @@ def ranking():
 
 
 @app.route("/user", methods=["GET", "POST"])
+@app.route("/user/<items>", methods=["POST"])
 @login_required
-def user_details():
+def user_details(items = None):
 
     if request.method == "POST":
 
         # top artists
-        if request.json["mode"] == "topArtists":
+        if items == "top-artists":
             artists = current_user.top_artists()
             if len(artists) > 5:
                 artists = artists[0:5]
@@ -203,7 +204,7 @@ def user_details():
             return Response(json.dumps(artists), status=200)
 
         # top tracks
-        if request.json["mode"] == "topTracks":
+        if items == "top-tracks":
             tracks = current_user.top_tracks()
             if len(tracks) > 5:
                 tracks = tracks[0:5]
@@ -221,7 +222,7 @@ def user_details():
 
         # top playlists
         plsts_q = 6
-        if request.json["mode"] == "topPlaylists":
+        if items == "top-playlists":
             playlists = current_user.top_playlists()
             if len(playlists) > plsts_q:
                 playlists = playlists[0:plsts_q]
@@ -235,6 +236,7 @@ def user_details():
                     "ownerName":pl["plst"].owner.name,
                     'description':pl["plst"].description,
                     "score":pl["score"]} for pl in playlists]
+            
             return Response(json.dumps(playlists), status=200)
     
     corr_answers, all_answers = current_user.answers()

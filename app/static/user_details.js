@@ -202,13 +202,9 @@ function removePlaceholders() {
 };
 
 // TOP TRACKS
-let data = {
-    'mode':'topTracks'
-};
-fetch(FETCH_URL, {
+fetch(FETCH_URL + '/top-tracks', {
     'method': 'POST',
-    'headers': { 'Content-Type': 'application/json' },
-    'body': JSON.stringify(data)
+    'headers': { 'Content-Type': 'application/json' }
 })
     .then((response) => {
         if (!response.ok) {
@@ -290,13 +286,9 @@ fetch(FETCH_URL, {
     });
 
 // TOP ARTISTS
-data = {
-    'mode': 'topArtists'
-};
-fetch(FETCH_URL, {
+fetch(FETCH_URL + '/top-artists', {
     'method': 'POST',
-    'headers': { 'Content-Type': 'application/json' },
-    'body': JSON.stringify(data)
+    'headers': { 'Content-Type': 'application/json' }
 })
     .then((response) => {
         if (!response.ok) {
@@ -342,13 +334,9 @@ fetch(FETCH_URL, {
 
 
 function fetchPlaylists(row) {
-    data = {
-        'mode': 'topPlaylists'
-    };
-    fetch(FETCH_URL, {
+    fetch(FETCH_URL + '/top-playlists', {
         'method': 'POST',
-        'headers': { 'Content-Type': 'application/json' },
-        'body': JSON.stringify(data)
+        'headers': { 'Content-Type': 'application/json' }
     })
     .then((response) => {
         if (!response.ok) {
