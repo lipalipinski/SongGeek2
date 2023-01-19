@@ -219,23 +219,25 @@ fetch(FETCH_URL, {
     .then((tracks) => {
         if (tracks.length == 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td class="text-center" colspan="5">to few games</td>'
+            tr.innerHTML = '<td class="text-center" colspan="6">to few games</td>'
             topTracksTable.querySelector('tbody').appendChild(tr);
             topTracksSpinner.classList.add('d-none');
             topTracksTable.classList.remove('d-none');
-        }
-        for (let [i, track] of tracks.entries()) {
-            const tr = document.createElement('tr');
-            tr.classList.add(`_${track.id}`)
-            let artists = '';
-            for (let [i, artist] of track.artists.entries()) {
-                artists += `<a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+            return false;
+        } else {
+            
+            for (let [i, track] of tracks.entries()) {
+                const tr = document.createElement('tr');
+                tr.classList.add(`_${track.id}`)
+                let artists = '';
+                for (let [i, artist] of track.artists.entries()) {
+                    artists += `<a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                 ${artist.name}</a>`;
-                if (i != track.artists.length -1) {
-                    artists += ',';
-                };
-            }
-            tr.innerHTML = `
+                    if (i != track.artists.length - 1) {
+                        artists += ',';
+                    };
+                }
+                tr.innerHTML = `
                             <td><strong>${track.rank}.</strong></td>
                             <td>
                                 <a href="${track.albumUrl}"  data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
@@ -264,23 +266,27 @@ fetch(FETCH_URL, {
                                     </div>
                                 </button>
                             </td>`;
-            topTracksTable.querySelector('tbody').appendChild(tr);
-        }
+                topTracksTable.querySelector('tbody').appendChild(tr);
+            }
+            return true;
+        };
     })
-    .then(() => {
-        // initialize link tooltips
-        const tracksTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tracksTooltipList = [...tracksTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-        // set player
-        const players = document.querySelectorAll(".audio-player");
-        const controls = document.querySelectorAll(".controls");
-        const volume = document.querySelector('#volume');
-        setMultiPlayer(players, controls, volume);
-        // set likes
-        const likes = document.querySelectorAll(".like");
-        setLikes(likes);
-        topTracksSpinner.classList.add('d-none');
-        topTracksTable.classList.remove('d-none');
+    .then((tracks) => {
+        if (tracks) {
+            // initialize link tooltips
+            const tracksTooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tracksTooltipList = [...tracksTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            // set player
+            const players = document.querySelectorAll(".audio-player");
+            const controls = document.querySelectorAll(".controls");
+            const volume = document.querySelector('#volume');
+            setMultiPlayer(players, controls, volume);
+            // set likes
+            const likes = document.querySelectorAll(".like");
+            setLikes(likes);
+            topTracksSpinner.classList.add('d-none');
+            topTracksTable.classList.remove('d-none');
+        };
     });
 
 // TOP ARTISTS
