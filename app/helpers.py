@@ -278,6 +278,17 @@ def retryfy(reps=1, pause=0):
 
     return decorator
 
+def admin_required(user):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if user.is_authenticated and user.admin:
+                return func(*args, **kwargs)
+            return redirect(url_for("index"))
+        return wrapper
+    return decorator
+
+
 def dict_html(dct):
     html = ''
     if type(dct) == list:

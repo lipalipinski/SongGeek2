@@ -110,7 +110,7 @@ function startPlayer() {
 
 // listen for the answer
 function answer(e) {
-
+    
     // remove listeners from buttons
     for (const btn of buttons) {
         btn.removeEventListener('click', answer);
@@ -205,6 +205,7 @@ function question() {
         quest_num.textContent = resp.quest_num + 1
     }
     play.removeEventListener('click', question)
+    buttons[buttons.length-1].scrollIntoView(false);
 };
 
 function turnGreen(btn) {

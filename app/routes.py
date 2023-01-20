@@ -7,9 +7,8 @@ from flask import flash, render_template, redirect, request, url_for, Response, 
 from flask_login import current_user, login_user, login_required, logout_user
 from requests.exceptions import RequestException
 from app import app, spotify, cache
-from app.helpers import dict_html, img_helper, countries, set_country, available_markets, retryfy
+from app.helpers import dict_html, img_helper, set_country, available_markets, retryfy, admin_required
 from app.models import db, Playlist, User, Game, Img, get_ranking
-
 
 @app.route("/api_callback", methods=["GET"])
 def api_callback():
@@ -98,6 +97,13 @@ def refresh_user_token():
             flash("You have been logged out due to inactivity")
             return redirect(url_for("logout"))
     db.session.commit()
+
+# ==== LOGOUT USER IF session["country"] is None
+@app.before_request
+def require_country():
+    if current_user.is_authenticated:
+        if not session["country"]:
+            return redirect(url_for("logout"))
 
 #@app.route("/index")
 @app.route("/", methods=["POST", "GET"])
@@ -370,6 +376,8 @@ def quiz(pl_id = None, game = None):
 def quiz_results(pl_id, game):
     pl = Playlist.query.get(pl_id)
     game = db.session.query(Game).get(game)
+    if game.user_id != current_user.id:
+        return redirect(url_for("index"))
     return render_template("quiz_score.html", pl = pl, game = game)
 
 
@@ -406,9 +414,9 @@ def likes():
 
 
 
-
 @app.route("/add-playlist", methods = ["POST", "GET"])
 @login_required
+@admin_required(current_user)
 def add_playlist():
 
     # ======== POST handler ===========
@@ -455,6 +463,7 @@ def add_playlist():
 
 @app.route("/remove-playlist", methods = ["POST"])
 @login_required
+@admin_required(current_user)
 def remove_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
@@ -467,6 +476,7 @@ def remove_playlist():
 
 @app.route("/playlist-manager", methods = ["POST", "GET"])
 @login_required
+@admin_required(current_user)
 def playlist_manager():
 
 
@@ -477,6 +487,7 @@ def playlist_manager():
 
 @app.route("/playlist_manager/activate", methods = ["POST", "GET"])
 @login_required
+@admin_required(current_user)
 def activate_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
@@ -488,6 +499,7 @@ def activate_playlist():
 
 @app.route("/playlist_manager/deactivate", methods = ["POST", "GET"])
 @login_required
+@admin_required(current_user)
 def deactivate_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
@@ -499,6 +511,7 @@ def deactivate_playlist():
 
 @app.route("/playlist_manager/update", methods=["POST", "GET"])
 @login_required
+@admin_required(current_user)
 def update_playlist():
 
     pl = Playlist.query.get(request.form.get("playlist_id"))
@@ -514,6 +527,7 @@ def update_playlist():
 
 @app.route("/playlist-manager/<playlist_id>")
 @login_required
+@admin_required(current_user)
 def playlist_detalis(playlist_id):
 
 
@@ -522,9 +536,3 @@ def playlist_detalis(playlist_id):
     return render_template("playlist_details.html", plst = plst)
 
         
-
-@app.route("/test")
-def test():
-
-    playlists = spotify.playlist('37i9dQZF1DX6ujZpAN0v9r')
-    return render_template("test.html", playlists = dict_html(playlists), raw = str(playlists))
