@@ -376,7 +376,7 @@ def quiz(pl_id = None, game = None):
 def quiz_results(pl_id, game):
     pl = Playlist.query.get(pl_id)
     game = db.session.query(Game).get(game)
-    if game.user_id != current_user.id:
+    if not game or game.user_id != current_user.id:
         return redirect(url_for("index"))
     return render_template("quiz_score.html", pl = pl, game = game)
 
