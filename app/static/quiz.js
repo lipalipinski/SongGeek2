@@ -101,6 +101,7 @@ function startPlayer() {
                 player.pause();
                 play.setAttribute('data-state', 'after-countdown');
                 play.textContent = "time's out!";
+                buttons[buttons.length - 1].scrollIntoView(false);
             } else {
                 play.textContent = score;
             };
