@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
@@ -9,6 +10,7 @@ class Config(object):
     CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
     CACHE_DEFAULT_TIMEOUT = 300
     TOKEN_UPDATE = 60*15 #update token when expires in less than that
+    LOGIN_DURATION = timedelta(seconds=30)
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
     API_BASE = 'https://accounts.spotify.com'
     REDIRECT_URI = 'http://127.0.0.1:5000/api_callback'
