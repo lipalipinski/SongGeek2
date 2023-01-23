@@ -60,7 +60,7 @@ def api_callback():
     db.session.add(user)
     db.session.commit()
 
-    login_user(user, remember=True)
+    login_user(user, remember=False)
     
     # set session country
     code = "PL"
