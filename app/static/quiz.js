@@ -175,7 +175,7 @@ function answer(e) {
             } else {
                 // AFTER LAST QUEST
                 
-                play.textContent = null;
+                play.textContent = ' ';
                 play.setAttribute('data-state', 'results');
                 const results = document.querySelector('#results');
                 results.href = json.resultsUrl;
