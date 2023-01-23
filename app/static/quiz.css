@@ -9,8 +9,8 @@
 }
 
 button.controls {
-    font-size: 4.4em;
-    min-height: 290px;
+    font-size: 4em;
     white-space: break-spaces;
+    background-position: 50%;
 }
 

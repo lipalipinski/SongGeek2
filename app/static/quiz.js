@@ -101,6 +101,7 @@ function startPlayer() {
                 player.pause();
                 play.setAttribute('data-state', 'after-countdown');
                 play.textContent = "time's out!";
+                buttons[buttons.length - 1].scrollIntoView(false);
             } else {
                 play.textContent = score;
             };
@@ -175,7 +176,7 @@ function answer(e) {
             } else {
                 // AFTER LAST QUEST
                 
-                play.textContent = null;
+                play.textContent = ' ';
                 play.setAttribute('data-state', 'results');
                 const results = document.querySelector('#results');
                 results.href = json.resultsUrl;
