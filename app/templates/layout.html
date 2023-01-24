@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+
     {% block head%}{% endblock %}
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
@@ -83,7 +89,7 @@
     </nav>
 
     <!-- cookies prompt modal -->
-    <div class="modal fade" id="cookies-prompt" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="cookies-prompt" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1"
         aria-labelledby="cookies prompt" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -91,7 +97,7 @@
                     <h1 class="modal-title fs-5">We use cookies</h1>
                 </div>
                 <div class="modal-body">
-                    This site uses cookie files to store information necessary to keep you logged in and store user specyfic preferences, such as playback volume.
+                    SonGeek uses cookies to store information necessary to keep you logged in.
                 </div>
                 <div class="modal-footer">
                     <button id="cookies-understood" type="button" class="btn btn-primary">Understood</button>
