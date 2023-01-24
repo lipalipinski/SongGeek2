@@ -11,3 +11,4 @@ migrations/versions/db0cc09693fa_spotify_user.py
 .cache
 migrations/__pycache__/env.cpython-311.pyc
 .cache
+app/__init__.pyc
