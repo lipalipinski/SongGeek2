@@ -65,7 +65,7 @@
                                                 <span>by</span>
                                                 {% for artist in quest.track.artists %}
                                                 <a href="{{ artist.url }}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                                    <span class="text-bg-light rounded px-1 ">{{artist.name}}</span></a>
+                                                    {{artist.name}}</a>
                                                     {% endfor %}   
                                             </div>
                                             <div class="col col-5 d-flex align-items-center">

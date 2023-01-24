@@ -223,8 +223,6 @@ fetch(FETCH_URL + '/top-tracks', {
         } else {
             
             for (let [i, track] of tracks.entries()) {
-                const tr = document.createElement('tr');
-                tr.classList.add(`_${track.id}`)
                 let artists = '';
                 for (let [i, artist] of track.artists.entries()) {
                     artists += `<a href="${artist.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
@@ -233,36 +231,47 @@ fetch(FETCH_URL + '/top-tracks', {
                         artists += ',';
                     };
                 }
-                tr.innerHTML = `
-                            <td><strong>${track.rank}.</strong></td>
-                            <td>
-                                <a href="${track.albumUrl}"  data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                const row = document.createElement('div');
+                row.classList.add('row', 'pb-1', 'mb-2', 'border-bottom', 'd-flex', 'flex-wrap', 'justify-content-between');
+                row.innerHTML = `
+                            <div class="col-3 col-sm-2 col-xl-1 d-flex align-items-center">
+                                <a href="${track.albumUrl}" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
                                     <img src="${track.albumImg}" class="cover-img" alt="${track.name} cover photo">
                                 </a>
-                            </td>
-                            <td>
-                            ${artists} - 
-                            <a href="${track.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
-                                ${track.name}
-                            </a>
-                            </td>
-                            <td>
-                                <strong>${track.score}</strong>
-                            </td>
-                            <td>
-                                <audio id="player${i}" class="audio-player" preload>
-                                    <source id="audioSource${i}" src="${track.prevUrl}" type="audio/mpeg">
-                                </audio>
-                                <button id="playpause${i}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
-                            </td>
-                            <td>
-                                <button id="like${i}" class="like multiplayer btn btn-sm btn-light position-relative" data-state="loading" value="${track.id}">                                        
-                                    <div id="spinner${i}" class="spinner-border spinner-border-sm" role="status">
-                                        <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="col-9 col-sm-10 col-xl-10">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col col-12">
+                                             <strong>${track.rank}</strong>.<a href="${track.url}" class="link-dark" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                                data-bs-title="Open in Spotify" target="_blank" noopener noreferer>
+                                                <span class="text-bg-light rounded px-1 fw-bold">${track.name}</span>
+                                            </a>
+                                            <span>by</span>
+                                            ${artists}
+                                        </div>
+                                        <div class="col col-5 d-flex align-items-center">
+                                            <span class="text-bg-dark rounded px-1"><strong>${track.score} pts</strong></span>
+                                        </div>
+                                        <div class="col col-4">
+                                            <audio id="player${i}" class="audio-player" preload>
+                                                <source id="audioSource${i}" src="${track.prevUrl}" type="audio/mpeg">
+                                            </audio>
+                                            <button id="playpause${i}" class="multiplayer controls btn btn-sm btn-light"
+                                                data-state="play"></button>
+                                        </div>
+                                        <div class="col col-3">
+                                            <button id="like${i}" class="multiplayer like btn btn-sm btn-light position-relative"
+                                                data-state="loading" value="${track.id}">
+                                                <div id="spinner${i}" class="spinner-border spinner-border-sm" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </button>
+                                        </div>
                                     </div>
-                                </button>
-                            </td>`;
-                topTracksTable.querySelector('tbody').appendChild(tr);
+                                </div>
+                            </div>`
+                document.querySelector('#top-tracks').appendChild(row);
             }
             return true;
         };
