@@ -32,7 +32,7 @@ fetch(FETCH_URL, {
             }
             tr.innerHTML = `<td><strong>${user.rank}</strong></td>
                             <td>
-                                <img src="${user.imgUrl}" class="usr-img">
+                                <img src="${user.imgUrl}" class="usr-img rounded">
                             </td>
                             <td>${user.name}</td>
                             <td><strong>${user.total}</strong></td>`;
