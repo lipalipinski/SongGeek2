@@ -1,5 +1,6 @@
 body{
     min-height: 100vh;
+    image-orientation: none;
 }
 #spotify-logo{
     height: 50px;
