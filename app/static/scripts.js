@@ -31,7 +31,6 @@ function setVolume() {
     };
     //set audio players volume
     if (volumeSetting) {
-        console.log(volumeSetting);
         // set remembered volume to audio players
         const audioPlayers = document.querySelectorAll('audio');
         for (const audio of audioPlayers) {
