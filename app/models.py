@@ -9,6 +9,7 @@ from requests.exceptions import RequestException
 from flask_login import UserMixin
 from app import app, db, login, spotify, pl_update_time, cache
 from app.helpers import img_helper, retryfy
+from sqlalchemy import func
 
 
 @cache.cached(timeout=3600, key_prefix="pls_avgs")
@@ -41,6 +42,7 @@ class User(UserMixin, db.Model):
     token = db.Column(db.Text)
     r_token =  db.Column(db.Text)
     expires = db.Column(db.DateTime)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
     admin = db.Column(db.Boolean, default = False)
     name = db.Column(db.Text)
     img_id = db.Column(db.Integer, db.ForeignKey("img.id"))
@@ -226,6 +228,8 @@ album_artist = db.Table("album_artist",
 class Game(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     user_id = db.Column(db.Text, db.ForeignKey("user.id"), index=True)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    time_updated = db.Column(db.DateTime(timezone=True), onupdate=func.now())
     playlist_id = db.Column(db.Text, db.ForeignKey("playlist.id"))
     status = db.Column(db.Integer, default=0)
     level = db.Column(db.Integer)
