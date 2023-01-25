@@ -307,6 +307,7 @@ def quiz(pl_id = None, game = None):
             app.logger.error(f"init_quest error: {err}")
             db.session.rollback()
             return Response(500)
+        
         db.session.add(game)
         db.session.commit()
 
@@ -324,6 +325,8 @@ def quiz(pl_id = None, game = None):
                 "plLvl":game.level}
 
         body["next_url"] = next_quest.track.prev_url
+        
+
         next_tracks = []
         for track in next_quest.all_answrs():
             next_tracks.append({"id":track.id, "name":track.name})
@@ -360,7 +363,6 @@ def quiz(pl_id = None, game = None):
                 }
         if next_quest:
             next_tracks =[]
-            next_url = next_quest.track.prev_url
             next_url = next_quest.track.prev_url
             for track in next_quest.all_answrs():
                 next_tracks.append({"id":track.id, "name":track.name})

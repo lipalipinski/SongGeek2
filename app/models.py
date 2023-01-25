@@ -401,17 +401,19 @@ class Playlist(db.Model):
             # artists from track to tb
             trck.artists.clear()
             for artist in track["artists"]:
-                artst = Artist.query.get(artist["id"])
+                with db.session.no_autoflush:
+                    artst = Artist.query.get(artist["id"])
                 if not artst:
                     artst = Artist(id=artist["id"], name=artist["name"], url=artist["external_urls"]["spotify"])
                     db.session.add(artst)
-                    db.session.flush()
+                    #db.session.flush()
 
                 # \\\\\\\\\\\
                 trck.artists.append(artst)
 
             # add new albums to db
-            albm = Album.query.get(track["album"]["id"])
+            with db.session.no_autoflush:
+                albm = db.session.get(Album, track["album"]["id"])
             if not albm:
                 albm = Album(id=track["album"]["id"], name=track["album"]["name"], url=track["album"]["external_urls"]["spotify"]) 
                 # \\\\\\\\\\\
@@ -438,8 +440,8 @@ class Playlist(db.Model):
             # \\\\\\\\\\\
             self.tracks.append(trck)
 
-        db.session.flush()
-        db.session.commit()
+        #db.session.flush()
+        #db.session.commit()
 
         return True
 
@@ -493,7 +495,7 @@ class Playlist(db.Model):
 class Owner(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     playlists = db.relationship("Playlist", backref="owner", lazy="dynamic")
 
     def __repr__(self) -> str:
@@ -503,8 +505,8 @@ class Owner(db.Model):
 class Track(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    album_id = db.Column(db.Text, db.ForeignKey("album.id"), nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    album_id = db.Column(db.Text, db.ForeignKey("album.id"))
+    url = db.Column(db.Text)
     prev_url = db.Column(db.Text)
     playlists = db.relationship("Playlist", secondary=playlist_track, back_populates="tracks")
     artists = db.relationship("Artist", secondary=track_artist, back_populates="tracks")
@@ -518,7 +520,7 @@ class Track(db.Model):
 class Album(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     tracks = db.relationship("Track", backref="album", lazy="dynamic")
     artists = db.relationship("Artist", secondary=album_artist, back_populates="albums")
@@ -531,7 +533,7 @@ class Artist(db.Model):
 
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     tracks = db.relationship("Track", secondary=track_artist, back_populates="artists")
     albums = db.relationship("Album", secondary=album_artist, back_populates="artists")
 

@@ -1,8 +1,8 @@
-"""initial migration with postgres
+"""postgres
 
-Revision ID: 05fb2610b2bc
+Revision ID: ba662bbf2d30
 Revises: 
-Create Date: 2023-01-25 18:20:12.562171
+Create Date: 2023-01-25 19:30:10.934359
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '05fb2610b2bc'
+revision = 'ba662bbf2d30'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('artist',
     sa.Column('id', sa.Text(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
-    sa.Column('url', sa.Text(), nullable=False),
+    sa.Column('url', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('artist', schema=None) as batch_op:
@@ -40,7 +40,7 @@ def upgrade():
     op.create_table('owner',
     sa.Column('id', sa.Text(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
-    sa.Column('url', sa.Text(), nullable=False),
+    sa.Column('url', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('owner', schema=None) as batch_op:
@@ -49,7 +49,7 @@ def upgrade():
     op.create_table('album',
     sa.Column('id', sa.Text(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
-    sa.Column('url', sa.Text(), nullable=False),
+    sa.Column('url', sa.Text(), nullable=True),
     sa.Column('img_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['img_id'], ['img.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -117,8 +117,8 @@ def upgrade():
     op.create_table('track',
     sa.Column('id', sa.Text(), nullable=False),
     sa.Column('name', sa.Text(), nullable=False),
-    sa.Column('album_id', sa.Text(), nullable=False),
-    sa.Column('url', sa.Text(), nullable=False),
+    sa.Column('album_id', sa.Text(), nullable=True),
+    sa.Column('url', sa.Text(), nullable=True),
     sa.Column('prev_url', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['album_id'], ['album.id'], ),
     sa.PrimaryKeyConstraint('id')
