@@ -10,6 +10,15 @@ from app import app, spotify, cache
 from app.helpers import dict_html, img_helper, set_country, available_markets, retryfy, admin_required
 from app.models import db, Playlist, User, Game, Img, get_ranking
 
+@app.errorhandler(404)
+def error_404(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def error_500(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
+
 @app.route("/api_callback", methods=["GET"])
 def api_callback():
 
