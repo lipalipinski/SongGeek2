@@ -69,7 +69,7 @@ class User(UserMixin, db.Model):
             })
             res.raise_for_status()
         except Exception as err:
-            app.logger.warning(f"token refresh error: {err}")
+            app.logger.error(f"token refresh error: {err}")
             raise RequestException
 
         res = res.json()
@@ -103,7 +103,7 @@ class User(UserMixin, db.Model):
             else:
                 sp.current_user_saved_tracks_delete([track_id])
         except Exception as err:
-            app.logger.warning(f"User.set_like error: {err}")
+            app.logger.error(f"User.set_like error: {err}")
             raise RequestException from err
         
         return True

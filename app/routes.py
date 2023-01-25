@@ -282,7 +282,7 @@ def quiz(pl_id = None, game = None):
             try:
                 pl.update(force=True)
             except Exception as err:
-                app.logger.critical(f"Playlist force update fail: {err}")
+                app.logger.error(f"Playlist force update fail: {err}")
                 return redirect(url_for("index"))
             
             db.session.add(pl)
@@ -304,7 +304,7 @@ def quiz(pl_id = None, game = None):
         try:
             game.init_quests()
         except ValueError as err:
-            app.logger.critical(f"init_quest error: {err}")
+            app.logger.error(f"init_quest error: {err}")
             db.session.rollback()
             return Response(500)
         db.session.add(game)
