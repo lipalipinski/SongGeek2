@@ -277,11 +277,12 @@ def quiz(pl_id = None, game = None):
     if request.method == "GET":
         # force update
         if request.args.get("force") == "True":
+            app.logger.info(f"Force playlist update (pl_id={pl_id})")
             pl = Playlist.query.get(pl_id)
             try:
                 pl.update(force=True)
             except Exception as err:
-                flash(f"Playlist update error {err}")
+                app.logger.critical(f"Playlist force update fail: {err}")
                 return redirect(url_for("index"))
             
             db.session.add(pl)
@@ -300,7 +301,12 @@ def quiz(pl_id = None, game = None):
 
         game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
         db.session.flush()
-        game.init_quests()
+        try:
+            game.init_quests()
+        except ValueError as err:
+            app.logger.critical(f"init_quest error: {err}")
+            db.session.rollback()
+            return Response(500)
         db.session.add(game)
         db.session.commit()
 

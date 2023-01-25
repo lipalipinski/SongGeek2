@@ -243,8 +243,7 @@ class Game(db.Model):
         try:
             tracks = random.sample(self.playlist.active_list(), 5)
         except ValueError as err:
-            print(self.playlist.active_list())
-            raise ValueError(f"Game init fail: {err}")
+            raise ValueError(f"Game.init_quest fail, Game.id={self.id}: {err}")
             
         
         for i, track in enumerate(tracks):
