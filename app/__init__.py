@@ -30,5 +30,5 @@ auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=4, retries=8, status_retries=3, status_forcelist=[401])
 
 
-from app import routes, models
+from app import routes, models, errors
 
