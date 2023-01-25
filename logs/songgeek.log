@@ -40,3 +40,12 @@
 2023-01-25 13:15:15,743 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
 2023-01-25 13:15:32,033 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
  Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:106]
+2023-01-25 13:22:33,872 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:22:44,113 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:106]
+2023-01-25 13:23:04,173 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:30:49,020 INFO: SPOTIFY 1 FAIL Playlist request failed: HTTPSConnectionPool(host='api.spotify.com', port=443): Read timed out. (read timeout=4) [in /Volumes/Samsung SSD/dev/SongGeek2/app/helpers.py:271]
+2023-01-25 13:31:08,553 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:32:59,101 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:36:03,574 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:43:18,416 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]

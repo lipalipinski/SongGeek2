@@ -271,7 +271,7 @@ def retryfy(reps=1, pause=0):
                     app.logger.info(f"SPOTIFY {attempt+1} FAIL {err}")
                     time.sleep(randint(0, pause))
 
-            print("SPOTIFY FINAL FAIL")
+            app.logger.critical("SPOTIFY FINAL FAIL")
             raise RequestException("Final request fail")
 
         return wrapper

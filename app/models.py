@@ -101,7 +101,7 @@ class User(UserMixin, db.Model):
                 sp.current_user_saved_tracks_add([track_id])
             # remove
             else:
-                sp.current_user_saved_tracks_delete([track_id+'asdasdfsdf'])
+                sp.current_user_saved_tracks_delete([track_id])
         except Exception as err:
             app.logger.warning(f"User.set_like error: {err}")
             raise RequestException from err

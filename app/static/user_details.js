@@ -54,104 +54,6 @@ function setMultiPlayer(plrs, cntrls, vol) {
     };
 };
 
-function setLikes(likes) {
-    let tracks = [];
-    for (like of likes) {
-        tracks.push(like.value)
-    }
-    let data = {
-        'mode': 'check',
-        'tracks': tracks,
-    }
-    fetch(LIKES_API, {
-        'method': 'POST',
-        'headers': { "Content-Type": "application/json" },
-        'body': JSON.stringify(data)
-    })
-        .then((response) => {
-            if (!response.ok) {
-                // make buttons inactive
-                for (like of likes) {
-                    like.setAttribute('disabled', 'true');
-                    like.setAttribute('data-state', 'fail');
-                };
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((resp) => {
-            for (const [i, track] of resp.tracks.entries()) {
-                btn = document.querySelector(`#like${i}`);
-                // song is liked
-                if (track.like == true) {
-                    btn.setAttribute('data-state', 'liked');
-                    btn.addEventListener('click', (e) => {
-                        likeSong(track.id, false, e.target)
-                    }, { once: true })
-                    // no like
-                } else {
-                    btn.setAttribute('data-state', 'not-liked');
-                    btn.addEventListener('click', (e) => {
-                        likeSong(track.id, true, e.target)
-                    }, { once: true })
-                };
-            };
-        });
-};
-
-function likeSong(id, like, btn) {
-
-    btn.setAttribute('data-state', 'loading')
-
-    let data = {
-        'mode': 'set_like',
-        'like': like,
-        'id': id,
-    };
-    fetch(LIKES_API, {
-        'method': 'POST',
-        'headers': { "Content-Type": "application/json" },
-        'body': JSON.stringify(data)
-    })
-        .then((response) => {
-            if (!response.ok) {
-                // set likes if request fails
-                btn.setAttribute('data-state', 'fail');
-                btn.setAttribute('disabled', 'true');
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((track) => {
-            if (like == true) {
-                btn.setAttribute('data-state', 'liked');
-                btn.addEventListener('click', (e) => {
-                    likeSong(track.id, false, e.target)
-                }, { once: true });
-                flashTooltip(btn, 'Added to Liked Songs', 900);
-                // no like
-            } else {
-                btn.setAttribute('data-state', 'not-liked');
-                btn.addEventListener('click', (e) => {
-                    likeSong(track.id, true, e.target)
-                }, { once: true });
-                flashTooltip(btn, 'Removed from Liked Songs', 900);
-            };
-        });
-};
-
-// flash a tooltip for [timeout] seconds
-function flashTooltip(element, message, timeout) {
-    const tooltip = new bootstrap.Tooltip(element, {
-        'title': message,
-        'trigger': 'manual'
-    });
-    tooltip.show();
-    setTimeout(() => {
-        tooltip.dispose();
-    }, timeout);
-};
-
 //set placeholders for playlists cards
 function setPlaylistsPlaceholders(row, count) {
     //row.innerHTML = '';
@@ -212,6 +114,7 @@ fetch(FETCH_URL + '/top-tracks', {
         return response.json();
     })
     .then((tracks) => {
+        // too few tracks
         if (tracks.length == 0) {
             const tr = document.createElement('tr');
             tr.innerHTML = '<td class="text-center" colspan="6">to few games</td>'
@@ -219,6 +122,7 @@ fetch(FETCH_URL + '/top-tracks', {
             topTracksSpinner.classList.add('d-none');
             topTracksTable.classList.remove('d-none');
             return false;
+        // display top tracks
         } else {
             
             for (let [i, track] of tracks.entries()) {
@@ -286,8 +190,7 @@ fetch(FETCH_URL + '/top-tracks', {
             const volume = document.querySelector('#volume');
             setMultiPlayer(players, controls, volume);
             // set likes
-            const likes = document.querySelectorAll(".like");
-            setLikes(likes);
+            setLikes(document.querySelectorAll(".like"));
             topTracksSpinner.classList.add('d-none');
             topTracksTable.classList.remove('d-none');
         };
@@ -340,7 +243,7 @@ fetch(FETCH_URL + '/top-artists', {
         };
     });
 
-
+// TOP PLAYLISTS
 function fetchPlaylists(row) {
     fetch(FETCH_URL + '/top-playlists', {
         'method': 'POST',
