@@ -116,9 +116,10 @@ fetch(FETCH_URL + '/top-tracks', {
     .then((tracks) => {
         // too few tracks
         if (tracks.length == 0) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = '<td class="text-center" colspan="6">to few games</td>'
-            topTracksTable.querySelector('tbody').appendChild(tr);
+            const row = document.createElement('div');
+            row.classList.add('row', 'pb-1', 'mb-2', 'border-bottom', 'd-flex', 'flex-wrap', 'justify-content-between', 'text-center');
+            row.innerHTML = '<span>to few games</span>'
+            document.querySelector('#top-tracks').appendChild(row);
             topTracksSpinner.classList.add('d-none');
             topTracksTable.classList.remove('d-none');
             return false;

@@ -1,11 +1,15 @@
 import os
 from datetime import timedelta
 basedir = os.path.abspath(os.path.dirname(__file__))
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PW = os.environ.get("POSTGRES_PW")
+POSTGRES_URL = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
+DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=POSTGRES_URL)
 
 class Config(object):
     BASE_PATH = 'view-source:http://127.0.0.1:5000/'
     SECRET_KEY = 'fgjeroiaulj'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
     CACHE_DEFAULT_TIMEOUT = 300
