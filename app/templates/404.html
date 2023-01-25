@@ -2,24 +2,7 @@
 
 {% block title %} Page Not Found (404) {% endblock %}
 
-{% block body %}
-<div class="row">
-    <div class="col col-lg-7 col-xl-6 my-5 mx-auto">
-        <div class="card h-100" style="">
-            <div class="card-header">
-                <h5>Page not found (404)</h5>
-            </div>
-            <div class="card-body">
-                <p>
-                    Nothing to see here!
-                </p>
-            </div>
-            <div class="card-footer text-center">
-                <a href="{{ url_for('index') }}">
-                    <button class="btn btn-primary" type="submit">Go back to main page</button>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+{% block header %}Page not found (404){% endblock %}
+{% block message %}
+Nothing to see here!
 {% endblock %}

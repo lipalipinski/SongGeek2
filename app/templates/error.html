@@ -23,16 +23,28 @@
     <!-- BS Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
-
-    <script>
-        const COUNTRY_URL = {{ url_for('country') | tojson | safe}}
-    </script>
-
-
     <title>SongGeek: {% block title %}{% endblock %}</title>
 
 </head>
 
-{%block body %}{% endblock %}
-
+<body>
+    <div class="row">
+        <div class="col col-lg-7 col-xl-6 my-5 mx-auto">
+            <div class="card h-100" style="">
+                <div class="card-header">
+                    <h5>{%block header %}{% endblock %}</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {%block message %}{% endblock %}
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('index') }}">
+                        <button class="btn btn-primary" type="submit">Go back to main page</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
