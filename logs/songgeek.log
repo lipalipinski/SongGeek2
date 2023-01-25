@@ -1,0 +1,42 @@
+2023-01-25 12:38:29,301 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:42:20,813 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:46:08,353 INFO: SPOTIFY 1 FAIL HTTPSConnectionPool(host='api.spotify.com', port=443): Read timed out. (read timeout=4) [in /Volumes/Samsung SSD/dev/SongGeek2/app/helpers.py:271]
+2023-01-25 12:50:38,775 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:51:55,260 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:53:09,721 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:53:49,054 WARNING: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:103]
+2023-01-25 12:54:56,757 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:55:09,170 WARNING: like track error:http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:103]
+2023-01-25 12:55:56,363 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:56:07,064 WARNING: like track error:http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:103]
+2023-01-25 12:57:19,429 WARNING: like track error:http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:103]
+2023-01-25 12:57:42,984 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:58:52,130 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 12:59:14,740 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:103]
+2023-01-25 13:00:30,627 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:00:45,050 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:01:07,626 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:05:15,519 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:05:23,151 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:05:36,941 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:06:06,376 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=20I8RduZC2PWMWTDCZuuANasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:12:46,023 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:14:18,724 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:15:07,835 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=20I8RduZC2PWMWTDCZuuANasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:107]
+2023-01-25 13:15:15,743 INFO: SongGeek startup [in /Volumes/Samsung SSD/dev/SongGeek2/app/__init__.py:44]
+2023-01-25 13:15:32,033 WARNING: User.set_like error: http status: 400, code:-1 - https://api.spotify.com/v1/me/tracks/?ids=4srUcUkIP3NejBuRvQz3Gvasdasdfsdf:
+ Bad request., reason: None [in /Volumes/Samsung SSD/dev/SongGeek2/app/models.py:106]

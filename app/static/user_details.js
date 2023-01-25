@@ -116,7 +116,6 @@ function likeSong(id, like, btn) {
         .then((response) => {
             if (!response.ok) {
                 // set likes if request fails
-                setLikes();
                 btn.setAttribute('data-state', 'fail');
                 btn.setAttribute('disabled', 'true');
                 throw new Error(`HTTP error: ${response.status}`);

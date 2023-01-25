@@ -68,7 +68,8 @@ class User(UserMixin, db.Model):
             "client_secret":getenv("SPOTIPY_CLIENT_SECRET")
             })
             res.raise_for_status()
-        except:
+        except Exception as err:
+            app.logger.warning(f"token refresh error: {err}")
             raise RequestException
 
         res = res.json()
@@ -93,19 +94,17 @@ class User(UserMixin, db.Model):
     def set_like(self, track_id, like):
         """ add/remove track from library """
         sp = spotipy.Spotify(auth=self.token)
-
-        # add
-        if like:
-            try:
+        
+        try:
+            # add track tolibrary
+            if like:
                 sp.current_user_saved_tracks_add([track_id])
-            except:
-                raise RequestException
-        # remove
-        else:
-            try:
-                sp.current_user_saved_tracks_delete([track_id])
-            except:
-                raise RequestException
+            # remove
+            else:
+                sp.current_user_saved_tracks_delete([track_id+'asdasdfsdf'])
+        except Exception as err:
+            app.logger.warning(f"User.set_like error: {err}")
+            raise RequestException from err
         
         return True
 
