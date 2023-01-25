@@ -268,7 +268,7 @@ def retryfy(reps=1, pause=0):
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:   
-                    app.logger.info(f"SPOTIFY {attempt+1} FAIL {err}")
+                    app.logger.warning(f"SPOTIFY {attempt+1} FAIL {err}")
                     time.sleep(randint(0, pause))
 
             app.logger.critical("SPOTIFY FINAL FAIL")
