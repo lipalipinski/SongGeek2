@@ -32,8 +32,8 @@ if app.config["CACHE_SERVERS"] == None:
     cache.init_app(app)
 else:
     cache = Cache()
-    cache_user = os.environ.get('MEMCACHIER_USERNAME') or ''
-    cache_pass = os.environ.get('MEMCACHIER_PASSWORD') or ''
+    cache_user = os.environ.get('MEMCACHIER_USERNAME') 
+    cache_pass = os.environ.get('MEMCACHIER_PASSWORD')
     cache.init_app(app,
         config={'CACHE_TYPE': 'saslmemcached',
                 'CACHE_MEMCACHED_SERVERS': app.config["CACHE_SERVERS"].split(','),
