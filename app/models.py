@@ -12,7 +12,7 @@ from app.helpers import img_helper, retryfy
 from sqlalchemy import func
 
 
-@cache.cached(timeout=3600, key_prefix="pls_avgs")
+@cache.cached(timeout=60, key_prefix="pls_avgs")
 def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
