@@ -13,7 +13,7 @@ class Config(object):
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
     BASE_PATH = 'view-source:http://127.0.0.1:5000/'
-    SQLALCHEMY_DATABASE_URI = DB_URL
+    SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
     CACHE_DEFAULT_TIMEOUT = 300
