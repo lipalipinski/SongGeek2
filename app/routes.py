@@ -126,7 +126,7 @@ def index():
                 resp = fetch_playlists(spotify, 20, session["country"]["code"])
         except Exception as err:
             #flash(f'Bad request {inst}')
-            print(f'\n\n SPOTIFY FAIL {err} \n\n')
+            app.logger.error(f'SPOTIFY FAIL {err}')
             return Response(status=401)
 
         raw_playlists = resp["playlists"]["items"]
@@ -158,7 +158,7 @@ def country():
     code = request.json["code"]
     # VALIDATE COUNTRY
     if code not in available_markets().keys():
-        print(f"WRONG COUNTRY: {code}")
+        app.logger.warning(f"WRONG COUNTRY: {code}")
         return Response(status=401)
 
     set_country(code)
@@ -300,12 +300,12 @@ def quiz(pl_id = None, game = None):
         game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
         try:
             game.init_quests()
+            db.session.commit()
         except ValueError as err:
             app.logger.error(f"init_quest error: {err}")
             db.session.rollback()
             return Response(500)
         
-        db.session.commit()
         next_quest = game.current_quest()
 
         body = {

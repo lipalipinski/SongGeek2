@@ -168,7 +168,6 @@ class User(UserMixin, db.Model):
         games = self.games.filter(Game.status == 5)
         for game in games:
             playlist = game.playlist
-            #print(playlist)
             if playlist.id not in playlists:
                 playlists[playlist.id] = dict()
                 playlists[playlist.id]["plst"]= playlist
@@ -259,7 +258,7 @@ class Game(db.Model):
             self.user.set_total_points()
 
     def current_quest(self):
-        
+        app.logger.debug(f"game: {self.id}/{self.status}")
         if self.status in range(0, 5):
             return self.quests[self.status]
         return False
@@ -390,7 +389,7 @@ class Playlist(db.Model):
 
             # sometimes spotify gives empty "tracks"
             if not track or not track["preview_url"]:
-                #print(f"TRACK NOT ACTIVE {track}\n")
+                app.logger.debug(f"TRACK NOT ACTIVE {track}\n")
                 continue
 
             # check if track in db
