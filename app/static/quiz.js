@@ -106,7 +106,6 @@ function startPlayer() {
                 player.pause();
                 play.setAttribute('data-state', 'after-countdown');
                 play.textContent = "time's out!";
-                buttons[buttons.length - 1].scrollIntoView(false);
             } else {
                 play.textContent = score;
             };
@@ -150,7 +149,7 @@ function answer(e) {
             gameId = json.gameId;
             questNum = json.questNum;
             console.log(`game: ${gameId}/${questNum}`);
-            
+
             // update points display
             const points = document.querySelector('#points');
             points.textContent = json.total_points;
