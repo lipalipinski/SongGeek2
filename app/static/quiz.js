@@ -8,6 +8,7 @@ let resp;
 const countdownSeconds = 5;
 let timer;
 let gameId;
+let questNum
 
 // audio player controls
 const player = document.querySelector('#player');
@@ -46,7 +47,11 @@ function get_quiz() {
         .then((json) => {
             resp = json;
             document.querySelector('title').innerText = `SongGeek: ${json.plName}`;
+            
             gameId = json.gameId;
+            questNum = json.questNum;
+            console.log(`game: ${gameId}/${questNum}`);
+            
             // set playlist img
             document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);
             // set playlist name
@@ -204,7 +209,7 @@ function question() {
         // event listener
         btn.addEventListener('click', answer);
         // quest_num update
-        quest_num.textContent = resp.quest_num + 1
+        quest_num.textContent = resp.questNum + 1
     }
     play.removeEventListener('click', question)
     buttons[buttons.length-1].scrollIntoView(false);

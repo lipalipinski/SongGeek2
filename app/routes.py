@@ -139,14 +139,15 @@ def index():
                 db.session.add(new_pl)
                 db.session.commit()
 
-            playlists.append({"id": new_pl.id, "name": new_pl.name, 
-                "description": new_pl.description, 
-                "url": new_pl.url,
-                "ownerName": new_pl.owner.name, 
-                "ownerUrl": new_pl.owner.url, 
-                "imgUrl": new_pl.img.md,
-                "lvl": new_pl.level()
-                })
+            playlists.append({"id": new_pl.id, 
+                              "name": new_pl.name, 
+                            "description": new_pl.description, 
+                            "url": new_pl.url,
+                            "ownerName": new_pl.owner.name, 
+                            "ownerUrl": new_pl.owner.url, 
+                            "imgUrl": new_pl.img.md,
+                            "lvl": new_pl.level()
+                            })
         return Response(json.dumps(playlists), status=200)
 
     return render_template("featured.html", countries = available_markets())
@@ -310,7 +311,7 @@ def quiz(pl_id = None, game = None):
 
         body = {
                 "gameId": game.id,
-                "quest_num":0, 
+                "questNum":0, 
                 "plImgUrl":pl.img.md, 
                 "plDescription":pl.description,
                 "plName":pl.name,
@@ -345,8 +346,8 @@ def quiz(pl_id = None, game = None):
 
         game.update_status()
         next_quest = game.current_quest()
-        body = {
-                "quest_num":game.status,
+        body = {"gameId":game.id,
+                "questNum":game.status,
                 "total_points":game.points(),
                 "points":quest.points,
                 "green":quest.track_id,
