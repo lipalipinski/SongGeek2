@@ -109,11 +109,6 @@ def require_country():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    app.logger.debug("\n\n DEBUG \n\n")
-    app.logger.info("\n\n INFO \n\n")
-    app.logger.warning("\n\n WARNING \n\n")
-    app.logger.error("\n\n ERROR \n\n")
-    app.logger.critical("\n\n CRITICAL \n\n")
     #@cache.memoize(timeout=60)
     @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
