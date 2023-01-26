@@ -7,6 +7,7 @@ from logging.handlers import RotatingFileHandler
 import logging
 import spotipy
 import os
+import sys
 from spotipy.oauth2 import SpotifyClientCredentials
 from config import Config
 
@@ -57,7 +58,7 @@ else:
 # logging into files
 if not app.debug and not app.testing:
     if app.config['LOG_TO_STDOUT']:
-            stream_handler = logging.StreamHandler()
+            stream_handler = logging.StreamHandler(sys.stdout)
             stream_handler.setLevel(logging.INFO)
             app.logger.addHandler(stream_handler)
     else:
