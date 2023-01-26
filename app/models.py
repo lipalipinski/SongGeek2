@@ -260,7 +260,8 @@ class Game(db.Model):
     def current_quest(self):
         app.logger.debug(f"game: {self.id}/{self.status}")
         if self.status in range(0, 5):
-            return self.quests[self.status]
+            return db.session.get(Quest, {"game_id":self.id, "q_num":self.status})
+            # return self.quests[self.status]
         return False
 
     def points(self):
