@@ -1,7 +1,9 @@
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.environget("SELF_URL")
+if not basedir:
+    basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PW = os.environ.get("POSTGRES_PW")
