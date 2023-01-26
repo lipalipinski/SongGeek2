@@ -261,7 +261,6 @@ class Game(db.Model):
         app.logger.debug(f"game: {self.id}/{self.status}")
         if self.status in range(0, 5):
             return db.session.get(Quest, {"game_id":self.id, "q_num":self.status})
-            # return self.quests[self.status]
         return False
 
     def points(self):
@@ -469,7 +468,7 @@ class Playlist(db.Model):
         return statistics.mean([game.points() for game in user_games.all()])
 
 
-    @cache.memoize(timeout=300)
+    @cache.memoize(timeout=60)
     def level(self):
 
         if self.avg_score() == 0:
