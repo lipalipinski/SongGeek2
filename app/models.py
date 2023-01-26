@@ -258,7 +258,7 @@ class Game(db.Model):
             self.final_points = round(self.points() * lvl_mod[self.level], 0)
             self.user.set_total_points()
 
-    def next_quest(self):
+    def current_quest(self):
         
         if self.status in range(0, 5):
             return self.quests[self.status]

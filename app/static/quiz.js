@@ -141,6 +141,7 @@ function answer(e) {
         })
         .then((json) => {
             resp = json;
+            
             // update points display
             const points = document.querySelector('#points');
             points.textContent = json.total_points;

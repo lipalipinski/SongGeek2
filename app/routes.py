@@ -295,12 +295,9 @@ def quiz(pl_id = None, game = None):
         
         # update playlist 
         pl.update()
-        db.session.add(pl)
-        db.session.commit()
 
 
         game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
-        db.session.flush()
         try:
             game.init_quests()
         except ValueError as err:
@@ -308,12 +305,8 @@ def quiz(pl_id = None, game = None):
             db.session.rollback()
             return Response(500)
         
-        db.session.add(game)
         db.session.commit()
-
-        next_quest = game.next_quest()
-        db.session.add(game)
-        db.session.commit()
+        next_quest = game.current_quest()
 
         body = {
                 "gameId": game.id,
@@ -326,12 +319,12 @@ def quiz(pl_id = None, game = None):
 
         body["next_url"] = next_quest.track.prev_url
         
-
         next_tracks = []
         for track in next_quest.all_answrs():
             next_tracks.append({"id":track.id, "name":track.name})
         body["next_tracks"] = next_tracks
 
+        db.session.commit()
         return Response(json.dumps(body), 200)
 
 
@@ -341,19 +334,17 @@ def quiz(pl_id = None, game = None):
         game_id = request.json["gameId"]
         track_id = request.json["id"]
         score = request.json["score"]
-        game = Game.query.filter_by(id=game_id).first()
-        quest = game.quests[game.status]
+        game = db.session.get(Game, game_id)
+        quest = game.current_quest()
         red = ''
 
         if quest.track_id == track_id:
             quest.points = score +1
-            db.session.flush()
         else:
             red = track_id
-        game.update_status()
-        db.session.commit()
 
-        next_quest = game.next_quest()
+        game.update_status()
+        next_quest = game.current_quest()
         body = {
                 "quest_num":game.status,
                 "total_points":game.points(),
@@ -373,6 +364,7 @@ def quiz(pl_id = None, game = None):
             body["next_url"] = ""
             body["resultsUrl"] = url_for("quiz_results", pl_id = pl_id, game = game.id)
 
+        db.session.commit()
         return Response(json.dumps(body), 200)
     
     else:
