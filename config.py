@@ -12,7 +12,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
-    BASE_PATH = 'view-source:http://127.0.0.1:5000/'
+    BASE_PATH = f'view-source:{basedir}/'
     SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
@@ -20,6 +20,6 @@ class Config(object):
     TOKEN_UPDATE = 60*15 #update token when expires in less than that
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
     API_BASE = 'https://accounts.spotify.com'
-    REDIRECT_URI = 'http://127.0.0.1:5000/api_callback'
+    REDIRECT_URI = f'{basedir}/api_callback'
     SCOPE = 'user-library-modify user-library-read'
 
