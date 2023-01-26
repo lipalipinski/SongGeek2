@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
-basedir = os.environget("SELF_URL")
+basedir = os.environ.get("SELF_URL")
 if not basedir:
     basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
