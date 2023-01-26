@@ -11,6 +11,7 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}'.format(user=POSTGRES_USER,pw=
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
+    CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
     BASE_PATH = 'view-source:http://127.0.0.1:5000/'
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
