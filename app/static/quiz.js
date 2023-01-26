@@ -51,7 +51,7 @@ function get_quiz() {
             gameId = json.gameId;
             questNum = json.questNum;
             console.log(`game: ${gameId}/${questNum}`);
-            
+
             // set playlist img
             document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);
             // set playlist name
@@ -146,6 +146,10 @@ function answer(e) {
         })
         .then((json) => {
             resp = json;
+            
+            gameId = json.gameId;
+            questNum = json.questNum;
+            console.log(`game: ${gameId}/${questNum}`);
             
             // update points display
             const points = document.querySelector('#points');
