@@ -475,6 +475,10 @@ class Playlist(db.Model):
             return 2
         
         all_scores = all_pls_avgs()
+        #stddec needs at least two data points
+        if len(all_scores) < 2:
+            return 2
+        
         mean_score = statistics.mean(all_scores)
         std_dev = statistics.stdev(all_scores)
 
