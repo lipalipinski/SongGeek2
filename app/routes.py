@@ -109,7 +109,7 @@ def require_country():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    @cache.memoize(timeout=60)
+    @cache.memoize(timeout=1800)
     @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
         return spoti.featured_playlists(limit=limit, country = code)
