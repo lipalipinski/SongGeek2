@@ -341,10 +341,11 @@ def refresh_token(refresh_token):
     return res_body.get("access_token")
 
 
-#@cache.cached(timeout=60, key_prefix="markets")
+@cache.cached(timeout=3600, key_prefix="markets")
 @retryfy(3, 2)
 def available_markets():
     """ returns a {code:name, ...} of available markets"""
+    app.logger.debug("available markets not cached")
     resp = spotify.available_markets()
     markets = resp["markets"]
     av_markets = {code: market for code, market in countries.items() if code in markets}
