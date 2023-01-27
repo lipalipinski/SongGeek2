@@ -39,7 +39,7 @@ if not app.debug and not app.testing:
         file_handler.setLevel(logging.DEBUG)
         app.logger.addHandler(file_handler)
 
-    app.logger.setLevel(logging.INFO)
+    app.logger.setLevel(logging.DEBUG)
     app.logger.info('SongGeek startup')
 
 
