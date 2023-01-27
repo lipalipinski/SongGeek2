@@ -150,7 +150,7 @@ function changeCountry(code) {
         })
         .then((json) => {
             // update page
-            selectedCountry.textContent = `${json["code"]}: ${json["name"]}}`;
+            selectedCountry.textContent = `${json["code"]}: ${json["name"]}`;
             buttonCountry.textContent = `Country: ${json["name"]}`;
         })
         .then(() => {
