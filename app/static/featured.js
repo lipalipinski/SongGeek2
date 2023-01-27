@@ -7,7 +7,7 @@ const selectCountry = document.querySelector('#select-country');
 const selectedCountry = document.querySelector('#selected-country')
 // select country button (navbar)
 const buttonCountry = document.querySelector('#country-btn');
-let targetCountry;
+let targetCountry = selectCountry.value;
 
 function setPlaceholders() {
     mainRow.innerHTML = '';
@@ -150,7 +150,8 @@ function changeCountry(code) {
         })
         .then((json) => {
             // update page
-            selectedCountry.textContent = `${json["code"]}: ${json["name"]}}`;
+            selectedCountry.textContent = `${json["code"]}: ${json["name"]}`;
+            selectedCountry.setAttribute('value', json["code"]);
             buttonCountry.textContent = `Country: ${json["name"]}`;
         })
         .then(() => {
@@ -159,7 +160,7 @@ function changeCountry(code) {
 };
 
 selectCountry.addEventListener('input', (e) => {
-    targetCountry = e.target.value
+    targetCountry = e.target.value;
 });
 
 

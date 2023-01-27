@@ -39,7 +39,7 @@ Home
             <div class="modal-body">
                 <select id="select-country" class="form-select" aria-label="Default select example">
                     {% if current_user.is_authenticated %}
-                    <option id="selected-country" selected>{{ session["country"]["code"] }}: {{session["country"]["name"] }}</option>
+                    <option id="selected-country" value="{{ session['country']['code'] }}" selected>{{ session["country"]["code"] }}: {{session["country"]["name"] }}</option>
                     {% endif %}
                     {% for code, country in countries.items() %}
                     <option value="{{code}}">{{code}}: {{country}}</option>
@@ -48,8 +48,9 @@ Home
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="change-country" type="button" class="btn btn-primary" data-bs-dismiss="modal">Change
-                    country</button>
+                <button id="change-country" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    Change country
+                </button>
             </div>
         </div>
     </div>

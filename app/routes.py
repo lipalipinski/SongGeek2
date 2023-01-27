@@ -109,9 +109,10 @@ def require_country():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    @cache.memoize(timeout=1800)
+    @cache.memoize(timeout=900, args_to_ignore=["spoti"])
     @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
+        app.logger.debug("FETCH_PLAYLIST NOT CACHED")
         return spoti.featured_playlists(limit=limit, country = code)
 
     if request.method == "POST" and request.json["mode"] == "featuredPlaylists":
@@ -126,7 +127,7 @@ def index():
                 resp = fetch_playlists(spotify, 20, session["country"]["code"])
         except Exception as err:
             #flash(f'Bad request {inst}')
-            print(f'\n\n SPOTIFY FAIL {err} \n\n')
+            app.logger.error(f'SPOTIFY FAIL {err}')
             return Response(status=401)
 
         raw_playlists = resp["playlists"]["items"]
@@ -139,14 +140,15 @@ def index():
                 db.session.add(new_pl)
                 db.session.commit()
 
-            playlists.append({"id": new_pl.id, "name": new_pl.name, 
-                "description": new_pl.description, 
-                "url": new_pl.url,
-                "ownerName": new_pl.owner.name, 
-                "ownerUrl": new_pl.owner.url, 
-                "imgUrl": new_pl.img.md,
-                "lvl": new_pl.level()
-                })
+            playlists.append({"id": new_pl.id, 
+                              "name": new_pl.name, 
+                            "description": new_pl.description, 
+                            "url": new_pl.url,
+                            "ownerName": new_pl.owner.name, 
+                            "ownerUrl": new_pl.owner.url, 
+                            "imgUrl": new_pl.img.md,
+                            "lvl": new_pl.level()
+                            })
         return Response(json.dumps(playlists), status=200)
 
     return render_template("featured.html", countries = available_markets())
@@ -158,7 +160,7 @@ def country():
     code = request.json["code"]
     # VALIDATE COUNTRY
     if code not in available_markets().keys():
-        print(f"WRONG COUNTRY: {code}")
+        app.logger.warning(f"WRONG COUNTRY: {code}")
         return Response(status=401)
 
     set_country(code)
@@ -295,28 +297,22 @@ def quiz(pl_id = None, game = None):
         
         # update playlist 
         pl.update()
-        db.session.add(pl)
-        db.session.commit()
 
 
         game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
-        db.session.flush()
         try:
             game.init_quests()
+            db.session.commit()
         except ValueError as err:
             app.logger.error(f"init_quest error: {err}")
             db.session.rollback()
             return Response(500)
-        db.session.add(game)
-        db.session.commit()
-
-        next_quest = game.next_quest()
-        db.session.add(game)
-        db.session.commit()
+        
+        next_quest = game.current_quest()
 
         body = {
                 "gameId": game.id,
-                "quest_num":0, 
+                "questNum":0, 
                 "plImgUrl":pl.img.md, 
                 "plDescription":pl.description,
                 "plName":pl.name,
@@ -324,11 +320,13 @@ def quiz(pl_id = None, game = None):
                 "plLvl":game.level}
 
         body["next_url"] = next_quest.track.prev_url
+        
         next_tracks = []
         for track in next_quest.all_answrs():
             next_tracks.append({"id":track.id, "name":track.name})
         body["next_tracks"] = next_tracks
 
+        db.session.commit()
         return Response(json.dumps(body), 200)
 
 
@@ -338,21 +336,19 @@ def quiz(pl_id = None, game = None):
         game_id = request.json["gameId"]
         track_id = request.json["id"]
         score = request.json["score"]
-        game = Game.query.filter_by(id=game_id).first()
-        quest = game.quests[game.status]
+        game = db.session.get(Game, game_id)
+        quest = game.current_quest()
         red = ''
 
         if quest.track_id == track_id:
             quest.points = score +1
-            db.session.flush()
         else:
             red = track_id
-        game.update_status()
-        db.session.commit()
 
-        next_quest = game.next_quest()
-        body = {
-                "quest_num":game.status,
+        game.update_status()
+        next_quest = game.current_quest()
+        body = {"gameId":game.id,
+                "questNum":game.status,
                 "total_points":game.points(),
                 "points":quest.points,
                 "green":quest.track_id,
@@ -360,7 +356,6 @@ def quiz(pl_id = None, game = None):
                 }
         if next_quest:
             next_tracks =[]
-            next_url = next_quest.track.prev_url
             next_url = next_quest.track.prev_url
             for track in next_quest.all_answrs():
                 next_tracks.append({"id":track.id, "name":track.name})
@@ -371,6 +366,7 @@ def quiz(pl_id = None, game = None):
             body["next_url"] = ""
             body["resultsUrl"] = url_for("quiz_results", pl_id = pl_id, game = game.id)
 
+        db.session.commit()
         return Response(json.dumps(body), 200)
     
     else:

@@ -13,3 +13,5 @@ migrations/__pycache__/env.cpython-311.pyc
 .cache
 app/__init__.pyc
 logs/
+.DS_Store
+.env

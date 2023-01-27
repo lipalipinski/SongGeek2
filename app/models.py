@@ -15,6 +15,7 @@ from sqlalchemy import func
 @cache.cached(timeout=3600, key_prefix="pls_avgs")
 def all_pls_avgs():
     '''returns a list of all playlists average scores'''
+    app.logger.debug("all_pls_avgs not cached")
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
 def get_ranking(n=None):
@@ -168,7 +169,6 @@ class User(UserMixin, db.Model):
         games = self.games.filter(Game.status == 5)
         for game in games:
             playlist = game.playlist
-            #print(playlist)
             if playlist.id not in playlists:
                 playlists[playlist.id] = dict()
                 playlists[playlist.id]["plst"]= playlist
@@ -258,10 +258,10 @@ class Game(db.Model):
             self.final_points = round(self.points() * lvl_mod[self.level], 0)
             self.user.set_total_points()
 
-    def next_quest(self):
-        
+    def current_quest(self):
+        app.logger.debug(f"game: {self.id}/{self.status}")
         if self.status in range(0, 5):
-            return self.quests[self.status]
+            return db.session.get(Quest, {"game_id":self.id, "q_num":self.status})
         return False
 
     def points(self):
@@ -390,7 +390,7 @@ class Playlist(db.Model):
 
             # sometimes spotify gives empty "tracks"
             if not track or not track["preview_url"]:
-                #print(f"TRACK NOT ACTIVE {track}\n")
+                app.logger.debug(f"TRACK NOT ACTIVE {track}\n")
                 continue
 
             # check if track in db
@@ -401,17 +401,19 @@ class Playlist(db.Model):
             # artists from track to tb
             trck.artists.clear()
             for artist in track["artists"]:
-                artst = Artist.query.get(artist["id"])
+                with db.session.no_autoflush:
+                    artst = Artist.query.get(artist["id"])
                 if not artst:
                     artst = Artist(id=artist["id"], name=artist["name"], url=artist["external_urls"]["spotify"])
                     db.session.add(artst)
-                    db.session.flush()
+                    #db.session.flush()
 
                 # \\\\\\\\\\\
                 trck.artists.append(artst)
 
             # add new albums to db
-            albm = Album.query.get(track["album"]["id"])
+            with db.session.no_autoflush:
+                albm = db.session.get(Album, track["album"]["id"])
             if not albm:
                 albm = Album(id=track["album"]["id"], name=track["album"]["name"], url=track["album"]["external_urls"]["spotify"]) 
                 # \\\\\\\\\\\
@@ -438,8 +440,8 @@ class Playlist(db.Model):
             # \\\\\\\\\\\
             self.tracks.append(trck)
 
-        db.session.flush()
-        db.session.commit()
+        #db.session.flush()
+        #db.session.commit()
 
         return True
 
@@ -467,13 +469,17 @@ class Playlist(db.Model):
         return statistics.mean([game.points() for game in user_games.all()])
 
 
-    @cache.memoize(timeout=300)
+    @cache.memoize(timeout=600)
     def level(self):
 
         if self.avg_score() == 0:
             return 2
         
         all_scores = all_pls_avgs()
+        #stddec needs at least two data points
+        if len(all_scores) < 2:
+            return 2
+        
         mean_score = statistics.mean(all_scores)
         std_dev = statistics.stdev(all_scores)
 
@@ -493,7 +499,7 @@ class Playlist(db.Model):
 class Owner(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     playlists = db.relationship("Playlist", backref="owner", lazy="dynamic")
 
     def __repr__(self) -> str:
@@ -503,8 +509,8 @@ class Owner(db.Model):
 class Track(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    album_id = db.Column(db.Text, db.ForeignKey("album.id"), nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    album_id = db.Column(db.Text, db.ForeignKey("album.id"))
+    url = db.Column(db.Text)
     prev_url = db.Column(db.Text)
     playlists = db.relationship("Playlist", secondary=playlist_track, back_populates="tracks")
     artists = db.relationship("Artist", secondary=track_artist, back_populates="tracks")
@@ -518,7 +524,7 @@ class Track(db.Model):
 class Album(db.Model):
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     img_id = db.Column(db.Integer, db.ForeignKey("img.id")) 
     tracks = db.relationship("Track", backref="album", lazy="dynamic")
     artists = db.relationship("Artist", secondary=album_artist, back_populates="albums")
@@ -531,7 +537,7 @@ class Artist(db.Model):
 
     id = db.Column(db.Text, index=True, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    url = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text)
     tracks = db.relationship("Track", secondary=track_artist, back_populates="artists")
     albums = db.relationship("Album", secondary=album_artist, back_populates="artists")
 

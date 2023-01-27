@@ -345,6 +345,7 @@ def refresh_token(refresh_token):
 @retryfy(3, 2)
 def available_markets():
     """ returns a {code:name, ...} of available markets"""
+    app.logger.debug("available markets not cached")
     resp = spotify.available_markets()
     markets = resp["markets"]
     av_markets = {code: market for code, market in countries.items() if code in markets}
