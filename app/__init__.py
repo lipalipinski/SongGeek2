@@ -23,16 +23,35 @@ login = LoginManager(app)
 login.login_message = None
 login.login_view = "login"
 
+# logging into files
+if not app.debug and not app.testing:
+    if app.config['LOG_TO_STDOUT']:
+            stream_handler = logging.StreamHandler(sys.stdout)
+            stream_handler.setLevel(logging.INFO)
+            app.logger.addHandler(stream_handler)
+    else:
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/songgeek.log', maxBytes=10240,
+                                        backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('SongGeek startup')
 
 
 if app.config["CACHE_SERVERS"] == None:
+    app.logger.info("PROCEEDING WITH SimpleCache")
     cache = Cache(config={
     'CACHE_TYPE': 'SimpleCache',
     "CACHE_DEFAULT_TIMEOUT": 600
     })
     cache.init_app(app)
 else:
-    app.logger.info("PROCEEDING WITH MEMCACHIER")
+    app.logger.info("PROCEEDING WITH saslmemcached")
     cache = Cache()
     cache_user = os.environ.get('MEMCACHIER_USERNAME') or ''
     cache_pass = os.environ.get('MEMCACHIER_PASSWORD') or ''
@@ -56,25 +75,6 @@ else:
                     'remove_failed': 1,
                     'retry_timeout': 2,
                     'dead_timeout': 30}}})
-
-# logging into files
-if not app.debug and not app.testing:
-    if app.config['LOG_TO_STDOUT']:
-            stream_handler = logging.StreamHandler(sys.stdout)
-            stream_handler.setLevel(logging.INFO)
-            app.logger.addHandler(stream_handler)
-    else:
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/songgeek.log', maxBytes=10240,
-                                        backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
-
-    app.logger.setLevel(logging.INFO)
-    app.logger.info('SongGeek startup')
 
 # spotipy client credentials
 auth_manager = SpotifyClientCredentials()
