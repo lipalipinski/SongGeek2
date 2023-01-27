@@ -15,6 +15,7 @@ from sqlalchemy import func
 @cache.cached(timeout=3600, key_prefix="pls_avgs")
 def all_pls_avgs():
     '''returns a list of all playlists average scores'''
+    app.logger.debug("all_pls_avgs not cached")
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
 def get_ranking(n=None):
@@ -134,7 +135,7 @@ class User(UserMixin, db.Model):
 
         return top_tracks
 
-    #@cache.memoize(timeout=60)
+    @cache.memoize(timeout=60)
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
@@ -185,12 +186,12 @@ class User(UserMixin, db.Model):
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
-    #@cache.memoize(timeout=5)
+    @cache.memoize(timeout=5)
     def count_games(self):
         games = db.session.query(Game).filter(Game.user_id == self.id, Game.status == 5).count()
         return games
 
-    #@cache.memoize(timeout=5)
+    @cache.memoize(timeout=5)
     def answers(self):
         """ returns (correct_answers, all_answers) """
         # consider only finished games (Game.status == 5)
@@ -468,7 +469,7 @@ class Playlist(db.Model):
         return statistics.mean([game.points() for game in user_games.all()])
 
 
-    #@cache.memoize(timeout=60)
+    @cache.memoize(timeout=600)
     def level(self):
 
         if self.avg_score() == 0:
