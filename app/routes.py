@@ -110,8 +110,9 @@ def require_country():
 def index():
 
     @cache.memoize(timeout=1800)
-    #@retryfy(3, 2)
+    @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
+        app.logger.debug("FETCH_PLAYLIST NOT CACHED")
         return spoti.featured_playlists(limit=limit, country = code)
 
     if request.method == "POST" and request.json["mode"] == "featuredPlaylists":

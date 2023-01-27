@@ -27,7 +27,7 @@ login.login_view = "login"
 if not app.debug and not app.testing:
     if app.config['LOG_TO_STDOUT']:
             stream_handler = logging.StreamHandler(sys.stdout)
-            stream_handler.setLevel(logging.INFO)
+            stream_handler.setLevel(logging.DEBUG)
             app.logger.addHandler(stream_handler)
     else:
         if not os.path.exists('logs'):
@@ -36,7 +36,7 @@ if not app.debug and not app.testing:
                                         backupCount=10)
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logging.DEBUG)
         app.logger.addHandler(file_handler)
 
     app.logger.setLevel(logging.INFO)
