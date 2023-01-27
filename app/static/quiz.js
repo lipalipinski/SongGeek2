@@ -94,21 +94,36 @@ function startPlayer() {
     if (play.getAttribute('data-state') == 'results') {
         return;
     }
-    if (player.paused || player.ended) {
-        score = countdownSeconds;
-        play.textContent = score;
-        player.play();
-        play.setAttribute('data-state', 'countdown');
-        timer = setInterval(() => {
-            score--;
-            if (score == 0) {
-                player.pause();
-                play.setAttribute('data-state', 'after-countdown');
-                play.textContent = "time's out!";
-            } else {
-                play.textContent = score;
-            };
-        }, 1000);
+    if (player.readyState == 4) {
+        console.log('audio loaded')
+        if (player.paused || player.ended) {
+            score = countdownSeconds;
+            play.textContent = score;
+            player.play();
+            play.setAttribute('data-state', 'countdown');
+            timer = setInterval(() => {
+                score--;
+                if (score == 0) {
+                    player.pause();
+                    play.setAttribute('data-state', 'after-countdown');
+                    play.textContent = "time's out!";
+                } else {
+                    play.textContent = score;
+                };
+            }, 1000);
+        };
+    } else {
+        play.setAttribute('data-state', 'loading');
+        play.innerText = ' ';
+        const spinner = document.createElement('div');
+        spinner.classList.add('spinner-border');
+        spinner.setAttribute('role', 'status');
+        play.appendChild(spinner);
+        player.addEventListener('canplaythrough', () => {
+            play.querySelector('div').classList.add('d-none');
+            startPlayer();
+        }, { once: true });
+        console.log('waiting for audio load')
     };
 };
 
@@ -171,6 +186,7 @@ function answer(e) {
             // if not last quest
             if (json.next_url != "") {
                 // update audio src
+                
                 audioSource.setAttribute('src', json.next_url);
                 player.load();
                 // set random playback start time
@@ -276,7 +292,10 @@ mute.addEventListener('click', (e) => {
     }
 })
 
-play.addEventListener('click', startPlayer, { once: true });
+play.addEventListener('click', () => {
+    startPlayer();
+}, { once: true });
+
 player.addEventListener('pause', () => {
     clearInterval(timer);
 });

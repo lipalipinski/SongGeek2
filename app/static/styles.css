@@ -66,6 +66,10 @@ button.controls[data-state="results"] {
     background-image: url('/static/img/arrow-right-square-fill.svg');
 }
 
+button.controls[data-state="loading"] {
+    background-image: none;
+}
+
 button#mute {
     height: 30px;
     width: 30px;
