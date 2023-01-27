@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from datetime import timedelta
 
 basedir = os.environ.get("SELF_URL")
-if not basedir:
-    basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
@@ -16,7 +14,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
-    BASE_PATH = f'view-source:{basedir}/'
+    BASE_PATH = f'view-source:{basedir}'
     SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
@@ -24,6 +22,6 @@ class Config(object):
     TOKEN_UPDATE = 60*15 #update token when expires in less than that
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
     API_BASE = 'https://accounts.spotify.com'
-    REDIRECT_URI = f'{basedir}/api_callback'
+    REDIRECT_URI = f'{basedir}api_callback'
     SCOPE = 'user-library-modify user-library-read'
 
