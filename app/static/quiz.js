@@ -147,7 +147,6 @@ function answer(e) {
             
             gameId = json.gameId;
             questNum = json.questNum;
-            console.log(`game: ${gameId}/${questNum}`);
 
             // update points display
             const points = document.querySelector('#points');

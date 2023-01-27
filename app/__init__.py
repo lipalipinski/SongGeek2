@@ -24,10 +24,15 @@ login.login_message = None
 login.login_view = "login"
 
 # logging into files
+if not app.config["LOG_DEBUG"] == "True":
+     logging_level = logging.INFO
+else:
+     logging_level = logging.DEBUG
+
 if not app.debug and not app.testing:
     if app.config['LOG_TO_STDOUT']:
             stream_handler = logging.StreamHandler(sys.stdout)
-            stream_handler.setLevel(logging.DEBUG)
+            stream_handler.setLevel(logging_level)
             app.logger.addHandler(stream_handler)
     else:
         if not os.path.exists('logs'):
@@ -36,10 +41,10 @@ if not app.debug and not app.testing:
                                         backupCount=10)
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.DEBUG)
+        file_handler.setLevel(logging_level)
         app.logger.addHandler(file_handler)
 
-    app.logger.setLevel(logging.DEBUG)
+    app.logger.setLevel(logging_level)
     app.logger.info('SongGeek startup')
 
 
