@@ -353,12 +353,15 @@ class Playlist(db.Model):
             db.session.flush()
             return True
 
+        app.logger.debug(f"start playlist update id: {self.id}")
+
         #update snapshot_id
         self.snapshot_id = resp["snapshot_id"]
 
         # pl img
         img = img_helper(resp["images"])
         self.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
+
 
         # check if owner in db
         ownr = Owner.query.get(resp["owner"]["id"])
