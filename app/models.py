@@ -315,6 +315,11 @@ class Playlist(db.Model):
         return len(self.tracks)
 
     def preload(self, resp):
+
+        if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
+            db.session.flush()
+            return True
+
         self.description = resp["description"]
         self.name=resp["name"]
         self.url=resp["external_urls"]["spotify"]
