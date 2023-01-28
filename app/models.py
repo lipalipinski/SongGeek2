@@ -393,7 +393,7 @@ class Playlist(db.Model):
 
             # sometimes spotify gives empty "tracks"
             if not track or not track["preview_url"]:
-                app.logger.debug(f"TRACK NOT ACTIVE {track}\n")
+                app.logger.debug(f"TRACK NOT ACTIVE \n")
                 continue
 
             # check if track in db
