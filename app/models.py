@@ -355,19 +355,9 @@ class Playlist(db.Model):
 
         app.logger.debug(f"start playlist update id: {self.id}")
 
-        #update snapshot_id
-        self.snapshot_id = resp["snapshot_id"]
-
-        # pl img
-        img = img_helper(resp["images"])
-        self.img = Img(sm=img["sm"], md=img["md"], lg=img["lg"])
-
-
-        # check if owner in db
-        ownr = Owner.query.get(resp["owner"]["id"])
-        if not ownr:
-            ownr = Owner(id=resp["owner"]["id"], name=resp["owner"]["display_name"], url=resp["owner"]["external_urls"]["spotify"])
-        self.owner = ownr
+        # update description, name, url, img, owner
+        self.preload()
+        db.session.flush()
 
         # request tracks
         try:
