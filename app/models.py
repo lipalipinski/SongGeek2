@@ -443,7 +443,7 @@ class Playlist(db.Model):
             # \\\\\\\\\\\
             self.tracks.append(trck)
 
-        #db.session.flush()
+        db.session.flush()
         #db.session.commit()
 
         return True
