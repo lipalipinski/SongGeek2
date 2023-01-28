@@ -356,7 +356,7 @@ class Playlist(db.Model):
         app.logger.debug(f"start playlist update id: {self.id}")
 
         # update description, name, url, img, owner
-        self.preload()
+        self.preload(resp)
         db.session.flush()
 
         # request tracks
