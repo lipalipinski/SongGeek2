@@ -288,6 +288,7 @@ def quiz(pl_id = None, game = None):
                 app.logger.error(f"Playlist force update fail: {err}")
                 return redirect(url_for("index"))
             
+            app.logger.debug(f"updated plst img: {pl.img}")
             db.session.add(pl)
             db.session.commit()
         return render_template("quiz.html", pl_id = pl_id)

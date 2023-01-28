@@ -355,6 +355,7 @@ class Playlist(db.Model):
 
         app.logger.debug(f"start playlist update id: {self.id}")
 
+        app.logger.debug(f"old img: {self.img}")
         # update description, name, url, img, owner
         self.preload(resp)
         db.session.flush()
