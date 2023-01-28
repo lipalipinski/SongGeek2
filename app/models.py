@@ -318,6 +318,7 @@ class Playlist(db.Model):
 
         if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
             db.session.flush()
+            app.logger.debug("ABORT PRELOAD PL UP TO DATE")
             return True
 
         self.description = resp["description"]
