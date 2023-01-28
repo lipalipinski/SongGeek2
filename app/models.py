@@ -327,6 +327,8 @@ class Playlist(db.Model):
         if not ownr:
             ownr = Owner(id=resp["owner"]["id"], name=resp["owner"]["display_name"], url=resp["owner"]["external_urls"]["spotify"])
         self.owner = ownr
+        
+        db.session.flush()
 
         return True
 

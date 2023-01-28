@@ -136,9 +136,10 @@ def index():
             new_pl = Playlist.query.get(pl["id"])
             if not new_pl:
                 new_pl = Playlist(id=pl["id"])
-                new_pl.preload(pl)
-                db.session.add(new_pl)
-                db.session.commit()
+            new_pl.preload(pl)
+            db.session.add(new_pl)
+            db.session.commit()
+            
 
             playlists.append({"id": new_pl.id, 
                               "name": new_pl.name, 
