@@ -14,11 +14,14 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     LOG_DEBUG = os.environ.get('LOG_DEBUG')
-    CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
     BASE_PATH = f'view-source:{basedir}'
     SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CACHE_TYPE =  "SimpleCache",  # Flask-Caching related configs
+    if os.environ.get('CHACHE_OFF') == "True":
+        CACHE_OFF = True
+    else:
+        CACHE_OFF = False
+    CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
     CACHE_DEFAULT_TIMEOUT = 300
     TOKEN_UPDATE = 60*15 #update token when expires in less than that
     PLAYLIST_UPDATE = 60*60 #update playlist after x seconds
