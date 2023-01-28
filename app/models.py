@@ -461,7 +461,7 @@ class Playlist(db.Model):
         """ returns current average score of all games with this playlist, 
         or 0 if no games played"""
         
-        games_count = db.session.query(Game).filter(Game.playlist_id == self.id).count()
+        games_count = db.session.query(Game).filter(Game.playlist_id == self.id, Game.status == 5).count()
         if games_count == 0:
             return 0
         if not user:
