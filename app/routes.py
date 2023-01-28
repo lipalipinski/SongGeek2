@@ -109,7 +109,7 @@ def require_country():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    @cache.memoize(timeout=900, args_to_ignore=["spoti"], unless=app.config["CACHE_OFF"])
+    @cache.memoize(timeout=900, args_to_ignore=["spoti"], unless= lambda: app.config["CACHE_OFF"])
     @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
         app.logger.debug("FETCH_PLAYLIST NOT CACHED")

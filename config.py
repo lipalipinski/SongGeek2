@@ -17,10 +17,7 @@ class Config(object):
     BASE_PATH = f'view-source:{basedir}'
     SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    if os.environ.get('CACHE_OFF') == "True":
-        CACHE_OFF = True
-    else:
-        CACHE_OFF = False
+    CACHE_OFF = os.environ.get('CACHE_OFF') == "True"
     CACHE_SERVERS = os.environ.get('MEMCACHIER_SERVERS')
     CACHE_DEFAULT_TIMEOUT = 300
     TOKEN_UPDATE = 60*15 #update token when expires in less than that
