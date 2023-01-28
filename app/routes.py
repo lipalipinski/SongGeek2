@@ -109,7 +109,7 @@ def require_country():
 @app.route("/", methods=["POST", "GET"])
 def index():
 
-    @cache.memoize(timeout=900, args_to_ignore=["spoti"])
+    #@cache.memoize(timeout=900, args_to_ignore=["spoti"])
     @retryfy(3, 2)
     def fetch_playlists(spoti, limit, code = None):
         app.logger.debug("FETCH_PLAYLIST NOT CACHED")
@@ -136,6 +136,7 @@ def index():
             new_pl = Playlist.query.get(pl["id"])
             if not new_pl:
                 new_pl = Playlist(id=pl["id"])
+
             new_pl.preload(pl)
             db.session.add(new_pl)
             db.session.commit()
