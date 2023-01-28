@@ -549,3 +549,6 @@ class Img(db.Model):
     playlist = db.relationship("Playlist", backref="img", lazy="dynamic")
     album = db.relationship("Album", backref="img", lazy="dynamic")
     user = db.relationship("User", backref="img", lazy="dynamic")
+
+    def __repr__(self) -> str:
+        return f"img: {self.id}, sm: {self.sm}, md: {self.md}, lg: {self.lg}"
