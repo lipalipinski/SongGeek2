@@ -12,7 +12,7 @@ from app.helpers import img_helper, retryfy
 from sqlalchemy import func
 
 
-@cache.cached(timeout=3600, key_prefix="pls_avgs")
+@cache.cached(timeout=3600, key_prefix="pls_avgs", unless=app.config["CACHE_OFF"])
 def all_pls_avgs():
     '''returns a list of all playlists average scores'''
     app.logger.debug("all_pls_avgs not cached")
@@ -135,7 +135,7 @@ class User(UserMixin, db.Model):
 
         return top_tracks
 
-    @cache.memoize(timeout=60)
+    @cache.memoize(timeout=60, unless=app.config["CACHE_OFF"])
     def top_artists(self):
         """ returns [{'artst':plst, 'score':score}, ...] """
         # minimum number of plays
@@ -186,12 +186,12 @@ class User(UserMixin, db.Model):
         top_playlists.sort(key = lambda playlist : playlist["score"], reverse=True)
         return top_playlists
 
-    @cache.memoize(timeout=5)
+    @cache.memoize(timeout=5, unless=app.config["CACHE_OFF"])
     def count_games(self):
         games = db.session.query(Game).filter(Game.user_id == self.id, Game.status == 5).count()
         return games
 
-    @cache.memoize(timeout=5)
+    @cache.memoize(timeout=5, unless=app.config["CACHE_OFF"])
     def answers(self):
         """ returns (correct_answers, all_answers) """
         # consider only finished games (Game.status == 5)
@@ -471,7 +471,7 @@ class Playlist(db.Model):
         return statistics.mean([game.points() for game in user_games.all()])
 
 
-    @cache.memoize(timeout=600)
+    @cache.memoize(timeout=600, unless=app.config["CACHE_OFF"])
     def level(self):
 
         if self.avg_score() == 0:
