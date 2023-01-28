@@ -297,6 +297,7 @@ def quiz(pl_id = None, game = None):
         
         # update playlist 
         pl.update()
+        db.session.commit()
 
 
         game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
