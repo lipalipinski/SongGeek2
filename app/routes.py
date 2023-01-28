@@ -283,6 +283,7 @@ def quiz(pl_id = None, game = None):
             pl = Playlist.query.get(pl_id)
             try:
                 pl.update(force=True)
+                db.session.commit()
             except Exception as err:
                 app.logger.error(f"Playlist force update fail: {err}")
                 return redirect(url_for("index"))
