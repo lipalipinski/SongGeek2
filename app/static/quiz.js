@@ -55,6 +55,7 @@ function get_quiz() {
             document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);
             // set playlist name
             document.querySelector('#pl_name').textContent = json.plName;
+            document.querySelector('#pl_name').setAttribute('href', json.plUrl)
             // set playlist owner
             document.querySelector('#pl_owner').textContent = json.plOwner;
             // set playlist description

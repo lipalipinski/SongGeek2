@@ -321,6 +321,7 @@ def quiz(pl_id = None, game = None):
                 "plDescription":pl.description,
                 "plName":pl.name,
                 "plOwner":pl.owner.name,
+                "plUrl":pl.url,
                 "plLvl":game.level}
 
         body["next_url"] = next_quest.track.prev_url
