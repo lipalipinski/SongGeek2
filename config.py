@@ -17,7 +17,7 @@ class Config(object):
     BASE_PATH = f'view-source:{basedir}'
     SQLALCHEMY_DATABASE_URI = POSTGRES_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    if os.environ.get('CHACHE_OFF') == "True":
+    if os.environ.get('CACHE_OFF') == "True":
         CACHE_OFF = True
     else:
         CACHE_OFF = False
