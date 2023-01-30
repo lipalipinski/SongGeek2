@@ -281,18 +281,17 @@ def quiz(pl_id = None, game = None):
     if request.method == "GET":
         # force update
         if request.args.get("force") == "True":
-            app.logger.info(f"Force playlist update (pl_id={pl_id})")
+            app.logger.info(f"Force playlist update pl_id={pl_id}")
             pl = Playlist.query.get(pl_id)
             try:
                 pl.update(force=True)
-                
             except Exception as err:
                 app.logger.error(f"Playlist force update fail: {err}")
                 return redirect(url_for("index"))
             
-            app.logger.debug(f"updated plst img: {pl.img}")
             db.session.add(pl)
             db.session.commit()
+            app.logger.debug(f"force updated plst: {pl.name} ({pl.id})")
         return render_template("quiz.html", pl_id = pl_id)
 
     # ======= new game =========    

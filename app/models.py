@@ -314,12 +314,14 @@ class Playlist(db.Model):
     def total_tracks(self):
         return len(self.tracks)
 
-    def preload(self, resp):
+    def preload(self, resp, force=False):
 
-        if self.snapshot_id and self.snapshot_id == resp["snapshot_id"]:
+        if self.snapshot_id and self.snapshot_id == resp["snapshot_id"] and not force:
             db.session.flush()
-            app.logger.debug("ABORT PRELOAD PL UP TO DATE")
+            app.logger.debug(f"ABORT PRELOAD SNAPSHOT NOT CHANGED: {self.name}")
             return True
+        
+        app.logger.debug(f"PREALOADING: {self.name}")
 
         self.description = resp["description"]
         self.name=resp["name"]
@@ -346,7 +348,7 @@ class Playlist(db.Model):
             now = datetime.utcnow()
             delta = (now - self.updated)
             if self.updated and delta.seconds < pl_update_time and delta.days < 1:
-                # playlist up to date
+                app.logger.debug("playlist up to date")
                 return True
         
         # spotify request
@@ -359,13 +361,15 @@ class Playlist(db.Model):
         # check snapshot
         if self.snapshot_id and self.snapshot_id == resp["snapshot_id"] and not force:
             db.session.flush()
+            app.logger.debug("playlist snapshot not changed")
             return True
 
+        self.snapshot_id = resp["snapshot_id"]
         app.logger.debug(f"start playlist update id: {self.id}")
 
         app.logger.debug(f"old img: {self.img}")
         # update description, name, url, img, owner
-        self.preload(resp)
+        self.preload(resp, force=force)
         db.session.flush()
 
         # request tracks
