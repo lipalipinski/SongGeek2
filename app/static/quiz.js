@@ -1,36 +1,18 @@
-// answer buttons
-const buttons = document.querySelectorAll('.ans-btn');
-const quest_num = document.querySelector('#quest_num');
-const quizCard = document.querySelector('#quiz-card');
-const loadCard = document.querySelector('.load-card');
-const mainContainer = document.querySelector('#main-container');
-let resp;
-const countdownSeconds = 5;
-let timer;
-let gameId;
-let questNum
-
-// audio player controls
-const player = document.querySelector('#player');
-const play = document.querySelector("#playpause");
-const volume = document.querySelector('#volume');
-const audioSource = document.querySelector('#audioSource');
-const mute = document.querySelector('#mute');
-
 function get_quiz() {
 
     // make request
     let data = {
         "mode": "newGame"
     }
-
-    fetch(QUIZ_URL, {
+    fetch(window.location.href, {
         "method": "POST",
         "headers": { "Content-Type": "application/json" },
         "body": JSON.stringify(data),
     })
         .then((response) => {
+            // response not ok
             if (!response.ok) {
+                const mainContainer = document.querySelector('#main-container');
                 mainContainer.textContent = ""
                 mainContainer.innerHTML = `<div class="card  h-100 my-auto" style="">
                 <div class="card-body my-auto">
@@ -47,7 +29,7 @@ function get_quiz() {
         .then((json) => {
             resp = json;
             document.querySelector('title').innerText = `SongGeek: ${json.plName}`;
-            
+
             gameId = json.gameId;
             questNum = json.questNum;
 
@@ -74,229 +56,102 @@ function get_quiz() {
                     break;
             };
             document.querySelector('#lvl-badge').appendChild(badge);
-            // update audio src
-            audioSource.setAttribute('src', json.next_url);
-            player.load();
-            // set random playback start time
-            let startTime = Math.floor(Math.random() * 25);
-            player.currentTime = startTime;
-            play.addEventListener('click', startPlayer, { once: true });
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-            loadCard.classList.add('d-none');
-            quizCard.classList.remove('d-none');
-
-            question();
-        })
-        .catch((err) => console.error(`Fetch problem: ${err.message}`));
-}
-
-function startPlayer() {
-    if (play.getAttribute('data-state') == 'results') {
-        return;
-    }
-    if (player.readyState == 4) {
-        console.log('audio loaded')
-        if (player.paused || player.ended) {
-            score = countdownSeconds;
-            play.textContent = score;
-            player.play();
-            play.setAttribute('data-state', 'countdown');
-            timer = setInterval(() => {
-                score--;
-                if (score == 0) {
-                    player.pause();
-                    play.setAttribute('data-state', 'after-countdown');
-                    play.textContent = "time's out!";
-                } else {
-                    play.textContent = score;
-                };
-            }, 1000);
-        };
-    } else {
-        play.setAttribute('data-state', 'loading');
-        play.innerText = ' ';
-        const spinner = document.createElement('div');
-        spinner.classList.add('spinner-border');
-        spinner.setAttribute('role', 'status');
-        play.appendChild(spinner);
-        player.addEventListener('canplaythrough', () => {
-            play.querySelector('div').classList.add('d-none');
-            startPlayer();
-        }, { once: true });
-        console.log('waiting for audio load')
-    };
-};
-
-// listen for the answer
-function answer(e) {
-    
-    // remove listeners from buttons
-    for (const btn of buttons) {
-        btn.removeEventListener('click', answer);
-    }
-
-    // pause player
-    player.pause()
-
-    // make request
-    let data = {
-        "mode": "nextQuest",
-        "gameId": gameId,
-        "id": e.target.value,
-        "score": score
-    }
-
-    fetch(QUIZ_URL, {
-        "method": "POST",
-        "headers": { "Content-Type": "application/json" },
-        "body": JSON.stringify(data),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((json) => {
-            resp = json;
+            console.log(resp);
+            const quiz = new QuizPlayer(resp["quests"]);
             
-            gameId = json.gameId;
-            questNum = json.questNum;
 
-            // update points display
-            const points = document.querySelector('#points');
-            points.textContent = json.total_points;
-
-            // green answer
-            turnGreen(document.querySelector(`#_${json.green}`));
-            // show badge
-            if (json.points > 0) {
-                const badge = document.querySelector(`#_${json.green} span`);
-                badge.classList.remove('d-none');
-                badge.textContent = '+' + json.points;
-            };
-            // red answer
-            if (json.red != "") {
-                turnRed(document.querySelector(`#_${json.red}`));
-                progbar(document.querySelector('#prog_bar'), false);
-            } else {
-                progbar(document.querySelector('#prog_bar'), true);
-            }
-
-            // if not last quest
-            if (json.next_url != "") {
-                // update audio src
-                
-                audioSource.setAttribute('src', json.next_url);
-                player.load();
-                // set random playback start time
-                let startTime = Math.floor(Math.random() * 25);
-                player.currentTime = startTime;
-                // listen for new playback
-                play.addEventListener('click', question);
-                play.addEventListener('click', startPlayer, { once: true });
-                play.textContent = 'NEXT';
-            } else {
-                // AFTER LAST QUEST
-                
-                play.textContent = ' ';
-                play.setAttribute('data-state', 'results');
-                const results = document.querySelector('#results');
-                results.href = json.resultsUrl;
-            }
+            quiz.nextQuest();
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }
 
-// prepere the question
-function question() {
-    // update buttons
-    for (let [i, btn] of buttons.entries()) {
-        const badge = document.createElement('span');
-        badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
-        // names
-        btn.textContent = resp.next_tracks[i].name;
-        btn.appendChild(badge);
-        // classes
-        btnReset(btn);
-        // btn id's
-        btn.setAttribute('id', `_${resp.next_tracks[i].id}`);
-        // btn values
-        btn.setAttribute('value', resp.next_tracks[i].id);
-        // event listener
-        btn.addEventListener('click', answer);
-        // quest_num update
-        quest_num.textContent = resp.questNum + 1
-    }
-    play.removeEventListener('click', question)
-    buttons[buttons.length-1].scrollIntoView(false);
+function QuizPlayer(quests) {
+    // init audio players
+    this.state = 0;
+    this.players = [];
+
+    for (const quest of quests) {
+        this.players.push(new Player(quest))
+    };
+
+    // chain load audio
+    this.players[0].loadAudio(1)
+        .then(() => {
+            return this.players[1].loadAudio(2);
+        })
+        .then(() => {
+            return this.players[2].loadAudio(3);
+        })
+        .then(() => {
+            return this.players[3].loadAudio(4);
+        })
+        .then(() => {
+            return this.players[4].loadAudio(5);
+        })
+
+    this.nextQuest = function () {
+        this.players[this.state].setQuest();
+        this.state++;
+    };
 };
 
-function turnGreen(btn) {
-    btn.classList.replace('btn-light', 'btn-success');
+function Player(quest) {
+    this.tracks = quest["tracks"];
+    this.audioPlayer = new Audio();
+    this.audioPlayer.preload = 'none';
+    this.audioPlayer.src = quest["prevUrl"];
+    this.startPosition = Math.floor(Math.random() * 25);
+
+    this.loadAudio = function (logger) {
+        // count canplay events, if seeking fires twice
+        let canplayCounter = 0;
+        this.audioPlayer.load();
+        this.audioPlayer.currentTime = this.startPosition;
+
+        const seeking = new Promise((resolve) => {
+            this.audioPlayer.addEventListener('seeked', () => {
+                resolve();
+            });
+        });
+        
+        const canplay = new Promise((resolve) => {
+            this.audioPlayer.addEventListener('canplaythrough', (e) => {
+                if (this.audioPlayer.currentTime === 0) {
+                    resolve();
+                } else if (canplayCounter === 1) {
+                    resolve();
+                };
+                canplayCounter++;
+            });
+        });
+
+        // wait for seeking if start time not 0
+        if (this.audioPlayer.currentTime != 0) {
+            return Promise.all([seeking, canplay]);
+        } else {
+            return Promise.all([canplay]);
+        }
+    };
+
+    this.setQuest = function () {
+        for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+            btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
+            btn.innerText = this.tracks[i]["name"];
+        };
+    };
+    this.startPlayback = function () {
+        this.audioPlayer.play();
+    };
 };
 
-function turnRed(btn) {
-    btn.classList.replace('btn-light', 'btn-danger');
+function removePlaceholder() {
+    document.querySelector('.load-card').remove();
 };
 
-function btnReset(btn) {
-    btn.classList.replace('btn-success', 'btn-light');
-    btn.classList.replace('btn-danger', 'btn-light');
-};
-
-function progbar(bar, succes) {
-    const prog = document.createElement('div');
-    prog.classList.add('progress-bar');
-    prog.style.width = '20%';
-    if (succes == false) {
-        prog.classList.add('bg-danger');
-    } else {
-        prog.classList.add('bg-success');
-    }
-    bar.appendChild(prog);
-};
-
-
-get_quiz()
-
-for (const btn of buttons) {
-    btn.addEventListener('click', answer);
+function showCard() {
+    document.querySelector('#quiz-card').classList.remove('d-none');
 }
 
-//start at random second
-let startTime = Math.floor(Math.random() * 25);
-player.currentTime = startTime;
-
-// disable all buttons after answer
-play.addEventListener('click', () => {
-    for (const btn of buttons) {
-        btn.disabled = false;  
-    };
-}, { once: true });
-
-
-// volume slider
-volume.addEventListener('input', (e) => {
-    player.volume = e.target.value / 100;
-});
-
-// toggle mute 
-mute.addEventListener('click', (e) => {
-    if (!player.muted) {
-        player.muted = true;
-        e.target.setAttribute('data-state', 'muted');
-    } else {
-        player.muted = false;
-        e.target.setAttribute('data-state', 'not-muted');
-    }
-})
-
-play.addEventListener('click', () => {
-    startPlayer();
-}, { once: true });
-
-player.addEventListener('pause', () => {
-    clearInterval(timer);
-});
+get_quiz();
+removePlaceholder();
+showCard();
