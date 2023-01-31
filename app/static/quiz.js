@@ -56,10 +56,9 @@ function get_quiz() {
                     break;
             };
             document.querySelector('#lvl-badge').appendChild(badge);
-            console.log(resp);
+            
             const quiz = new QuizPlayer(resp["quests"]);
             
-
             quiz.nextQuest();
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
@@ -68,6 +67,7 @@ function get_quiz() {
 function QuizPlayer(quests) {
     // init audio players
     this.state = 0;
+    this.points = 0;
     this.players = [];
 
     for (const quest of quests) {
@@ -77,6 +77,7 @@ function QuizPlayer(quests) {
     // chain load audio
     this.players[0].loadAudio(1)
         .then(() => {
+            this.enableBtns();
             return this.players[1].loadAudio(2);
         })
         .then(() => {
@@ -90,8 +91,23 @@ function QuizPlayer(quests) {
         })
 
     this.nextQuest = function () {
-        this.players[this.state].setQuest();
+        // quest counter
+        document.querySelector('#quest_num').innerText = this.state + 1;
+        // points counter
+        document.querySelector('#points').innerText = this.points;
+        this.players[this.state].setAnswers();
         this.state++;
+    };
+
+    //enable playback and answer
+    this.enableBtns = function (enable=true) {
+        for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+            if (enable == true) {
+                btn.classList.remove('disabled');
+            } else {
+                btn.classList.add('disabled');
+            }
+        };
     };
 };
 
@@ -113,7 +129,7 @@ function Player(quest) {
                 resolve();
             });
         });
-        
+        console.log('sdfsdfsdf')
         const canplay = new Promise((resolve) => {
             this.audioPlayer.addEventListener('canplaythrough', (e) => {
                 if (this.audioPlayer.currentTime === 0) {
@@ -133,12 +149,15 @@ function Player(quest) {
         }
     };
 
-    this.setQuest = function () {
+    // answer btns
+    this.setAnswers = function () {
         for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
             btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
+            btn.setAttribute('value', `${this.tracks[i]["id"]}`);
             btn.innerText = this.tracks[i]["name"];
         };
     };
+
     this.startPlayback = function () {
         this.audioPlayer.play();
     };
@@ -151,6 +170,7 @@ function removePlaceholder() {
 function showCard() {
     document.querySelector('#quiz-card').classList.remove('d-none');
 }
+
 
 get_quiz();
 removePlaceholder();
