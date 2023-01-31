@@ -59,7 +59,6 @@ function get_quiz() {
             
             const quiz = new QuizPlayer(resp["quests"]);
             
-            quiz.nextQuest();
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }
@@ -90,6 +89,34 @@ function QuizPlayer(quests) {
         };
     };
 
+    // controlBtnStatus
+    this.controlBtnStatus = function (state) {
+        const btn = document.querySelector('#playpause');
+        btn.innerText = '';
+        switch (state) {
+            case 'loading':
+                const spinner = document.createElement('div');
+                spinner.classList.add('spinner-border');
+                spinner.setAttribute('role', 'status');
+                btn.setAttribute('data-state', 'loading');
+                btn.appendChild(spinner);
+                break;
+            case 'play':
+                btn.setAttribute('data-state', 'play')
+                break;
+            case 'countdown':
+                btn.setAttribute('data-state', 'countdown')
+                break;
+            case 'after-countdown':
+                btn.setAttribute('data-state', 'after-countdown')
+                break;
+            case 'results':
+                btn.setAttribute('data-state', 'results')
+                break;
+                break;
+        };
+    };
+
     // init players
     for (const quest of quests) {
         this.players.push(new Player(quest))
@@ -103,10 +130,17 @@ function QuizPlayer(quests) {
         .then(console.log(`loaded ${i}`))
     };
     
+    this.controlBtnStatus('loading');
+    removePlaceholder();
+    showCard();
+
     this.players[0].ready
         .then(() => {
-            this.enableBtns()
+            this.nextQuest();
+            this.enableBtns();
+            this.controlBtnStatus('play');
         });
+    
 
 };
 
@@ -180,5 +214,3 @@ function showCard() {
 
 
 get_quiz();
-removePlaceholder();
-showCard();
