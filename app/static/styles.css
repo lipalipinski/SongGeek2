@@ -58,6 +58,7 @@ button.controls[data-state="countdown"] {
 }
 
 button.controls[data-state="after-countdown"] {
+    font-size: 2.1em;
     font-weight: bolder;
     color: black;
 }

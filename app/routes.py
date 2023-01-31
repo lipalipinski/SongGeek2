@@ -339,7 +339,6 @@ def quiz(pl_id = None, game = None):
     #  ==== answer received ======
     elif request.json["mode"] == "nextQuest":
 
-        print(session["current_game"])
         game_id = int(session["current_game"])
         track_id = request.json["id"]
         score = request.json["score"]
@@ -362,7 +361,6 @@ def quiz(pl_id = None, game = None):
                 }
 
         db.session.commit()
-        print(body)
         return Response(json.dumps(body), 200)
     
     else:

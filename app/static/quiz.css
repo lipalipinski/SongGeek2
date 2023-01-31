@@ -14,6 +14,7 @@
 
 button.controls {
     font-size: 4em;
+    min-height: 110px;
     white-space: break-spaces;
     background-position: 50%;
 }

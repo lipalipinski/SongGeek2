@@ -335,7 +335,7 @@ function Player(quest) {
                 btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
                 btn.setAttribute('value', `${this.tracks[i]["id"]}`);
                 btn.innerText = this.tracks[i]["name"];
-
+                
                 // score badge
                 const badge = document.createElement('span');
                 badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
@@ -351,25 +351,34 @@ function Player(quest) {
                         "id": e.target.value,
                         "score": this.score
                     }
+                    console.log('ANSWER REQUEST')
                     const resp = fetch(window.location.href, {
                         "method": "POST",
                         "headers": { "Content-Type": "application/json" },
                         "body": JSON.stringify(data),
-                        })
-                        .then((response) => {
-                            if (!response.ok) {
+                    })
+                    .then((response) => {
+                        if (!response.ok) {
                                 throw new Error(`HTTP error: ${response.status}`);
                             }
                             return response.json();
                         })
-                    return resolve(resp)
-                }, {once:true});
+                        return resolve(resp)
+                    }, {once:true});
             };
         });
-        return answer.then();
+        return answer.then((answer) => {
+            // clone remove event listeners from btns after answering
+            for (const btn of document.querySelectorAll('.ans-btn')) {
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+            };
+            return answer;
+        });
     };
 
     this.startPlayback = function () {
+        console.log('START PLAYBACK')
         this.audioPlayer.play();
         this.enableBtns();
         document.querySelector('#playpause').innerText = this.score;
@@ -385,6 +394,8 @@ function Player(quest) {
 
     this.stopPlayback = function () {
         clearInterval(this.timer);
+        document.querySelector('#playpause').innerText = ' ';
+        document.querySelector('#playpause').setAttribute('data-state', 'after-countdown');
         this.audioPlayer.pause();
     };
 };
