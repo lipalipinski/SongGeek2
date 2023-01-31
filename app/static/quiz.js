@@ -30,9 +30,6 @@ function get_quiz() {
             resp = json;
             document.querySelector('title').innerText = `SongGeek: ${json.plName}`;
 
-            gameId = json.gameId;
-            questNum = json.questNum;
-
             // set playlist img
             document.querySelector('#pl_img').setAttribute('src', json.plImgUrl);
             // set playlist name
@@ -57,14 +54,15 @@ function get_quiz() {
             };
             document.querySelector('#lvl-badge').appendChild(badge);
             
-            const quiz = new QuizPlayer(resp["quests"]);
+            const quiz = new QuizPlayer(resp["quests"], resp["gameId"]);
             
         })
         .catch((err) => console.error(`Fetch problem: ${err.message}`));
 }
 
-function QuizPlayer(quests) {
+function QuizPlayer(quests, gameId) {
     // init audio players
+    this.gameId = gameId;
     this.state = 0;
     this.points = 0;
     this.players = [];
@@ -204,8 +202,22 @@ function QuizPlayer(quests) {
                 // score update
                 this.points += resp["points"];
                 this.updatePoints();
-                this.controlBtnStatus('after-countdown', 'NEXT');
             })
+        // not last quest
+        if (player.qNum != 4) {
+            gameChain = gameChain
+                .then(() => {
+                    this.controlBtnStatus('after-countdown', 'NEXT');
+                })
+        } else {
+            // last quest
+            gameChain = gameChain
+                .then(() => {
+                    this.controlBtnStatus('results');
+                    const resultsUrl = window.location.href + '/' + this.gameId;
+                    document.querySelector('#results').setAttribute('href', resultsUrl);
+            })
+        }
     };
 
 };
