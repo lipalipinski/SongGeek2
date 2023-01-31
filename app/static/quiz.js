@@ -351,7 +351,6 @@ function Player(quest) {
                         "id": e.target.value,
                         "score": this.score
                     }
-                    console.log('ANSWER REQUEST')
                     const resp = fetch(window.location.href, {
                         "method": "POST",
                         "headers": { "Content-Type": "application/json" },
@@ -378,7 +377,6 @@ function Player(quest) {
     };
 
     this.startPlayback = function () {
-        console.log('START PLAYBACK')
         this.audioPlayer.play();
         this.enableBtns();
         document.querySelector('#playpause').innerText = this.score;
@@ -386,8 +384,8 @@ function Player(quest) {
             this.score--;
             document.querySelector('#playpause').innerText = this.score;
             if (this.score == 0) {
-                document.querySelector('#playpause').innerText = "TIME'S OUT";
                 this.stopPlayback();  
+                document.querySelector('#playpause').innerText = "TIME'S OUT";
             };
         }, 1000);
     };
