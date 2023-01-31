@@ -73,9 +73,12 @@ function QuizPlayer(quests) {
         // quest counter
         document.querySelector('#quest_num').innerText = this.state + 1;
         // points counter
-        document.querySelector('#points').innerText = this.points;
         return this.players[this.state].setAnswers();
     };
+
+    this.updatePoints = function () {
+        document.querySelector('#points').innerText = this.points;
+    }
 
     // controlBtnStatus
     this.controlBtnStatus = function (state, message='') {
@@ -117,12 +120,14 @@ function QuizPlayer(quests) {
     };
     
     this.controlBtnStatus('loading');
+    this.updatePoints();
     removePlaceholder();
     showCard();
 
     // GAME CHAIN
     let gameChain = Promise.resolve();
     for (const player of this.players) {
+        // wait for answer
         // first quest
         if (player.qNum == 0) {
             console.log(`STATE = ${this.state} (first quest)`)
@@ -162,7 +167,7 @@ function QuizPlayer(quests) {
                     return answer
                 })
         };
-
+        // update game info after answer
         gameChain = gameChain
             .then((resp) => {
                 // turn button green
@@ -172,6 +177,8 @@ function QuizPlayer(quests) {
                     document.querySelector(`#_${resp["red"]}`).classList.replace('btn-light', 'btn-danger');   
                 }
                 // score update
+                this.points += resp["points"];
+                this.updatePoints();
                 // progbar update
                 this.controlBtnStatus('after-countdown', 'NEXT');
             })
