@@ -341,6 +341,7 @@ function Player(quest) {
                 btn.appendChild(badge);
                 
                 btn.addEventListener('click', (e) => {
+                    document.querySelector('#playpause').setAttribute('data-state', 'loading');
                     this.enableBtns(false);
                     this.stopPlayback();
                     // disable butons
