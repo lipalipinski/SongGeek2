@@ -181,10 +181,15 @@ function QuizPlayer(quests, gameId) {
         gameChain = gameChain
             .then((resp) => {
                 // turn button green
-                document.querySelector(`#_${resp['green']}`).classList.replace('btn-light', 'btn-success');
+                const green = document.querySelector(`#_${resp['green']}`);
+                green.classList.replace('btn-light', 'btn-success');
+                green.classList.add('opacity-100');
+
                 // turn button red
                 if (resp["red"] != "") {
-                    document.querySelector(`#_${resp["red"]}`).classList.replace('btn-light', 'btn-danger');
+                    const red = document.querySelector(`#_${resp["red"]}`);
+                    red.classList.replace('btn-light', 'btn-danger');
+                    red.classList.add('opacity-100')
                     // red progbar
                     this.progbar(false);
                 } else {
@@ -286,6 +291,7 @@ function Player(quest) {
             for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
                 btn.classList.replace('btn-success', 'btn-light');
                 btn.classList.replace('btn-danger', 'btn-light');
+                btn.classList.remove('opacity-100');
                 btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
                 btn.setAttribute('value', `${this.tracks[i]["id"]}`);
                 btn.innerText = this.tracks[i]["name"];
