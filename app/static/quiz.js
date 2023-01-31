@@ -193,6 +193,14 @@ function QuizPlayer(quests) {
                     // green progbar
                     this.progbar();
                 }
+
+                // show score badge
+                if (resp["points"] > 0) {
+                    const badge = document.querySelector(`#_${resp["green"]} span`);
+                    badge.classList.remove('d-none');
+                    badge.textContent = '+' + resp["points"];
+                };
+
                 // score update
                 this.points += resp["points"];
                 this.updatePoints();
@@ -269,6 +277,11 @@ function Player(quest) {
                 btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
                 btn.setAttribute('value', `${this.tracks[i]["id"]}`);
                 btn.innerText = this.tracks[i]["name"];
+
+                // score badge
+                const badge = document.createElement('span');
+                badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
+                btn.appendChild(badge);
                 
                 btn.addEventListener('click', (e) => {
                     this.enableBtns(false);
