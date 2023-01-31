@@ -70,26 +70,6 @@ function QuizPlayer(quests) {
     this.points = 0;
     this.players = [];
 
-    for (const quest of quests) {
-        this.players.push(new Player(quest))
-    };
-
-    // chain load audio
-    this.players[0].loadAudio(1)
-        .then(() => {
-            this.enableBtns();
-            return this.players[1].loadAudio(2);
-        })
-        .then(() => {
-            return this.players[2].loadAudio(3);
-        })
-        .then(() => {
-            return this.players[3].loadAudio(4);
-        })
-        .then(() => {
-            return this.players[4].loadAudio(5);
-        })
-
     this.nextQuest = function () {
         // quest counter
         document.querySelector('#quest_num').innerText = this.state + 1;
@@ -109,6 +89,25 @@ function QuizPlayer(quests) {
             }
         };
     };
+
+    // init players
+    for (const quest of quests) {
+        this.players.push(new Player(quest))
+    };
+    
+    // load audio chain
+    let loadChain = Promise.resolve();
+    for ([i, player] of this.players.entries()) {
+        loadChain = loadChain
+        .then(player.loadAudio(i))
+        .then(console.log(`loaded ${i}`))
+    };
+    
+    this.players[0].ready
+        .then(() => {
+            this.enableBtns()
+        });
+
 };
 
 function Player(quest) {
@@ -117,9 +116,14 @@ function Player(quest) {
     this.audioPlayer.preload = 'none';
     this.audioPlayer.src = quest["prevUrl"];
     this.startPosition = Math.floor(Math.random() * 25);
+    this.readyResolver;
+    this.ready = new Promise((resolve) => {
+        this.readyResolver = resolve;
+    });
 
     this.loadAudio = function (logger) {
         // count canplay events, if seeking fires twice
+        console.log(logger);
         let canplayCounter = 0;
         this.audioPlayer.load();
         this.audioPlayer.currentTime = this.startPosition;
@@ -129,7 +133,7 @@ function Player(quest) {
                 resolve();
             });
         });
-        console.log('sdfsdfsdf')
+        
         const canplay = new Promise((resolve) => {
             this.audioPlayer.addEventListener('canplaythrough', (e) => {
                 if (this.audioPlayer.currentTime === 0) {
@@ -142,11 +146,14 @@ function Player(quest) {
         });
 
         // wait for seeking if start time not 0
+        let loaded;
         if (this.audioPlayer.currentTime != 0) {
-            return Promise.all([seeking, canplay]);
+            loaded = Promise.all([seeking, canplay]);
         } else {
-            return Promise.all([canplay]);
+            loaded = Promise.all([canplay]);
         }
+        
+        return loaded.then(this.readyResolver())
     };
 
     // answer btns
