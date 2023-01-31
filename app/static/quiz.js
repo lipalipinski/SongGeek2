@@ -74,19 +74,7 @@ function QuizPlayer(quests) {
         document.querySelector('#quest_num').innerText = this.state + 1;
         // points counter
         document.querySelector('#points').innerText = this.points;
-        this.players[this.state].setAnswers();
-        this.state++;
-    };
-
-    //enable playback and answer
-    this.enableBtns = function (enable=true) {
-        for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
-            if (enable == true) {
-                btn.classList.remove('disabled');
-            } else {
-                btn.classList.add('disabled');
-            }
-        };
+        return this.players[this.state].setAnswers();
     };
 
     // controlBtnStatus
@@ -126,36 +114,97 @@ function QuizPlayer(quests) {
     for ([i, player] of this.players.entries()) {
         loadChain = loadChain
         .then(player.loadAudio(i))
-        .then(console.log(`loaded ${i}`))
     };
     
     this.controlBtnStatus('loading');
     removePlaceholder();
     showCard();
 
-    this.players[0].ready
-        .then(() => {
-            this.nextQuest();
-            this.enableBtns();
-            this.controlBtnStatus('play');
-        });
+    // GAME CHAIN
+    let gameChain = Promise.resolve();
+    for (const player of this.players) {
+        // first quest
+        if (player.qNum == 0) {
+            console.log(`STATE = ${this.state} (first quest)`)
+                gameChain = gameChain
+                    .then(() => {
+                        this.controlBtnStatus('play');
+                        const currentPlayer = this.players[this.state];
+
+                        const answer = this.nextQuest();
+
+                        document.querySelector('#playpause').addEventListener('click', () => {
+                            console.log(currentPlayer.audioPlayer.src);
+                            this.controlBtnStatus('countdown', currentPlayer.score);
+                            currentPlayer.startPlayback();
+                            this.state++;
+                        }, { once: true });
+                        return answer;
+                    })
+        } else {
+            console.log(`STATE = ${this.state}`)
+            gameChain = gameChain
+                .then(() => {
+                    this.controlBtnStatus('play');
+                    const currentPlayer = this.players[this.state];
+
+                    
+                    const answer = new Promise((resolve) => {
+                        document.querySelector('#playpause').addEventListener('click', () => {
+                            console.log(currentPlayer.audioPlayer.src);
+                            this.controlBtnStatus('countdown', currentPlayer.score);
+                            currentPlayer.startPlayback();
+                            this.nextQuest().then((answer) => resolve(answer))
+                            this.state++;
+                        }, { once: true });
+                    })
+                    
+                    return answer
+                })
+        };
+
+        gameChain = gameChain
+            .then((resp) => {
+                // turn button green
+                document.querySelector(`#_${resp['green']}`).classList.replace('btn-light', 'btn-success');
+                // turn button red
+                if (resp["red"] != "") {
+                    document.querySelector(`#_${resp["red"]}`).classList.replace('btn-light', 'btn-danger');   
+                }
+                // score update
+                // progbar update
+                this.controlBtnStatus('after-countdown', 'NEXT');
+            })
+    };
 
 };
 
 function Player(quest) {
+    this.qNum = quest["qNum"];
     this.tracks = quest["tracks"];
     this.audioPlayer = new Audio();
     this.audioPlayer.preload = 'none';
     this.audioPlayer.src = quest["prevUrl"];
     this.startPosition = Math.floor(Math.random() * 25);
+    this.score = 5;
     this.readyResolver;
     this.ready = new Promise((resolve) => {
         this.readyResolver = resolve;
     });
 
-    this.loadAudio = function (logger) {
+    //enable answer
+    this.enableBtns = function (enable = true) {
+        for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+            if (enable == true) {
+                btn.classList.remove('disabled');
+            } else {
+                btn.classList.add('disabled');
+            }
+        };
+    };
+
+    this.loadAudio = function () {
         // count canplay events, if seeking fires twice
-        console.log(logger);
         let canplayCounter = 0;
         this.audioPlayer.load();
         this.audioPlayer.currentTime = this.startPosition;
@@ -190,15 +239,59 @@ function Player(quest) {
 
     // answer btns
     this.setAnswers = function () {
-        for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
-            btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
-            btn.setAttribute('value', `${this.tracks[i]["id"]}`);
-            btn.innerText = this.tracks[i]["name"];
-        };
+        const answer = new Promise((resolve, reject) => {
+            for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+                btn.classList.replace('btn-success', 'btn-light');
+                btn.classList.replace('btn-danger', 'btn-light');
+                btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
+                btn.setAttribute('value', `${this.tracks[i]["id"]}`);
+                btn.innerText = this.tracks[i]["name"];
+                
+                btn.addEventListener('click', (e) => {
+                    this.enableBtns(false);
+                    this.stopPlayback();
+                    // disable butons
+                    const data = {
+                        "mode": "nextQuest",
+                        "qNum": this.qNum,
+                        "id": e.target.value,
+                        "score": this.score
+                    }
+                    const resp = fetch(window.location.href, {
+                        "method": "POST",
+                        "headers": { "Content-Type": "application/json" },
+                        "body": JSON.stringify(data),
+                        })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                    return resolve(resp)
+                }, {once:true});
+            };
+        });
+        return answer.then();
     };
 
     this.startPlayback = function () {
         this.audioPlayer.play();
+        this.enableBtns();
+        document.querySelector('#playpause').innerText = this.score;
+        this.timer = setInterval(() => {
+            this.score--;
+            document.querySelector('#playpause').innerText = this.score;
+            if (this.score == 0) {
+                document.querySelector('#playpause').innerText = "TIME'S OUT";
+                this.stopPlayback();  
+            };
+        }, 1000);
+    };
+
+    this.stopPlayback = function () {
+        clearInterval(this.timer);
+        this.audioPlayer.pause();
     };
 };
 

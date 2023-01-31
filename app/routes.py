@@ -327,15 +327,20 @@ def quiz(pl_id = None, game = None):
             tracks = []
             for track in quest.all_answrs():
                 tracks.append({"id":track.id, "name":track.name})
-            body["quests"].append({"tracks":tracks, "prevUrl":quest.track.prev_url})
+            body["quests"].append({
+                "tracks":tracks, 
+                "prevUrl":quest.track.prev_url,
+                "qNum":quest.q_num})
 
+        session["current_game"] = game.id
         return Response(json.dumps(body), 200)
 
 
     #  ==== answer received ======
     elif request.json["mode"] == "nextQuest":
 
-        game_id = request.json["gameId"]
+        print(session["current_game"])
+        game_id = int(session["current_game"])
         track_id = request.json["id"]
         score = request.json["score"]
         game = db.session.get(Game, game_id)
@@ -348,7 +353,6 @@ def quiz(pl_id = None, game = None):
             red = track_id
 
         game.update_status()
-        next_quest = game.current_quest()
         body = {"gameId":game.id,
                 "questNum":game.status,
                 "total_points":game.points(),
@@ -356,19 +360,9 @@ def quiz(pl_id = None, game = None):
                 "green":quest.track_id,
                 "red":red,
                 }
-        if next_quest:
-            next_tracks =[]
-            next_url = next_quest.track.prev_url
-            for track in next_quest.all_answrs():
-                next_tracks.append({"id":track.id, "name":track.name})
-            body["next_url"] = next_url
-            body["next_tracks"] = next_tracks
-        else:
-            
-            body["next_url"] = ""
-            body["resultsUrl"] = url_for("quiz_results", pl_id = pl_id, game = game.id)
 
         db.session.commit()
+        print(body)
         return Response(json.dumps(body), 200)
     
     else:
