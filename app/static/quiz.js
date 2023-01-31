@@ -140,7 +140,6 @@ function QuizPlayer(quests, gameId) {
         // wait for answer
         // first quest
         if (player.qNum == 0) {
-            console.log(`STATE = ${this.state} (first quest)`)
                 gameChain = gameChain
                     .then(() => {
                         this.controlBtnStatus('play');
@@ -157,7 +156,6 @@ function QuizPlayer(quests, gameId) {
                         return answer;
                     })
         } else {
-            console.log(`STATE = ${this.state}`)
             gameChain = gameChain
                 .then(() => {
                     this.controlBtnStatus('play');
@@ -228,16 +226,54 @@ function QuizPlayer(quests, gameId) {
 };
 
 function Player(quest) {
+    const that = this;
     this.qNum = quest["qNum"];
     this.tracks = quest["tracks"];
     this.audioPlayer = new Audio();
     this.audioPlayer.preload = 'none';
     this.audioPlayer.src = quest["prevUrl"];
+    // volume slider
+    this.volume = document.querySelector('#volume');
+    // mute button
+    this.mute = document.querySelector('#mute');
+    // set volume from slider
+    this.audioPlayer.volume = this.volume.value / 100; 
     this.startPosition = Math.floor(Math.random() * 25);
     this.score = 5;
     this.readyResolver;
     this.ready = new Promise((resolve) => {
         this.readyResolver = resolve;
+    });
+
+    
+    this.setMuteImg = function () {
+        // set mute img
+        if (this.volume.value < 100 / 3) {
+            this.mute.setAttribute('data-state', 'vol-1');
+        } else if (this.volume.value > 200 / 3) {
+            this.mute.setAttribute('data-state', 'vol-3');
+        } else {
+            this.mute.setAttribute('data-state', 'vol-2');
+        };
+    };
+    
+    this.setMuteImg();
+    
+    // toggle mute 
+    this.mute.addEventListener('click', (e) => {
+        if (!this.audioPlayer.muted) {
+            this.audioPlayer.muted = true;
+            e.target.setAttribute('data-state', 'muted');
+        } else {
+            this.audioPlayer.muted = false;
+            this.setMuteImg();
+        };
+    })
+
+    // volume slider
+    this.volume.addEventListener('input', (e) => {
+        this.audioPlayer.volume = e.target.value / 100;
+        this.setMuteImg();
     });
 
     //enable answer

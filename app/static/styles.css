@@ -81,11 +81,23 @@ button.controls .spinner-border{
 button#mute {
     height: 30px;
     width: 30px;
-    background-image: url('/static/img/volume-mute-fill.svg');
+    background-image: url('/static/img/volume-up-fill.svg');
+}
+
+button#mute[data-state="vol-1"] {
+    background-image: url('/static/img/volume-1-fill.svg');
+}
+
+button#mute[data-state="vol-2"] {
+    background-image: url('/static/img/volume-2-fill.svg');
+}
+
+button#mute[data-state="vol-3"] {
+    background-image: url('/static/img/volume-3-fill.svg');
 }
 
 button#mute[data-state="muted"]{
-    background-image: url('/static/img/volume-off-fill.svg');
+    background-image: url('/static/img/volume-mute-fill.svg');
 }
 
 button.like[data-state="not-liked"] {
