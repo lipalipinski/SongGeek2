@@ -154,7 +154,7 @@ function QuizPlayer(quests, gameId) {
                         this.scrollToShowBtns();
 
                         document.querySelector('#playpause').addEventListener('click', () => {
-                            this.controlBtnStatus('countdown', currentPlayer.score);
+                            this.controlBtnStatus('loading');
                             currentPlayer.startPlayback();
                             this.state++;
                         }, { once: true });
@@ -169,7 +169,7 @@ function QuizPlayer(quests, gameId) {
                     
                     const answer = new Promise((resolve) => {
                         document.querySelector('#playpause').addEventListener('click', () => {
-                            this.controlBtnStatus('countdown', currentPlayer.score);
+                            this.controlBtnStatus('loading');
                             currentPlayer.startPlayback();
                             this.nextQuest().then((answer) => resolve(answer))
                             this.state++;
@@ -247,8 +247,7 @@ function Player(quest) {
     this.readyResolver;
     this.ready = new Promise((resolve) => {
         this.readyResolver = resolve;
-    });
-
+    })
     
     this.setMuteImg = function () {
         // set mute img
@@ -377,17 +376,21 @@ function Player(quest) {
     };
 
     this.startPlayback = function () {
-        this.audioPlayer.play();
-        this.enableBtns();
-        document.querySelector('#playpause').innerText = this.score;
-        this.timer = setInterval(() => {
-            this.score--;
-            document.querySelector('#playpause').innerText = this.score;
-            if (this.score == 0) {
-                this.stopPlayback();  
-                document.querySelector('#playpause').innerText = "TIME'S OUT";
-            };
-        }, 1000);
+        this.ready
+        .then(() => {
+                document.querySelector('#playpause').setAttribute('data-state', 'countdown')
+                document.querySelector('#playpause').innerText = this.score;
+                this.audioPlayer.play();
+                this.enableBtns();
+                this.timer = setInterval(() => {
+                    this.score--;
+                    document.querySelector('#playpause').innerText = this.score;
+                    if (this.score == 0) {
+                        this.stopPlayback();
+                        document.querySelector('#playpause').innerText = "TIME'S OUT";
+                    };
+                }, 1000);
+            });
     };
 
     this.stopPlayback = function () {
