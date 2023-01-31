@@ -311,8 +311,6 @@ def quiz(pl_id = None, game = None):
             app.logger.error(f"init_quest error: {err}")
             db.session.rollback()
             return Response(500)
-        
-        next_quest = game.current_quest()
 
         body = {
                 "gameId": game.id,
@@ -322,16 +320,15 @@ def quiz(pl_id = None, game = None):
                 "plName":pl.name,
                 "plOwner":pl.owner.name,
                 "plUrl":pl.url,
-                "plLvl":game.level}
-
-        body["next_url"] = next_quest.track.prev_url
+                "plLvl":game.level,
+                "quests":[]}
         
-        next_tracks = []
-        for track in next_quest.all_answrs():
-            next_tracks.append({"id":track.id, "name":track.name})
-        body["next_tracks"] = next_tracks
+        for quest in game.quests.all():
+            tracks = []
+            for track in quest.all_answrs():
+                tracks.append({"id":track.id, "name":track.name})
+            body["quests"].append({"tracks":tracks, "prevUrl":quest.track.prev_url})
 
-        db.session.commit()
         return Response(json.dumps(body), 200)
 
 
