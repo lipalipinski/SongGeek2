@@ -91,7 +91,7 @@ function QuizPlayer(quests, gameId) {
     }
 
     // controlBtnStatus
-    this.controlBtnStatus = function (state, message='') {
+    this.controlBtnStatus = function (state, message=' ') {
         const btn = document.querySelector('#playpause');
         btn.innerText = message;
         switch (state) {
@@ -117,6 +117,12 @@ function QuizPlayer(quests, gameId) {
         };
     };
 
+    this.scrollToShowBtns = function () {
+        document.querySelector('#quiz-card').scrollIntoView(false);  
+    };
+
+    this.controlBtnStatus('loading');
+
     // init players
     for (const quest of quests) {
         this.players.push(new Player(quest))
@@ -129,7 +135,6 @@ function QuizPlayer(quests, gameId) {
         .then(player.loadAudio(i))
     };
     
-    this.controlBtnStatus('loading');
     this.updatePoints();
     removePlaceholder();
     showCard();
@@ -146,9 +151,9 @@ function QuizPlayer(quests, gameId) {
                         const currentPlayer = this.players[this.state];
 
                         const answer = this.nextQuest();
+                        this.scrollToShowBtns();
 
                         document.querySelector('#playpause').addEventListener('click', () => {
-                            console.log(currentPlayer.audioPlayer.src);
                             this.controlBtnStatus('countdown', currentPlayer.score);
                             currentPlayer.startPlayback();
                             this.state++;
@@ -164,7 +169,6 @@ function QuizPlayer(quests, gameId) {
                     
                     const answer = new Promise((resolve) => {
                         document.querySelector('#playpause').addEventListener('click', () => {
-                            console.log(currentPlayer.audioPlayer.src);
                             this.controlBtnStatus('countdown', currentPlayer.score);
                             currentPlayer.startPlayback();
                             this.nextQuest().then((answer) => resolve(answer))
@@ -258,7 +262,7 @@ function Player(quest) {
     };
     
     this.setMuteImg();
-    
+
     // toggle mute 
     this.mute.addEventListener('click', (e) => {
         if (!this.audioPlayer.muted) {
