@@ -80,6 +80,18 @@ function QuizPlayer(quests) {
         document.querySelector('#points').innerText = this.points;
     }
 
+    this.progbar = function (green = true) {
+        const prog = document.createElement('div');
+        prog.classList.add('progress-bar');
+        prog.style.width = '20%';
+        if (green) {
+            prog.classList.add('bg-success');
+        } else {
+            prog.classList.add('bg-danger');
+        }
+        document.querySelector('#prog_bar').appendChild(prog);
+    }
+
     // controlBtnStatus
     this.controlBtnStatus = function (state, message='') {
         const btn = document.querySelector('#playpause');
@@ -174,12 +186,16 @@ function QuizPlayer(quests) {
                 document.querySelector(`#_${resp['green']}`).classList.replace('btn-light', 'btn-success');
                 // turn button red
                 if (resp["red"] != "") {
-                    document.querySelector(`#_${resp["red"]}`).classList.replace('btn-light', 'btn-danger');   
+                    document.querySelector(`#_${resp["red"]}`).classList.replace('btn-light', 'btn-danger');
+                    // red progbar
+                    this.progbar(false);
+                } else {
+                    // green progbar
+                    this.progbar();
                 }
                 // score update
                 this.points += resp["points"];
                 this.updatePoints();
-                // progbar update
                 this.controlBtnStatus('after-countdown', 'NEXT');
             })
     };
