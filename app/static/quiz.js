@@ -90,9 +90,9 @@ function QuizPlayer(quests) {
     };
 
     // controlBtnStatus
-    this.controlBtnStatus = function (state) {
+    this.controlBtnStatus = function (state, message='') {
         const btn = document.querySelector('#playpause');
-        btn.innerText = '';
+        btn.innerText = message;
         switch (state) {
             case 'loading':
                 const spinner = document.createElement('div');
@@ -112,7 +112,6 @@ function QuizPlayer(quests) {
                 break;
             case 'results':
                 btn.setAttribute('data-state', 'results')
-                break;
                 break;
         };
     };
@@ -140,7 +139,6 @@ function QuizPlayer(quests) {
             this.enableBtns();
             this.controlBtnStatus('play');
         });
-    
 
 };
 
