@@ -12,7 +12,9 @@ Score points by recognizing songs from playlists featured by Spotify. Add songs 
 - HTML/CSS/JS
 - Bootstrap
 
-SongGeek is a Flask web application. Score points by recognizing songs from Spotify playlists.
+SongGeek is a Flask web application. Score points by recognizing songs from Spotify playlists. 
+
+SongGeek is currently in development mode, and maximum user count is restricted by Spotify. Contact me at jakub@jlipinski.pl if you would like to log in. The app is available at [SongGeek.herokuapp.com](https://songgeek.herokuapp.com/).
 
 # User story
 
