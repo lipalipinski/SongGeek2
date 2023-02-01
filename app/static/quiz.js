@@ -389,12 +389,18 @@ function Player(quest) {
 
     this.startPlayback = function () {
         console.log(this.ready)
+        const timer = setTimeout(() => {
+            if (this.audioPlayer.paused) {
+                this.loadAudio();
+            }
+        }, 1500);
         this.ready
-        .then(() => {
+            .then(() => {
             this.audioPlayer.play();
             // start countdown only after audio play
-            this.audioPlayer.addEventListener('play', () => {
-                document.querySelector('#playpause').setAttribute('data-state', 'countdown')
+                this.audioPlayer.addEventListener('play', () => {
+                    clearTimeout(timer);
+                    document.querySelector('#playpause').setAttribute('data-state', 'countdown');
                 document.querySelector('#playpause').innerText = this.score;
                 this.enableBtns();
                 this.timer = setInterval(() => {
