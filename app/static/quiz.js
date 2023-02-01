@@ -407,8 +407,10 @@ function Player(quest) {
                     document.querySelector('#playpause').setAttribute('data-state', 'countdown');
                 document.querySelector('#playpause').innerText = this.score;
                 this.enableBtns();
-                this.timer = setInterval(() => {
-                    this.score--;
+                    this.timer = setInterval(() => {
+                        if (!this.audioPlayer.paused) {
+                            this.score--;
+                        }
                     document.querySelector('#playpause').innerText = this.score;
                     if (this.score == 0) {
                         this.stopPlayback();
