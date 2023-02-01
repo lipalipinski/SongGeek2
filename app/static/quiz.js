@@ -351,8 +351,9 @@ function Player(quest) {
         });
     };
 
-    this.loadAudio = function () {
+    this.loadAudio = function (retryTimeout=500) {
         // count canplay events, if seeking fires twice
+        retryTimeout += 200;
         let canplayCounter = 0;
         this.audioPlayer.preload = 'auto';
         this.audioPlayer.load();
@@ -385,10 +386,10 @@ function Player(quest) {
 
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
-                console.log(`${this.qNum} retry audio load`)
-                this.loadAudio();
+                console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
+                this.loadAudio(retryTimeout);
             }
-        }, 1500);
+        }, retryTimeout);
 
         return loaded.then(() => {
             console.log(`${this.qNum} readyResolver`);
