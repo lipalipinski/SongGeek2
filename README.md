@@ -21,7 +21,7 @@ SongGeek is a Flask web application. Score points by recognizing songs from Spot
 ![OAUTH 2.0 login](images/sm/login.jpg)
 
 ## Select a country
-User can select any country with a Spotify service. SongGeek will display playlists currently featured in selectetd country.
+SongGeek will display Spotify playlists currently featured in selectetd country.
 
 ![Select a country modal](images/sm/country.jpg)
 
