@@ -130,9 +130,9 @@ function QuizPlayer(quests, gameId) {
     
     // load audio chain
     let loadChain = Promise.resolve();
-    for ([i, player] of this.players.entries()) {
+    for ( player of this.players) {
         loadChain = loadChain
-        .then(player.loadAudio(i))
+        .then(player.loadAudio())
     };
     
     this.updatePoints();
@@ -290,8 +290,9 @@ function Player(quest) {
         };
     };
 
-    this.loadAudio = function () {
+    this.loadAudio = function (retry = 0) {
         // count canplay events, if seeking fires twice
+        // retry after timeout if failed (3 times max)
         let canplayCounter = 0;
         this.audioPlayer.load();
         this.audioPlayer.currentTime = this.startPosition;
@@ -321,7 +322,22 @@ function Player(quest) {
             loaded = Promise.all([canplay]);
         }
         
-        return loaded.then(this.readyResolver())
+        let timer;
+        // retry 
+        if (retry < 3) {
+            timer = setTimeout(() => {
+                this.loadAudio(retry + 1);
+            }, 2000 * (this.qNum + 1));
+        } else {
+            return console.error('Audio load fail');
+        };
+
+        loaded.then(() => {
+            // clear load timeout
+            clearTimeout(timer);
+            return Promise.resolve(this.readyResolver())
+        })
+
     };
 
     // answer btns
