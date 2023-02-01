@@ -383,7 +383,14 @@ function Player(quest) {
             loaded = Promise.all([canplay]);
         }
 
+        const timer = setTimeout(() => {
+            console.log(`${this.qNum} retry audio load`)
+            this.loadAudio();
+        }, 1500);
+
         return loaded.then(() => {
+            console.log(`${this.qNum} readyResolver`);
+            clearTimeout(timer);
             return this.readyResolver()
         })
 
