@@ -401,7 +401,7 @@ function Player(quest) {
 
     this.startPlayback = function () {
 
-        const retry = 0;
+        /*const retry = 0;
         const timer = setInterval(() => {
             if (this.audioPlayer.paused) {
                 console.log('reload audio')
@@ -410,7 +410,7 @@ function Player(quest) {
             if (retry > 2) {
                 clearInterval(timer);  
             };
-        }, 1000);
+        }, 1000);*/
 
             this.audioPlayer.play();
             // start countdown only after audio play
