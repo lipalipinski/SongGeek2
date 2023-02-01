@@ -294,6 +294,7 @@ function Player(quest) {
         // count canplay events, if seeking fires twice
         // retry after timeout if failed (3 times max)
         let canplayCounter = 0;
+        this.audioPlayer.preload = 'auto';
         this.audioPlayer.load();
         this.audioPlayer.currentTime = this.startPosition;
 
