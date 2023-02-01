@@ -294,8 +294,8 @@ function Player(quest) {
         // count canplay events, if seeking fires twice
         let canplayCounter = 0;
         this.audioPlayer.preload = 'auto';
-        this.audioPlayer.load();
         this.audioPlayer.currentTime = this.startPosition;
+        this.audioPlayer.load();
 
         const seeking = new Promise((resolve) => {
             this.audioPlayer.addEventListener('seeked', () => {
@@ -388,11 +388,11 @@ function Player(quest) {
     };
 
     this.startPlayback = function () {
-        console.log(this.ready)
+        console.log(this.ready);
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
                 this.loadAudio();
-            }
+            };
         }, 1500);
         this.ready
             .then(() => {
