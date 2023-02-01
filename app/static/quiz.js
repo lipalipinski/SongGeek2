@@ -134,7 +134,7 @@ function QuizPlayer(quests, gameId) {
     
     // load audio chain
     let loadChain = Promise.resolve();
-    for ( player of this.players) {
+    for (const  player of this.players) {
         loadChain = loadChain
         .then(player.loadAudio())
     };
