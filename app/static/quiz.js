@@ -386,13 +386,13 @@ function Player(quest) {
 
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
-                console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
+                //console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
                 this.loadAudio(retryTimeout);
             }
         }, retryTimeout);
 
         return loaded.then(() => {
-            console.log(`${this.qNum} readyResolver`);
+            //console.log(`${this.qNum} readyResolver`);
             clearTimeout(timer);
             return this.readyResolver()
         })
