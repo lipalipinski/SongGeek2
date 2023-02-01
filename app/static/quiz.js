@@ -100,18 +100,22 @@ function QuizPlayer(quests, gameId) {
                 spinner.classList.add('spinner-border');
                 spinner.setAttribute('role', 'status');
                 btn.setAttribute('data-state', 'loading');
+                btn.setAttribute('disabled', 'true');
                 btn.appendChild(spinner);
                 break;
             case 'play':
+                btn.removeAttribute('disabled');
                 btn.setAttribute('data-state', 'play')
                 break;
             case 'countdown':
                 btn.setAttribute('data-state', 'countdown')
                 break;
             case 'after-countdown':
+                btn.removeAttribute('disabled');
                 btn.setAttribute('data-state', 'after-countdown')
                 break;
             case 'results':
+                btn.removeAttribute('disabled');
                 btn.setAttribute('data-state', 'results')
                 break;
         };
@@ -317,6 +321,7 @@ function Player(quest) {
                     spinner.classList.add('spinner-border');
                     spinner.setAttribute('role', 'status');
                     playBtn.setAttribute('data-state', 'loading');
+                    playBtn.setAttribute('disabled', 'true');
                     playBtn.appendChild(spinner);
 
                     // disable butons
