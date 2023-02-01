@@ -135,6 +135,10 @@ function QuizPlayer(quests, gameId) {
         .then(player.loadAudio())
     };
     
+    const placeholderCol = [3, 6, 4, 8]
+    for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+        btn.innerHTML = `<span class="placeholder col-${placeholderCol[i]}"></span>`;
+    }
     this.updatePoints();
     removePlaceholder();
     showCard();
@@ -144,7 +148,12 @@ function QuizPlayer(quests, gameId) {
     for (const player of this.players) {
         // wait for answer
         // first quest
-        gameChain = gameChain.then(player.ready)
+        gameChain = gameChain.
+            // before player is ready
+            then(() => {
+                this.controlBtnStatus('loading');
+                return player.ready
+            })
         if (player.qNum == 0) {
                 gameChain = gameChain
                     .then(() => {
