@@ -385,7 +385,9 @@ function Player(quest) {
 
         const timer = setTimeout(() => {
             console.log(`${this.qNum} retry audio load`)
-            this.loadAudio();
+            if (this.pause) {
+                this.loadAudio();
+            }
         }, 1500);
 
         return loaded.then(() => {
