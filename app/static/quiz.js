@@ -144,16 +144,8 @@ function QuizPlayer(quests, gameId) {
     showCard();
 
     // GAME CHAIN
-    let gameChain = Promise.resolve();
+    let gameChain = this.players[0].ready
     for (const player of this.players) {
-        // wait for answer
-        // first quest
-        gameChain = gameChain.
-            // before player is ready
-            then(() => {
-                this.controlBtnStatus('loading');
-                return player.ready
-            })
         if (player.qNum == 0) {
                 gameChain = gameChain
                     .then(() => {
