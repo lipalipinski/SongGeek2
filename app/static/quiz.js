@@ -341,12 +341,19 @@ function Player(quest) {
                 btn.appendChild(badge);
                 
                 btn.addEventListener('click', (e) => {
-                    document.querySelector('#playpause').setAttribute('data-state', 'loading');
                     this.enableBtns(false);
                     this.stopPlayback();
+                    // loading spinner 
+                    const playBtn = document.querySelector('#playpause')
+                    const spinner = document.createElement('div');
+                    spinner.classList.add('spinner-border');
+                    spinner.setAttribute('role', 'status');
+                    playBtn.setAttribute('data-state', 'loading');
+                    playBtn.appendChild(spinner);
+
                     // disable butons
                     const data = {
-                        "mode": "nextQuest",
+                        "mode": "nextQuest qweqewqwe",
                         "qNum": this.qNum,
                         "id": e.target.value,
                         "score": this.score
