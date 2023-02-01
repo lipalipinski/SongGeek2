@@ -290,9 +290,8 @@ function Player(quest) {
         };
     };
 
-    this.loadAudio = function (retry = 0) {
+    this.loadAudio = function () {
         // count canplay events, if seeking fires twice
-        // retry after timeout if failed (3 times max)
         let canplayCounter = 0;
         this.audioPlayer.preload = 'auto';
         this.audioPlayer.load();
@@ -322,21 +321,9 @@ function Player(quest) {
         } else {
             loaded = Promise.all([canplay]);
         }
-        
-        let timer;
-        // retry 
-        if (retry < 3) {
-            timer = setTimeout(() => {
-                this.loadAudio(retry + 1);
-            }, 2000 * (this.qNum + 1));
-        } else {
-            return console.error('Audio load fail');
-        };
 
         loaded.then(() => {
-            // clear load timeout
-            clearTimeout(timer);
-            return Promise.resolve(this.readyResolver())
+            return this.readyResolver()
         })
 
     };
@@ -401,6 +388,7 @@ function Player(quest) {
     };
 
     this.startPlayback = function () {
+        console.log(this.ready)
         this.ready
         .then(() => {
             this.audioPlayer.play();
