@@ -290,6 +290,65 @@ function Player(quest) {
         };
     };
 
+    // answer btns
+    this.setAnswers = function () {
+        const answer = new Promise((resolve, reject) => {
+            for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
+                btn.classList.replace('btn-success', 'btn-light');
+                btn.classList.replace('btn-danger', 'btn-light');
+                btn.classList.remove('opacity-100');
+                btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
+                btn.setAttribute('value', `${this.tracks[i]["id"]}`);
+                btn.innerText = this.tracks[i]["name"];
+
+                // score badge
+                const badge = document.createElement('span');
+                badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
+                btn.appendChild(badge);
+
+                btn.addEventListener('click', (e) => {
+                    this.enableBtns(false);
+                    this.stopPlayback();
+                    // loading spinner 
+                    const playBtn = document.querySelector('#playpause')
+                    const spinner = document.createElement('div');
+                    spinner.classList.add('spinner-border');
+                    spinner.setAttribute('role', 'status');
+                    playBtn.setAttribute('data-state', 'loading');
+                    playBtn.appendChild(spinner);
+
+                    // disable butons
+                    const data = {
+                        "mode": "nextQuest",
+                        "qNum": this.qNum,
+                        "id": e.target.value,
+                        "score": this.score
+                    }
+                    const resp = fetch(window.location.href, {
+                        "method": "POST",
+                        "headers": { "Content-Type": "application/json" },
+                        "body": JSON.stringify(data),
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                    return resolve(resp)
+                }, { once: true });
+            };
+        });
+        return answer.then((answer) => {
+            // clone remove event listeners from btns after answering
+            for (const btn of document.querySelectorAll('.ans-btn')) {
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+            };
+            return answer;
+        });
+    };
+
     this.loadAudio = function () {
         // count canplay events, if seeking fires twice
         let canplayCounter = 0;
@@ -322,75 +381,17 @@ function Player(quest) {
             loaded = Promise.all([canplay]);
         }
 
-        loaded.then(() => {
-            return this.readyResolver()
+        return loaded.then(() => {
+            this.readyResolver()
         })
 
-    };
-
-    // answer btns
-    this.setAnswers = function () {
-        const answer = new Promise((resolve, reject) => {
-            for (const [i, btn] of document.querySelectorAll('.ans-btn').entries()) {
-                btn.classList.replace('btn-success', 'btn-light');
-                btn.classList.replace('btn-danger', 'btn-light');
-                btn.classList.remove('opacity-100');
-                btn.setAttribute('id', `_${this.tracks[i]["id"]}`);
-                btn.setAttribute('value', `${this.tracks[i]["id"]}`);
-                btn.innerText = this.tracks[i]["name"];
-                
-                // score badge
-                const badge = document.createElement('span');
-                badge.classList.add('d-none', 'position-absolute', 'top-0', 'start-100', 'translate-middle', 'badge', 'rounded-pill', 'bg-danger');
-                btn.appendChild(badge);
-                
-                btn.addEventListener('click', (e) => {
-                    this.enableBtns(false);
-                    this.stopPlayback();
-                    // loading spinner 
-                    const playBtn = document.querySelector('#playpause')
-                    const spinner = document.createElement('div');
-                    spinner.classList.add('spinner-border');
-                    spinner.setAttribute('role', 'status');
-                    playBtn.setAttribute('data-state', 'loading');
-                    playBtn.appendChild(spinner);
-
-                    // disable butons
-                    const data = {
-                        "mode": "nextQuest",
-                        "qNum": this.qNum,
-                        "id": e.target.value,
-                        "score": this.score
-                    }
-                    const resp = fetch(window.location.href, {
-                        "method": "POST",
-                        "headers": { "Content-Type": "application/json" },
-                        "body": JSON.stringify(data),
-                    })
-                    .then((response) => {
-                        if (!response.ok) {
-                                throw new Error(`HTTP error: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        return resolve(resp)
-                    }, {once:true});
-            };
-        });
-        return answer.then((answer) => {
-            // clone remove event listeners from btns after answering
-            for (const btn of document.querySelectorAll('.ans-btn')) {
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-            };
-            return answer;
-        });
     };
 
     this.startPlayback = function () {
         console.log(this.ready);
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
+                console.log('reload audio')
                 this.loadAudio();
             };
         }, 1500);
