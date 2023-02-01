@@ -415,8 +415,7 @@ function Player(quest) {
             this.audioPlayer.play();
             // start countdown only after audio play
                 this.audioPlayer.addEventListener('playing', () => {
-                    clearInterval(timer);
-                    document.querySelector('#playpause').setAttribute('data-state', 'countdown');
+                document.querySelector('#playpause').setAttribute('data-state', 'countdown');
                 document.querySelector('#playpause').innerText = this.score;
                 this.enableBtns();
                     this.timer = setInterval(() => {
