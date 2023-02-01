@@ -403,9 +403,11 @@ function Player(quest) {
     this.startPlayback = function () {
         this.ready
         .then(() => {
+            this.audioPlayer.play();
+            // start countdown only after audio play
+            this.audioPlayer.addEventListener('play', () => {
                 document.querySelector('#playpause').setAttribute('data-state', 'countdown')
                 document.querySelector('#playpause').innerText = this.score;
-                this.audioPlayer.play();
                 this.enableBtns();
                 this.timer = setInterval(() => {
                     this.score--;
@@ -415,6 +417,7 @@ function Player(quest) {
                         document.querySelector('#playpause').innerText = "TIME'S OUT";
                     };
                 }, 1000);
+            });
             });
     };
 
