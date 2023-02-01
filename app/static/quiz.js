@@ -136,7 +136,10 @@ function QuizPlayer(quests, gameId) {
     let loadChain = Promise.resolve();
     for (const  player of this.players) {
         loadChain = loadChain
-        .then(player.loadAudio())
+            .then(() => {
+                console.log(`${player.qNum} start load`)
+                return player.loadAudio()
+            })
     };
     
     const placeholderCol = [3, 6, 4, 8]
@@ -388,13 +391,13 @@ function Player(quest) {
 
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
-                //console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
+                console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
                 return this.loadAudio(retryTimeout);
             }
         }, retryTimeout);
 
         return loaded.then(() => {
-            //console.log(`${this.qNum} readyResolver`);
+            console.log(`${this.qNum} loaded, readyResolver`);
             clearTimeout(timer);
             this.readyResolver();
             return Promise.resolve();
