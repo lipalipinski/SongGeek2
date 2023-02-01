@@ -386,13 +386,13 @@ function Player(quest) {
 
         const timer = setTimeout(() => {
             if (this.audioPlayer.paused) {
-                //console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
+                console.log(`${this.qNum} retry audio load t=${retryTimeout}`)
                 this.loadAudio(retryTimeout);
             }
         }, retryTimeout);
 
         return loaded.then(() => {
-            //console.log(`${this.qNum} readyResolver`);
+            console.log(`${this.qNum} readyResolver`);
             clearTimeout(timer);
             return this.readyResolver()
         })
@@ -401,9 +401,21 @@ function Player(quest) {
 
     this.startPlayback = function () {
 
+        const retry = 0;
+        const timer = setInterval(() => {
+            if (this.audioPlayer.paused) {
+                console.log('reload audio')
+                this.loadAudio();
+            };
+            if (retry > 2) {
+                clearInterval(timer);  
+            };
+        }, 1000);
+
             this.audioPlayer.play();
             // start countdown only after audio play
                 this.audioPlayer.addEventListener('play', () => {
+                    clearInterval(timer);
                     document.querySelector('#playpause').setAttribute('data-state', 'countdown');
                 document.querySelector('#playpause').innerText = this.score;
                 this.enableBtns();
