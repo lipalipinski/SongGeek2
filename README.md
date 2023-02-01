@@ -45,6 +45,7 @@ You will be presented with five song snippets from selected playlist. The faster
 
 ## Add songs to your Spotify Library
 After answering quiz question you'll be presented with a summary, which lets you add songs from the quiz to your Spotify Library. It's a great way to discovering new music!
+
 ![quiz results, adding songs to spotify library](images/sm/quiz-results.jpg)
 
 ## Check your ranking!
