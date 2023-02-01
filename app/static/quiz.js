@@ -150,6 +150,8 @@ function QuizPlayer(quests, gameId) {
     // GAME CHAIN
     let gameChain = this.players[0].ready
     for (const player of this.players) {
+        // wait for answer
+        // first quest else other quests
         if (player.qNum == 0) {
                 gameChain = gameChain
                     .then(() => {
@@ -216,13 +218,8 @@ function QuizPlayer(quests, gameId) {
                 this.points += resp["points"];
                 this.updatePoints();
             })
-        // not last quest
-        if (player.qNum != 4) {
-            gameChain = gameChain
-                .then(() => {
-                    this.controlBtnStatus('after-countdown', 'NEXT');
-                })
-        } else {
+        // show -> results hres
+        if (player.qNum === 4) {
             // last quest
             gameChain = gameChain
                 .then(() => {
@@ -406,17 +403,6 @@ function Player(quest) {
     };
 
     this.startPlayback = function () {
-
-        /*const retry = 0;
-        const timer = setInterval(() => {
-            if (this.audioPlayer.paused) {
-                console.log('reload audio')
-                this.loadAudio();
-            };
-            if (retry > 2) {
-                clearInterval(timer);  
-            };
-        }, 1000);*/
 
             this.audioPlayer.play();
             // start countdown only after audio play
