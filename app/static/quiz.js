@@ -144,6 +144,7 @@ function QuizPlayer(quests, gameId) {
     for (const player of this.players) {
         // wait for answer
         // first quest
+        gameChain = gameChain.then(player.ready)
         if (player.qNum == 0) {
                 gameChain = gameChain
                     .then(() => {
