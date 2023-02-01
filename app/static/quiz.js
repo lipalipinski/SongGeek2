@@ -384,7 +384,7 @@ function Player(quest) {
         }
 
         return loaded.then(() => {
-            this.readyResolver()
+            return this.readyResolver()
         })
 
     };
