@@ -353,7 +353,7 @@ function Player(quest) {
 
                     // disable butons
                     const data = {
-                        "mode": "nextQuest qweqewqwe",
+                        "mode": "nextQuest",
                         "qNum": this.qNum,
                         "id": e.target.value,
                         "score": this.score
