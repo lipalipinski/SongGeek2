@@ -3,7 +3,7 @@ const rankingTable = document.querySelector('#top-players');
 data = {
     "mode":"getRanking"
 };
-fetch(FETCH_URL, {
+fetch(window.location.href, {
     'method': 'POST',
     'headers': { 'Content-Type': 'application/json' },
     'body': JSON.stringify(data)
