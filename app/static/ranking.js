@@ -20,7 +20,7 @@ fetch(FETCH_URL, {
     })
     .then((ranking) => {
         for (user of ranking) {
-            // user rank > 10
+            // user rank > 10 add separation rows
             if (user.rank > 10) {
                 const extraTr = document.createElement('tr');
                 extraTr.innerHTML = `<td colspan="4" class="text-center">.<br>.<br>.<br></td>`;
@@ -35,7 +35,7 @@ fetch(FETCH_URL, {
                                 <img src="${user.imgUrl}" class="usr-img rounded">
                             </td>
                             <td>${user.name}</td>
-                            <td><strong>${user.total}</strong></td>`;
+                            <td><strong>${user.score}</strong></td>`;
             rankingTable.querySelector('tbody').appendChild(tr);
             rankingTable.classList.remove('d-none');
         }

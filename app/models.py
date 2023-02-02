@@ -19,15 +19,15 @@ def all_pls_avgs():
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
 def get_ranking(n=None, period=None):
-    """get to n players returns sorted dict {<user>:rank, ...}"""
+    """returns dict of n users {<user>:{rank:<int>,score:<int>}, ... }"""
     ids = []
     pts = []
 
+    # all time ranking
     if not period:
-        for user in db.session.query(User).all():
-            ids.append(user)
-            pts.append(user.total_points)
+        query = db.session.query(User.total_points, User).all()
     
+    # period specified
     else:
         now = datetime.now()
 
@@ -39,19 +39,11 @@ def get_ranking(n=None, period=None):
                                             .join(User)\
                                                 .filter(Game.time_updated > lim)\
                                                     .group_by(User.id).all()
-        for user in query:
-            ids.append(user[1])
-            pts.append(user[0])
-
-
-    sr = pd.Series(pts, dtype='float64')
-    sr.index = ids
-
-    ranking = sr.rank(ascending=False, method="first", na_option="bottom").sort_values().head(n).to_dict()
-    print(query)
+        
     query.sort(reverse=True, key = lambda a, : a)
-    print(query)
-    return ranking
+    rank = {row[1]:{"rank":i+1, "score":row[0]} for i, row in enumerate(query)}
+    
+    return rank
 
 @login.user_loader
 def load_user(id):
@@ -72,7 +64,7 @@ class User(UserMixin, db.Model):
     quests = db.relationship("Quest", secondary="game", viewonly=True)
 
     def __repr__(self) -> str:
-        return f"<user: {self.name}>"
+        return f"<user: {self.name}, id:{self.id}>"
 
     def refresh_token(self):
 

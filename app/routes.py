@@ -179,18 +179,19 @@ def ranking():
         return render_template("ranking.html")
     
     # POST
-    ranks_raw = get_ranking(10, period="daily")
-    ranks = [{"rank":rank, 
+    ranks_raw = get_ranking(10, "daily")
+    ranks = [{"rank":data["rank"], 
             "name":user.name,
             "imgUrl":user.img.sm,
-            "total":user.total_points,
-            "current":(user == current_user)} for user, rank in ranks_raw.items()]
-    if current_user not in ranks_raw.keys():
+            "score":data["score"],
+            "current":(user == current_user)} for user, data in ranks_raw.items()]
+    # !!!!!!!!!!!!!!
+    '''if current_user not in ranks_raw.keys():
         ranks.append({"rank":current_user.rank(), 
             "name":current_user.name,
             "imgUrl":current_user.img.sm,
             "total":current_user.total_points,
-            "current":True})
+            "current":True})'''
     return Response(json.dumps(ranks), 200)
 
 
