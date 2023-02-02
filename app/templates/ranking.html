@@ -21,7 +21,7 @@ Ranking
     <div class="card h-100" style="">
         <div class="card-header">
             <h5>top 10 players</h5>
-            <a href='?period=total' role="button" class="btn btn-sm {{ 'btn-primary' if request.args.get('period') == 'total' else 'btn-outline-primary' }}">
+            <a href='?period=total' role="button" class="btn btn-sm {{ 'btn-primary' if request.args.get('period') == 'total' or not request.args.get('period')  else 'btn-outline-primary' }}">
                     total
             </a>
             <a href='?period=daily' role="button" class="btn btn-sm {{ 'btn-primary' if request.args.get('period') == 'daily' else 'btn-outline-primary' }}">
