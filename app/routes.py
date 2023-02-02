@@ -179,7 +179,7 @@ def ranking():
         return render_template("ranking.html")
     
     # POST
-    ranks_raw = get_ranking(10)
+    ranks_raw = get_ranking(10, period="daily")
     ranks = [{"rank":rank, 
             "name":user.name,
             "imgUrl":user.img.sm,

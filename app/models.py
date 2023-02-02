@@ -18,19 +18,39 @@ def all_pls_avgs():
     app.logger.debug("all_pls_avgs not cached")
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
-def get_ranking(n=None):
+def get_ranking(n=None, period=None):
     """get to n players returns sorted dict {<user>:rank, ...}"""
     ids = []
     pts = []
-    for user in db.session.query(User).all():
-        ids.append(user)
-        pts.append(user.total_points)
 
-    sr = pd.Series(pts)
+    if not period:
+        for user in db.session.query(User).all():
+            ids.append(user)
+            pts.append(user.total_points)
+    
+    else:
+        now = datetime.now()
+
+        if period == "daily":
+            lim = now.date()
+
+        query = db.session.query(func.sum(Game.final_points)\
+                                        .label('score'), User)\
+                                            .join(User)\
+                                                .filter(Game.time_updated > lim)\
+                                                    .group_by(User.id).all()
+        for user in query:
+            ids.append(user[1])
+            pts.append(user[0])
+
+
+    sr = pd.Series(pts, dtype='float64')
     sr.index = ids
 
     ranking = sr.rank(ascending=False, method="first", na_option="bottom").sort_values().head(n).to_dict()
-
+    print(query)
+    query.sort(reverse=True, key = lambda a, : a)
+    print(query)
     return ranking
 
 @login.user_loader
@@ -267,6 +287,8 @@ class Game(db.Model):
     def points(self):
         return sum([x.points for x in self.quests])
 
+    def __repr__(self) -> str:
+        return f"<Game id:{self.id} time_updated:{self.time_updated}>"
 
 class Quest(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), index=True, primary_key=True)
