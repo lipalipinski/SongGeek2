@@ -18,9 +18,8 @@ def all_pls_avgs():
     app.logger.debug("all_pls_avgs not cached")
     return [pl.avg_score() for pl in db.session.query(Playlist).all() if pl.avg_score() != 0]
 
-def get_ranking(n=None, period=None, user=None):
-    """returns dict of n users {<user>:{rank:<int>,score:<int>}, ... }
-    or {rank:<int>, score:<int>} for a specyfied user"""
+def get_ranking(n=None, period=None):
+    """returns dict of n users {<user>:{rank:<int>,score:<int>}, ... }"""
 
     """ n"""
 
@@ -35,11 +34,14 @@ def get_ranking(n=None, period=None, user=None):
         if period == "daily":
             lim = now.date()
 
-        if period == "weekly":
-            lim = now.date()
+        elif period == "weekly":
+            monday = datetime.now() - timedelta(days=datetime.now().weekday())
+            lim = monday.date()   
         
-        if period == "weekly":
-            lim = now.date()
+        elif period == "monthly":
+            first_day = datetime.now() - timedelta(days=datetime.now().date().day)
+            lim = first_day.date()
+            print(f"first: {lim}")
 
         query = db.session.query(func.sum(Game.final_points)\
                                         .label('score'), User)\
@@ -53,8 +55,6 @@ def get_ranking(n=None, period=None, user=None):
     query.sort(reverse=True, key = lambda a, : a)
     rank = {row[1]:{"rank":i+1, "score":row[0]} for i, row in enumerate(query)}
     
-    if user:
-        return rank[user]
     
     return rank
 

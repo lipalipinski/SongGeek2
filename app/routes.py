@@ -185,6 +185,8 @@ def ranking():
         period = "daily"
     elif request.args.get("period") == "weekly":
         period = "weekly"
+    elif request.args.get("period") == "monthly":
+        period = "monthly"
     else:
         period = None
 
@@ -195,7 +197,6 @@ def ranking():
             "imgUrl":user.img.sm,
             "score":data["score"],
             "current":(user == current_user)} for user, data in ranks_raw.items()]
-    # !!!!!!!!!!!!!!
 
     if current_user not in ranks_raw.keys():
         user_data = current_user.rank()
