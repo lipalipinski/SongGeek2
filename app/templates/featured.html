@@ -22,6 +22,10 @@ Home
         data-bs-target="#exampleModal">
         Country: {{session["country"]["name"]}}
         </button>
+    {% else %}
+    <button id="country-btn" type="button" class="btn-navbar btn btn-sm btn-primary b-0" data-bs-toggle="modal" data-bs-target="#login-prompt">
+        Select a country
+    </button>
     {% endif %}
 </li>
 {% endblock %}
