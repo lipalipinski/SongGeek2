@@ -38,7 +38,9 @@ function changeButtonState(player, control) {
 
 setLvlBadge(document.querySelector('#lvl-badge'), GAME_LVL);
 
-setLikes(document.querySelectorAll(".like"));
+if (USER_LOGGED == 'True') {
+    setLikes(document.querySelectorAll(".like"));
+}
 
 // play/pause player
 for (const [i, playpause] of controls.entries()) {

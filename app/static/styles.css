@@ -113,6 +113,10 @@ button.like[data-state="liked"] {
     background-image: url('/static/img/heart-64-full.svg');
 }
 
+button.like[data-state="unavailable"] {
+    background-image: url('/static/img/heart-64-gray.svg');
+}
+
 button.like[data-state="loading"] {
     background-image: none;
 }

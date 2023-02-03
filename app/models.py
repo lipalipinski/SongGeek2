@@ -281,7 +281,10 @@ class Game(db.Model):
         if self.status == 5:
             lvl_mod = {1:0.5, 2:1, 3:2}
             self.final_points = round(self.points() * lvl_mod[self.level], 0)
-            self.user.set_total_points()
+            
+            # update user total points if user is logged in
+            if self.user:
+                self.user.set_total_points()
 
     def current_quest(self):
         app.logger.debug(f"game: {self.id}/{self.status}")

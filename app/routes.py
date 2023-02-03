@@ -285,7 +285,6 @@ def remove_user():
 
 @app.route("/quiz")
 @app.route("/quiz/<pl_id>", methods=["POST", "GET"])
-@login_required
 def quiz(pl_id = None, game = None):
     
     if pl_id == None:
@@ -316,8 +315,11 @@ def quiz(pl_id = None, game = None):
         pl.update()
         db.session.commit()
 
+        if current_user.is_authenticated:
+            game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
+        else:
+            game = Game(user_id=None, playlist = pl, level = pl.level())
 
-        game = Game(user_id=current_user.id, playlist = pl, level = pl.level())
         try:
             game.init_quests()
             db.session.commit()
@@ -382,13 +384,20 @@ def quiz(pl_id = None, game = None):
 
 
 @app.route("/quiz/<pl_id>/<game>", methods=["GET"])
-@login_required
 def quiz_results(pl_id, game):
     pl = Playlist.query.get(pl_id)
     game = db.session.query(Game).get(game)
-    if not game or game.user_id != current_user.id:
-        return redirect(url_for("index"))
-    return render_template("quiz_score.html", pl = pl, game = game)
+    
+    # user not logged in
+    if game and current_user.is_anonymous and not game.user_id:
+        return render_template("quiz_score.html", pl = pl, game = game)
+    
+    # logged user
+    if game and game.user_id == current_user.id:
+        return render_template("quiz_score.html", pl = pl, game = game)
+    
+    # redirect to index if invalid game
+    return redirect(url_for("index"))
 
 
 @app.route("/likes", methods=["POST"])

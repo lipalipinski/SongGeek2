@@ -63,6 +63,11 @@
                             Ranking
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#FAQ-modal">
+                            FAQ
+                        </a>
+                    </li>
                     {% block extranav %}{% endblock %}
                 </ul>
                 {% if current_user.is_anonymous %}
@@ -126,7 +131,72 @@
                 </div>
                 <div class="modal-footer">
                     <button id="cookies-understood" type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                        Understood
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ modal -->
+    <div class="modal modal-lg fade" id="FAQ-modal" data-bs-keyboard="true" tabindex="-1" aria-labelledby="FAQ"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5">Frequently Asked Questions</h>
+                </div>
+                <div class="modal-body">
+                    <h4>What is SongGeek?</h4>
+                        <p>
+                            SongGeek is a musical quiz. It relates on data provided by Spotify API. It let's users play quiz, 
+                            gain points for recognizing song titles, and add songs to their Spotify Library.
+                        </p>
+                        <p>
+                            SongGeek is open-source - you can <a href="https://github.com/lipalipinski/SongGeek2" target="_blank" noopener noreferer>find it's repository and more technical data on GitHub</a>.
+                        </p>
+                    <h4>Is it safe? Who is storing my password?</h4>
+                        <p>
+                            SongGeek does not store your password. In fact we don't even have acces to it. We use <a href="https://en.wikipedia.org/wiki/OAuth" target="_blank" noopener noreferer>OAuth 2.0 protocol</a>
+                            to verify your identity, and link your SongGeek and Spotify accounts together.
+                            When you log in to SongGeek, you are beeing redirected to a Spotify login page, 
+                            on which you confirm your credentials and give SongGeek permisions necessary to work correctly 
+                            (i.e. add songs to your Library). Spotify provides us with an authorisation token, which we use to access Spotify on your behalf. 
+                            You can always revoke SongGeek permisions in your Spotify account settings, which would make the token obsolete, and imposible for us to interact with your Spotify account.
+                        </p>
+                    <h4>Why can't I log in?</h4>
+                    <p>
+                        SongGeek is currently <a href="https://developer.spotify.com/documentation/web-api/guides/development-extended-quota-modes/" target="_blank" noopener noreferer>in a development mode</a>,
+                        which limits ammount of users we can grant access to.
+                    </p>
+                    <h4>What are playlist levels?</h4>
+                    <p>
+                        It's no wonder not all songs are easy to recognise. Among playlists featured by Spotify there are playlists with massive global hits, 
+                        as well as playlists with some of the newest releases. It's super easy to score high on an '80 Hits playlist, as opposed to, for example, New Music Friday.
+                        That's why we dynamicaly assign every playlist with a level, based on an average score achieved on a given playlist, and its relation to average score of other playlists. 
+                        It involves some basic statystics like standard deviation etc.
+                    </p> 
+                    <p>
+                        What's importent is that playlist levels modify your final score: <br> 
+                        <span class="badge text-bg-success">easy</span> level halves your points <br>
+                        <span class="badge text-bg-warning">normal</span> level leaves your score as it is <br>
+                        <span class="badge text-bg-danger">hard</span> level doubles your points <br>
+                    </p>
+                    <p>
+                        So it's worth giving a chance to some less popular playlists. You can gain up to 48 points a quiz, 
+                        as well as discover some new musical gemes!
+                    </p>
+                    <h4>Who chooses those playlists?</h4>
+                    <p>
+                        Playlists we present on our main page are selected by Spotify. 
+                        Spotify selects featured playlists for each country few times a day.
+                        If you can't find interesting playlist in your country at a given time, check out playlists somwhere else,
+                        maybe even in a different timezone!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="cookies-understood" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        Dismiss
                     </button>
                 </div>
             </div>
