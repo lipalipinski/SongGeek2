@@ -1,10 +1,10 @@
 # SongGeek
 ## A musical quiz based on Spotify API
 
-Score points by recognizing songs from playlists featured by Spotify. Add songs to your Spotify Library.
+Score points by recognising songs from playlists featured by Spotify. Add songs to your Spotify Library.
 
 ## Try it!
-SongGeek is currently in development mode, and maximum user count is restricted by Spotify. Contact me at jakub@jlipinski.pl if you would like to log in. The app is available at [songgeek.herokuapp.com](https://songgeek.herokuapp.com/).
+SongGeek is currently in development mode, and maximum user count is restricted by Spotify. Contact me at jakub@jlipinski.pl if you would like to log in. The app is available at [songgeek.herokuapp.com](https://songgeek.herokuapp.com/). You can play without logging in, but your score will not be recorded, and you will not be able to save songs to your Spotify Library.
 
 ### Technologies:
 - Flask
