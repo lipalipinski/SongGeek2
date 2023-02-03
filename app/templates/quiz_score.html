@@ -9,6 +9,7 @@
 <script>
     const LIKES_API = {{ url_for('likes') | tojson | safe}};
     const GAME_LVL = {{game.level}};
+    const USER_LOGGED = '{{current_user.is_authenticated}}';
 </script>
 {% endblock %}
 
@@ -45,6 +46,13 @@
                         score: <span class="text-bg-dark rounded px-1">{{ game.points() }} pts</span> x
                         <span id="lvl-badge" class="badge"></span>
                         = {{ game.final_points }} pts
+                        {% if current_user.is_anonymous %}
+                        <p class="fw-bold text-danger"> 
+                            Your score has not been recorded. 
+                            <a href="{{ url_for('login') }}">Log in with a Spotify account</a> to save score, 
+                            add songs to your Spotify Library, and more!
+                        </p>                        
+                        {% endif %}
                     </p>
                     <div class="container px-0 ">
                             {% for quest in game.quests %}
@@ -78,11 +86,20 @@
                                                     <button id="playpause{{loop.index0}}" class="multiplayer controls btn btn-sm btn-light" data-state="play"></button>
                                             </div>
                                             <div class="col col-3">
+                                                {% if current_user.is_authenticated %}
                                                 <button id="like{{loop.index0}}" class="multiplayer like btn btn-sm btn-light position-relative" data-state="loading" value="{{quest.track.id}}">                                        
                                                     <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
                                                         <span class="visually-hidden">Loading...</span>
                                                     </div>
                                                 </button>
+                                                {% else %}
+                                                <button id="like{{loop.index0}}" class="multiplayer like btn btn-sm btn-light position-relative" data-state="unavailable" data-bs-toggle="modal" data-bs-target="#login-prompt"
+                                                    value="{{quest.track.id}}">
+                                                    <div id="spinner{{loop.index0}}" class="spinner-border spinner-border-sm" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </button>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
