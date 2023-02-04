@@ -15,7 +15,7 @@ SongGeek is currently in development mode, and maximum user count is restricted 
 - HTML/CSS/JS
 - Bootstrap
 
-SongGeek is a Flask web application. Score points by recognizing songs from Spotify playlists. 
+SongGeek is a Flask web application. Score points by recognising songs from Spotify playlists. 
 
 
 # User story
