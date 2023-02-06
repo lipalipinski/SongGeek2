@@ -393,7 +393,7 @@ def quiz_results(pl_id, game):
         return render_template("quiz_score.html", pl = pl, game = game)
     
     # logged user
-    if game and game.user_id == current_user.id:
+    if game and current_user.is_authenticated and game.user_id == current_user.id:
         return render_template("quiz_score.html", pl = pl, game = game)
     
     # redirect to index if invalid game
