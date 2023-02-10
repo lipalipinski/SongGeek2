@@ -41,7 +41,9 @@ def api_callback():
         usr = sp.current_user()
     except spotipy.exceptions.SpotifyException as err:
         if err.http_status == 403:
-            flash(f"Login failed, contact developer to gain access")
+            flash(f"Could not log in - the app is in a development mode, and \
+                  Spotify is restricting the number of users that can use the app. \
+                  Please, contact jakub@jlipinski.pl to gain access.")
         else:
             flash("Login failed")
         return redirect(url_for("index"))
