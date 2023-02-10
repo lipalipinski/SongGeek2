@@ -36,10 +36,12 @@ def api_callback():
     r_token = res_body.get("refresh_token")
     expires_in = res_body.get("expires_in") #seconds
     
+    # get user details
     try:
         sp = spotipy.Spotify(auth=token)
         usr = sp.current_user()
     except spotipy.exceptions.SpotifyException as err:
+        # if user doesnt have the access
         if err.http_status == 403:
             flash(f"Could not log in - the app is in a development mode, and \
                   Spotify is restricting the number of users that can use the app. \
